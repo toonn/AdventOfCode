@@ -1,8 +1,10 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i runghc
-#! nix-shell -p "haskellPackages.ghcWithPackages (ps: [])"
+#! nix-shell -p "haskellPackages.ghcWithPackages (ps: [ ps.containers ])"
 
 module ChronalCalibration where
+
+import qualified Data.Set as P
 
 main :: IO ()
 main = (putStrLn . ("Total frequency drift: " <>) . show =<< drift)
@@ -10,5 +12,5 @@ main = (putStrLn . ("Total frequency drift: " <>) . show =<< drift)
   where
     shifts = map (read . filter (/= '+')) . lines <$> readFile "./input"
     drift = sum <$> shifts
-    repeat = firstRepeat [] . scanl (+) 0 . cycle <$> shifts
-    firstRepeat xs (y:ys) = if y `elem` xs then y else firstRepeat (y:xs) ys
+    repeat = firstRepeat P.empty . scanl (+) 0 . cycle <$> shifts
+    firstRepeat xs (y:ys) = if y `P.member` xs then y else firstRepeat (P.insert y xs) ys
