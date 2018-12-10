@@ -4,6 +4,7 @@
 
 {-# LANGUAGE BangPatterns #-}
 
+module Marble where
 
 import Data.List (foldl')
 import qualified Data.Map as M
@@ -24,12 +25,11 @@ main = do
       skipSpaces >>
       number >>= \lastMarble ->
       return (players, lastMarble))
-    multiple x y = x `mod` y == 0
     turn places circle = case S.splitAt (places `mod` length circle) circle of
       (ls, rs) -> rs S.>< ls
     takeCurrent (m S.:<| ms) = (m, ms)
     makeMove players (!p, !pM, !circle, lastMod) n = (nP, nPM, nCircle, nMod)
-      where nMultiple23       = (lastMod + 1) `multiple` 23
+      where nMultiple23       = (lastMod + 1) == 23
             nMod | nMultiple23 = 0
                  | otherwise   = lastMod + 1
             nP | p == players = 1
