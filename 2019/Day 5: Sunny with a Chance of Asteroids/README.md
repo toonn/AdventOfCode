@@ -103,8 +103,6 @@ tests, *what diagnostic code does the program produce?*
 
 Your puzzle answer was `15097178`.
 
-The first half of this puzzle is complete! It provides one gold star: \*
-
 \-\-- Part Two \-\-- {#part2}
 --------------------
 
@@ -182,3 +180,8 @@ ship\'s thermal radiator controller. This diagnostic test suite only
 outputs one number, the *diagnostic code*.
 
 *What is the diagnostic code for system ID `5`?*
+
+Your puzzle answer was `1558663`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*

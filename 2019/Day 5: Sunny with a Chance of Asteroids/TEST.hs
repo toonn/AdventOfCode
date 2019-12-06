@@ -44,19 +44,19 @@ inp memory [address] i = memory V.// [(address, i)]
 outp :: Memory -> [Parameter] -> Modes -> Int
 outp memory [param] (mode:_) = parameter memory param mode
 
-jumpTrue :: Memory -> [Parameter] -> Modes -> Int
-jumpTrue memory [c, j] (m1:m2:_) | condition /= 0 = jump
-                                 | otherwise = 3
+jumpTrue :: Memory -> [Parameter] -> Modes -> Address -> Int
+jumpTrue memory [c, j] (m1:m2:_) address | condition /= 0 = jump
+                                         | otherwise = 3
   where
     condition = parameter memory c m1
-    jump = parameter memory j m2
+    jump = parameter memory j m2 - address
 
-jumpFalse :: Memory -> [Parameter] -> Modes -> Int
-jumpFalse memory [c, j] (m1:m2:_) | condition == 0 = jump
-                                  | otherwise = 3
+jumpFalse :: Memory -> [Parameter] -> Modes -> Address -> Int
+jumpFalse memory [c, j] (m1:m2:_) address | condition == 0 = jump
+                                          | otherwise = 3
   where
     condition = parameter memory c m1
-    jump = parameter memory j m2
+    jump = parameter memory j m2 - address
 
 lessThan :: Memory -> [Parameter] -> Modes -> Memory
 lessThan memory [i,j,result] (m1:m2:_) | a < b = memory V.// [(result, 1)]
@@ -88,10 +88,10 @@ execOpcode inputs memory address = case decode (memory V.! address) of
     Just (inp memory (parameters 1) (head inputs), tail inputs, Nothing, 2)
   (4, modes) ->
     Just (memory, inputs, Just (outp memory (parameters 1) modes), 2)
-  (5, modes) ->
-    Just (memory, inputs, Nothing, jumpTrue memory (parameters 2) modes)
-  (6, modes) ->
-    Just (memory, inputs, Nothing, jumpFalse memory (parameters 2) modes)
+  (5, modes) -> Just (memory, inputs, Nothing
+                     , jumpTrue memory (parameters 2) modes address)
+  (6, modes) -> Just (memory, inputs, Nothing
+                     , jumpFalse memory (parameters 2) modes address)
   (7, modes) -> Just (lessThan memory (parameters 3) modes, inputs, Nothing, 4)
   (8, modes) -> Just (equals memory (parameters 3) modes, inputs, Nothing, 4)
   (99, _) -> Nothing
