@@ -6,7 +6,7 @@ module ACS where
 
 import qualified Data.Vector as V
 import Data.List (intercalate, permutations)
-import Data.Maybe (fromJust, listToMaybe)
+import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
 type Address = Int
@@ -24,7 +24,7 @@ type Parameter = Int
 type Mode = Int
 type Modes = [Mode]
 
-type Amplifiers = [Inputs -> (Memory, Outputs)]
+type Amplifiers = [Inputs -> Maybe (Memory, Inputs, Output, Address)]
 
 parameter :: Memory -> Parameter -> Mode -> Int
 parameter memory param mode | mode == 0 = memory V.! param
@@ -102,64 +102,64 @@ execOpcode inputs memory address = case decode (memory V.! address) of
   where
     parameters n = V.toList (V.slice (address + 1) n memory)
 
-compute' :: Inputs -> Memory -> Address -> (Memory, Outputs)
-compute' inputs memory address = case execOpcode inputs memory address of
-  Nothing -> (memory, [])
+step' :: Memory -> Inputs -> Address
+      -> Maybe (Memory, Inputs, Maybe Output, Address)
+step' memory inputs address = case execOpcode inputs memory address of
+  Nothing -> Nothing
   Just (next, inputs', output, jump) ->
-    let (m, os) = compute' inputs' next (address + jump)
-    in case output of
-      Nothing -> (m, os)
-      Just o -> (m, o:os)
+    Just (next, inputs', output, address + jump)
 
-compute :: Inputs -> Memory -> (Memory, Outputs)
-compute inputs memory = compute' inputs memory 0
+step :: Memory -> Inputs -> Address
+     -> Maybe (Memory, Inputs, Output, Address)
+step memory inputs address = case step' memory inputs address of
+  Nothing -> Nothing
+  Just (next, inputs', Nothing, address') -> step next inputs' address'
+  Just (next, inputs', Just output, address') ->
+    Just (next, inputs', output, address')
 
-amplifier :: Memory -> Input -> [Input] -> (Memory, Outputs)
-amplifier memory phaseSetting inputs = compute (phaseSetting:inputs) memory
+amplifier :: Memory -> Input -> Inputs
+          -> Maybe (Memory, Inputs, Output, Address)
+amplifier memory phaseSetting inputs = step memory (phaseSetting:inputs) 0
 
-amplifiers' :: Inputs -> Amplifiers -> ([Memory], Outputs)
+amplifiers' :: Inputs -> Amplifiers -> Maybe (Amplifiers, Outputs)
 amplifiers' inputs amps =
   foldr (\amp more i -> case amp i of
-          (m, o) -> case more o of
-            (mems, o') -> (m:mems, o')
+          Nothing -> Nothing
+          Just (m, i', o, a') -> case more [o] of
+            Nothing -> Nothing
+            Just (amps', o') ->
+              Just ((\inputs -> step m (i' ++ inputs) a'):amps', o')
         )
-        (\i -> ([], i))
+        (\i -> Just ([], i))
         amps
         inputs
 
-amplifiers :: [Memory] -> Inputs -> Inputs -> ([Memory], Outputs)
+amplifiers :: [Memory] -> Inputs -> Inputs -> Maybe (Amplifiers, Outputs)
 amplifiers memories inputs phaseSettings = amplifiers' inputs
   (map (\(m, pS) -> amplifier m pS) (zip memories phaseSettings))
 
 maximumThrusterSignal :: Memory -> Output
 maximumThrusterSignal memory =
-  maximum (map (head . snd . amplifiers (replicate 5 memory) [0])
+  maximum (map (head . snd . fromJust . amplifiers (replicate 5 memory) [0])
                (permutations [0..4]))
 
-feedback :: ([Memory], Inputs) -> Output
+feedback :: (Amplifiers, Inputs) -> Output
 feedback (amps, inputs) =
-  case amplifiers' inputs (toAmps amps) of
-    (_, []) -> head inputs
-    o -> feedback o
-  where
-    toAmps = map (\m is -> compute is m)
+  case amplifiers' inputs amps of
+    Nothing -> head inputs
+    Just o -> feedback o
 
 maximumFeedbackSignal :: Memory -> Output
 maximumFeedbackSignal memory =
-  feedback . amplifiers memories [0] . snd .  M.findMax $
-  foldr (\phaseSettings m ->
-          M.insert (head . snd $ amplifiers memories [0] phaseSettings)
-                   phaseSettings
-                   m
-        )
-        M.empty
-        (permutations [5..9])
-  where
-    memories = replicate 5 memory
+  maximum (map (feedback . fromJust . amplifiers (replicate 5 memory) [0])
+               (permutations [5..9]))
 
-mFS memory = M.findMax $
+mFS memory =
+  M.findMax $
   foldr (\phaseSettings m ->
-          M.insert (head . snd $ amplifiers memories [0] phaseSettings)
+          M.insert (head . snd . fromJust $
+                     amplifiers memories [0] phaseSettings
+                   )
                    phaseSettings
                    m
         )

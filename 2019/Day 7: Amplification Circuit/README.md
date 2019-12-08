@@ -92,8 +92,6 @@ highest signal that can be sent to the thrusters?*
 
 Your puzzle answer was `199988`.
 
-The first half of this puzzle is complete! It provides one gold star: \*
-
 \-\-- Part Two \-\-- {#part2}
 --------------------
 
@@ -156,3 +154,8 @@ Here are some example programs:
 Try every combination of the new phase settings on the amplifier
 feedback loop. *What is the highest signal that can be sent to the
 thrusters?*
+
+Your puzzle answer was `17519904`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
