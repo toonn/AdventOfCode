@@ -4,13 +4,11 @@
 
 module Moons where
 
-import Control.Monad (guard)
-import Data.List (intercalate, sortOn)
-import qualified Data.Map as M
+import Data.List (intercalate)
 import qualified Data.Set as S
 
 data Three = Three {x :: Int, y :: Int, z :: Int}
-  deriving (Show, Read)
+  deriving (Show, Read, Eq, Ord)
 type Location = Three
 type Velocity = Three
 type Moon = (Location, Velocity)
@@ -63,6 +61,36 @@ energy (l,v) = product (map manhattan [l,v])
 totalEnergy :: [Moon] -> Int
 totalEnergy = sum . map energy
 
+projectAxis :: (Three -> Int) -> Moon -> (Int, Int)
+projectAxis axis (l,v) = (axis l, axis v)
+
+stepAxis :: [Int] -> [Int] -> ([Int],[Int])
+stepAxis ls vs = (zipWith (+) ls vs', vs')
+  where
+    go ls = map (\l -> foldr (\l' g -> case l `compare` l' of
+                               LT -> 1 + g
+                               EQ -> g
+                               GT -> g - 1
+                             )
+                             0
+                             ls
+                )
+                ls
+    vs' = zipWith (+) vs (go ls)
+
+axisPeriod :: ([Int],[Int]) -> Int
+axisPeriod (locations, velocities)  = go (stepAxis locations velocities) 1
+  where
+    go (ls,vs) steps | locations == ls && velocities == vs = steps
+                     | otherwise = go (stepAxis ls vs) (steps + 1)
+
+period :: [Moon] -> Int
+period moons = foldr lcm 1 . map (axisPeriod . unzip) $
+  [ (map (projectAxis x) moons)
+  , (map (projectAxis y) moons)
+  , (map (projectAxis z) moons)
+  ]
+
 parseMoons :: String -> [Moon]
 parseMoons s = zip (map ((read :: String -> Location) . three) (lines s))
                    (repeat zero)
@@ -79,17 +107,19 @@ main = do
   moons <- parseMoons <$> readFile "input.txt"
   putStrLn . ("Total energy after 1000 steps: " <>) . show $
     totalEnergy (simulate 1000 moons)
+  putStrLn . ("Steps until repetition: " <>) . show $
+    period moons
 
-exampleP11 :: String
-exampleP11 = intercalate "\n" [ "<x=-1, y=0, z=2>"
-                              , "<x=2, y=-10, z=-7>"
-                              , "<x=4, y=-8, z=8>"
-                              , "<x=3, y=5, z=-1>"
-                              ]
+example1 :: String
+example1 = intercalate "\n" [ "<x=-1, y=0, z=2>"
+                            , "<x=2, y=-10, z=-7>"
+                            , "<x=4, y=-8, z=8>"
+                            , "<x=3, y=5, z=-1>"
+                            ]
 
-exampleP12 :: String
-exampleP12 = intercalate "\n" [ "<x=-8, y=-10, z=0>"
-                              , "<x=5, y=5, z=10>"
-                              , "<x=2, y=-7, z=3>"
-                              , "<x=9, y=-8, z=-3>"
-                              ]
+example2 :: String
+example2 = intercalate "\n" [ "<x=-8, y=-10, z=0>"
+                            , "<x=5, y=5, z=10>"
+                            , "<x=2, y=-7, z=3>"
+                            , "<x=9, y=-8, z=-3>"
+                            ]

@@ -221,8 +221,6 @@ given in your scan for `1000` steps?
 
 Your puzzle answer was `7179`.
 
-The first half of this puzzle is complete! It provides one gold star: \*
-
 \-\-- Part Two \-\-- {#part2}
 --------------------
 
@@ -276,3 +274,8 @@ to simulate the universe*.
 
 *How many steps does it take* to reach the first state that exactly
 matches a previous state?
+
+Your puzzle answer was `428576638953552`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
