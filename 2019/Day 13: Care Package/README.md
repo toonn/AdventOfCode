@@ -36,8 +36,6 @@ exits?*
 
 Your puzzle answer was `277`.
 
-The first half of this puzzle is complete! It provides one gold star: \*
-
 \-\-- Part Two \-\-- {#part2}
 --------------------
 
@@ -67,3 +65,8 @@ score.
 
 Beat the game by breaking all the blocks. *What is your score after the
 last block is broken?*
+
+Your puzzle answer was `12856`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
