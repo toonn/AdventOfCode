@@ -31,12 +31,24 @@ checkSums entry entries = foldr (\e e' -> case e' of
                                 entries
 
 multiply2020Sum :: [Integer] -> Integer
+multiply2020Sum [] = 0
 multiply2020Sum (entry:entries) = go 0
   where
     go multiplication =
       case checkSums entry entries of
         Nothing -> multiply2020Sum entries
         Just entry' -> entry * entry'
+
+multiplyTriple :: [Integer] -> Integer
+multiplyTriple [] = 0
+multiplyTriple (entry:entries) = case go entries of
+  0 -> multiplyTriple entries
+  x -> x
+  where
+    go [] = 0
+    go (e:es) = case checkSums (entry + e) es of
+      Nothing -> go es
+      Just e' -> entry * e * e'
 
 main :: IO ()
 main = do
@@ -46,3 +58,7 @@ main = do
   either (putStrLn . errorBundlePretty)
          (putStrLn . ("Multiplication of two expenses: " <>) . show)
          expenseMultiplication
+  let expenseThree = multiplyTriple <$> entries
+  either (putStrLn . errorBundlePretty)
+         (putStrLn . ("Multiplication of three expenses: " <>) . show)
+         expenseThree
