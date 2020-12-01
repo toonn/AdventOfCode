@@ -22,6 +22,7 @@ pkgs.stdenv.mkDerivation {
       (ghcWithPackages (ps: with ps;
         [ # containers
           megaparsec
+          pqueue
           vector
         ]))
       pandoc.components.exes.pandoc
