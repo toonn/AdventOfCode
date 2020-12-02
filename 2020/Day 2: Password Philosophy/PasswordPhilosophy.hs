@@ -1,6 +1,8 @@
 module Main where
 
+import Data.Bits (xor)
 import Data.Char (isLetter)
+import Data.Maybe (listToMaybe)
 import Data.Void (Void)
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -49,15 +51,34 @@ validPassword ((lo, up, le), pas) =
   let count = toInteger $ length (filter (== le) pas)
   in lo <= count && count <= up
 
-countValidPasswords :: [(Policy, Password)] -> Integer
-countValidPasswords = toInteger . length . filter validPassword
+countValidPasswords :: ((Policy, Password) -> Bool)
+                    -> [(Policy, Password)]
+                    -> Integer
+countValidPasswords p = toInteger . length . filter p
+
+validPasswordMkII :: (Policy, Password) -> Bool
+validPasswordMkII ((lo, up, le), pas) =
+  case (pas !? (fromInteger lo - 1), pas !? (fromInteger up - 1)) of
+    (Just x, Just y) | (x == le) `xor` (y == le) -> True
+    (Just x, Nothing) -> x == le
+    (Nothing, Just y) -> y == le
+    _ -> False
+  where
+    (!?) :: [a] -> Int -> Maybe a
+    list !? index = listToMaybe (drop index list)
 
 main :: IO ()
 main = do
   inputFile <- getDataFileName "Day 2: Password Philosophy/input.txt"
   database <- readDB inputFile
-  let validNr = countValidPasswords <$> database
+  let validNr = countValidPasswords validPassword <$> database
   either (putStrLn . errorBundlePretty)
          (putStrLn . ("Nr of valid passwords: " <>) . show)
          validNr
+  let validNrMkII = countValidPasswords validPasswordMkII <$> database
+  either (putStrLn . errorBundlePretty)
+         (putStrLn . ("Nr of valid passwords according corporate policy: " <>)
+         . show)
+         validNrMkII
+
 
