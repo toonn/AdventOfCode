@@ -3,6 +3,7 @@ module Main where
 import Data.Bits (xor)
 import Data.Char (isLetter)
 import Data.Maybe (listToMaybe)
+import qualified Data.Vector as V
 import Data.Void (Void)
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -14,7 +15,7 @@ type Parser = Parsec Void String
 type Parsed a = Either (ParseErrorBundle String Void) a
 
 type Policy = (Integer, Integer, Char)
-type Password = String
+type Password = V.Vector Char
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme (L.space space1 empty empty)
@@ -31,7 +32,7 @@ policy = do
   pure (lower, upper, letter)
 
 password :: Parser Password
-password = lexeme (takeWhile1P (Just "Password character") (isLetter))
+password = lexeme (takeWhile1P (Just "Password character") (isLetter)) >>= pure . V.fromList
 
 entry :: Parser (Policy, Password)
 entry = do
@@ -48,7 +49,7 @@ readDB inputFile = parse parseDB inputFile <$> readFile inputFile
 
 validPassword :: (Policy, Password) -> Bool
 validPassword ((lo, up, le), pas) =
-  let count = toInteger $ length (filter (== le) pas)
+  let count = toInteger $ V.length (V.filter (== le) pas)
   in lo <= count && count <= up
 
 countValidPasswords :: ((Policy, Password) -> Bool)
@@ -58,14 +59,11 @@ countValidPasswords p = toInteger . length . filter p
 
 validPasswordMkII :: (Policy, Password) -> Bool
 validPasswordMkII ((lo, up, le), pas) =
-  case (pas !? (fromInteger lo - 1), pas !? (fromInteger up - 1)) of
+  case (pas V.!? (fromInteger lo - 1), pas V.!? (fromInteger up - 1)) of
     (Just x, Just y) | (x == le) `xor` (y == le) -> True
     (Just x, Nothing) -> x == le
     (Nothing, Just y) -> y == le
     _ -> False
-  where
-    (!?) :: [a] -> Int -> Maybe a
-    list !? index = listToMaybe (drop index list)
 
 main :: IO ()
 main = do

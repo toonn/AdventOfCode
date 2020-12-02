@@ -25,6 +25,7 @@ executable PasswordPhilosophy
   build-depends:      base ^>=4.14.1.0
                     , megaparsec ^>= 9.0.1
                     , mtl ^>= 2.2.2
+                    , vector ^>= 0.12.1.2
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 2: Password Philosophy"
   data-files:         "Day 2: Password Philosophy"/input.txt
