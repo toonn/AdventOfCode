@@ -1,6 +1,6 @@
 module Main where
 
-import Data.Semigroup (Max(..))
+import Data.Semigroup (Max(..), Product(..))
 import qualified Data.Set as S
 import Data.Void (Void)
 import Text.Megaparsec
@@ -60,6 +60,11 @@ countTrees (stepX, stepY) (TreeMap (Max maxX) (Max maxY) trees) =
     count loc n | loc `S.member` trees = n + 1
                 | otherwise = n
 
+slopeDanger :: [(Coord, Coord)] -> TreeMap -> Integer
+slopeDanger slopes treeMap = getProduct . mconcat
+  . map (\slope -> Product (countTrees slope treeMap))
+  $ slopes
+
 main :: IO ()
 main = do
   inputFile <- getDataFileName "Day 3: Toboggan Trajectory/input.txt"
@@ -68,3 +73,7 @@ main = do
   either (putStrLn . errorBundlePretty)
          (putStrLn . ("Nr of trees along (3,1): " <>) . show)
          treeNr
+  let danger = slopeDanger [(1,1), (3,1), (5,1), (7,1), (1,2)] <$> treeMap
+  either (putStrLn . errorBundlePretty)
+         (putStrLn . ("Danger level: " <>) . show)
+         danger
