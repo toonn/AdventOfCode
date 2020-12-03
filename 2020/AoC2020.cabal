@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2020
-version:             2020.12.2.2
+version:             2020.12.3.1
 synopsis:            Advent of Code 2020
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -30,3 +30,15 @@ executable PasswordPhilosophy
   hs-source-dirs:     "Day 2: Password Philosophy"
   data-files:         "Day 2: Password Philosophy"/input.txt
   default-language:   Haskell2010
+
+executable TobogganTrajectory
+  main-is:            TobogganTrajectory.hs
+  build-depends:      base ^>=4.14.1.0
+                    , megaparsec ^>= 9.0.1
+                    , mtl ^>= 2.2.2
+                    , containers ^>= 0.6.2.1
+  other-modules:      Paths_AoC2020
+  hs-source-dirs:     "Day 3: Toboggan Trajectory"
+  data-files:         "Day 3: Toboggan Trajectory"/input.txt
+  default-language:   Haskell2010
+
