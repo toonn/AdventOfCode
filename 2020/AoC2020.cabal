@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2020
-version:             2020.12.4.2
+version:             2020.12.5.1
 synopsis:            Advent of Code 2020
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -9,6 +9,7 @@ license-file:        LICENSE
 author:              toonn
 maintainer:          toonn@toonn.io
 category:            Game
+data-files:          "*"/input.txt
 
 executable ReportRepair
   main-is:            ReportRepair.hs
@@ -17,7 +18,6 @@ executable ReportRepair
                     , mtl ^>= 2.2.2
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 1: Report Repair"
-  data-files:         "Day 1: Report Repair"/input.txt
   default-language:   Haskell2010
 
 executable PasswordPhilosophy
@@ -28,7 +28,6 @@ executable PasswordPhilosophy
                     , vector ^>= 0.12.1.2
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 2: Password Philosophy"
-  data-files:         "Day 2: Password Philosophy"/input.txt
   default-language:   Haskell2010
 
 executable TobogganTrajectory
@@ -39,7 +38,6 @@ executable TobogganTrajectory
                     , containers ^>= 0.6.2.1
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 3: Toboggan Trajectory"
-  data-files:         "Day 3: Toboggan Trajectory"/input.txt
   default-language:   Haskell2010
 
 executable PassportProcessing
@@ -50,6 +48,17 @@ executable PassportProcessing
                     , containers ^>= 0.6.2.1
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 4: Passport Processing"
-  data-files:         "Day 4: Passport Processing"/input.txt
+  default-language:   Haskell2010
+
+executable BinaryBoarding
+  main-is:            BinaryBoarding.hs
+  build-depends:      base ^>=4.14.1.0
+                    , megaparsec ^>= 9.0.1
+                    , mtl ^>= 2.2.2
+                    , containers ^>= 0.6.2.1
+                    , criterion ^>= 1.5.9.0
+                    , silently ^>= 1.2.5.1
+  other-modules:      Paths_AoC2020
+  hs-source-dirs:     "Day 5: Binary Boarding"
   default-language:   Haskell2010
 
