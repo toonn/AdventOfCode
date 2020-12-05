@@ -56,9 +56,19 @@ part1 boardingPasses = do
          (putStrLn . ("Highest seat ID: " <>) . show)
          highestSeatID
 
+missingSeat :: [SeatID] -> SeatID
+missingSeat seats = case foldr missing Nothing pNs of
+  Nothing -> error "Couldn't find a missing seat ID"
+  Just x -> x
+  where
+    missing (prev, next) Nothing | next - prev == 2 = Just (prev + 1)
+    missing _ s = s
+    seats' = L.sort seats
+    pNs = zip seats' (tail seats')
+
 part2 :: Parsed [SeatID] -> IO ()
 part2 boardingPasses = do
-  let highestSeatID = L.maximum <$> boardingPasses
+  let highestSeatID = missingSeat <$> boardingPasses
   either (putStrLn . errorBundlePretty)
          (putStrLn . ("Highest seat ID: " <>) . show)
          highestSeatID
