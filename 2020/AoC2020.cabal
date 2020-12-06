@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2020
-version:             2020.12.5.2
+version:             2020.12.6.1
 synopsis:            Advent of Code 2020
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -9,7 +9,7 @@ license-file:        LICENSE
 author:              toonn
 maintainer:          toonn@toonn.io
 category:            Game
-data-files:          "*"/input.txt
+data-files:          **/*.txt
 
 executable ReportRepair
   main-is:            ReportRepair.hs
@@ -60,5 +60,17 @@ executable BinaryBoarding
                     , silently ^>= 1.2.5.1
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 5: Binary Boarding"
+  default-language:   Haskell2010
+
+executable CustomCustoms
+  main-is:            CustomCustoms.hs
+  build-depends:      base ^>=4.14.1.0
+                    , megaparsec ^>= 9.0.1
+                    , mtl ^>= 2.2.2
+                    , containers ^>= 0.6.2.1
+                    , criterion ^>= 1.5.9.0
+                    , silently ^>= 1.2.5.1
+  other-modules:      Paths_AoC2020
+  hs-source-dirs:     "Day 6: Custom Customs"
   default-language:   Haskell2010
 
