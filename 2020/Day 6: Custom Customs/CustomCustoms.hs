@@ -20,16 +20,16 @@ type GroupAnswer = Answer
 answers :: Parser Answer
 answers = S.fromList <$> takeWhile1P (Just "Answer") isLower
 
-groupAnswer :: Parser GroupAnswer
-groupAnswer = mconcat <$> endBy answers eol
+anyone :: Parser GroupAnswer
+anyone = mconcat <$> endBy answers eol
 
-groupAnswers :: Parser [GroupAnswer]
-groupAnswers = sepEndBy groupAnswer eol
+groupAnswers :: Parser GroupAnswer -> Parser [GroupAnswer]
+groupAnswers groupAnswer = sepEndBy groupAnswer eol
 
-readInput :: IO (Parsed [GroupAnswer])
-readInput = do
+readInput :: Parser GroupAnswer -> IO (Parsed [GroupAnswer])
+readInput groupAnswer = do
   inputFile <- getDataFileName "Day 6: Custom Customs/input.txt"
-  parse groupAnswers inputFile
+  parse (groupAnswers groupAnswer) inputFile
     <$> readFile inputFile
 
 printAnswer :: Show a => String -> Parsed a -> IO ()
@@ -38,23 +38,30 @@ printAnswer question answer =
          (putStrLn . (question <>) . show)
          answer
 
-part1 :: Parsed [GroupAnswer] -> IO ()
+part1 :: (Parser GroupAnswer -> IO (Parsed [GroupAnswer])) -> IO ()
 part1 input = do
-  let sumOfGroupCounts = sum . map S.size <$> input
-  printAnswer "Sum of counts: " sumOfGroupCounts
+  input' <- input anyone
+  let sumOfGroupCounts = sum . map S.size <$> input'
+  printAnswer "Anyone answered yes: " sumOfGroupCounts
 
-part2 :: Parsed [GroupAnswer] -> IO ()
+everyone :: Parser GroupAnswer
+everyone = foldr1 S.intersection <$> endBy answers eol
+
+part2 :: (Parser GroupAnswer -> IO (Parsed [GroupAnswer])) -> IO ()
 part2 input = do
-  printAnswer "" (pure "Not an answer")
+  input' <- input everyone
+  let answer = sum . map S.size <$> input'
+  printAnswer "Everyone answered yes: " answer
 
 main :: IO ()
 main = do
-  input <- readInput
-  part1 input
-  part2 input
+  putStrLn ""
+  part1 readInput
+  part2 readInput
+  putStrLn ""
   defaultMain [
       bgroup "AoC"
-        [ bench "Part 1" $ nfIO (silence $ readInput >>= part1)
-        , bench "Part 2" $ nfIO (silence $ readInput >>= part2)
+        [ bench "Part 1" $ nfIO (silence $ part1 readInput)
+        , bench "Part 2" $ nfIO (silence $ part2 readInput)
         ]
     ]
