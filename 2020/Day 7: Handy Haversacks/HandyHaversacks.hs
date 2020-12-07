@@ -15,8 +15,8 @@ import Paths_AoC2020
 type Parser = Parsec Void String
 type Parsed a = Either (ParseErrorBundle String Void) a
 
-type Rule = M.Map String (String, Integer)
-type Rules = M.Map String [(String, Integer)]
+type Rule = (String, [(String, Integer)])
+type Rules a = M.Map String [a]
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme (L.space hspace1 empty empty)
@@ -50,14 +50,12 @@ rule = do
   word "contain"
   containees <- (string "no other bags" *> pure []) <|> sepBy bags comma
   char '.'
-  pure $ foldr (\(ctee, qty) m -> M.insert ctee (container, qty) m)
-               M.empty
-               containees
+  pure $ (container, containees)
 
-rules :: Parser Rules
-rules = M.unionsWith (<>) . map (M.map (:[])) <$> sepEndBy rule eol
+rules :: Parser [Rule]
+rules = sepEndBy rule eol
 
-readInput :: IO (Parsed Rules)
+readInput :: IO (Parsed [Rule])
 readInput = do
   inputFile <- getDataFileName "Day 7: Handy Haversacks/input.txt"
   parse rules inputFile
@@ -69,21 +67,33 @@ printAnswer question answer =
          (putStrLn . (question <>) . show)
          answer
 
-closure :: String -> Rules -> S.Set String
+closure :: String -> Rules String -> S.Set String
 closure k m = case M.lookup k m of
   Nothing -> S.empty
   Just [] -> error ("A " <> k <> " bag cannot be contained in any other bag.")
-  Just bs -> S.unions (map (\(k', _) -> S.insert k' (closure k' m)) bs)
+  Just bs -> S.unions (map (\k' -> S.insert k' (closure k' m)) bs)
 
-part1 :: Parsed Rules -> IO ()
+part1 :: Parsed [Rule] -> IO ()
 part1 input = do
-  let answer = S.size . closure "shiny gold" <$> input
+  -- Data.Map.Merge.Strict may have more efficient combinators than union after
+  -- mapping.
+  let answer = S.size . closure "shiny gold" . M.unionsWith (<>)
+             . map (\(k, bs) -> foldr (\(b,_) -> M.insert b [k]) M.empty bs)
+             <$> input
   printAnswer "Nr of bags that can contain a shiny gold bag: " answer
 
-part2 :: Parsed Rules -> IO ()
+closure' :: String -> Rules (String, Integer) -> Integer
+closure' k m = case M.lookup k m of
+  Nothing -> error ("I don't know of any " <> k <> " bags.")
+  Just [] -> 0
+  Just bs -> foldr (\(b,qty) total -> total + qty * (1 + closure' b m))
+                   0
+                   bs
+
+part2 :: Parsed [Rule] -> IO ()
 part2 input = do
-  let answer = const (-1) <$> input
-  printAnswer "Not an answer: " answer
+  let answer = closure' "shiny gold" . M.fromList <$> input
+  printAnswer "Nr of bags a shiny gold bag needs to contain: " answer
 
 main :: IO ()
 main = do
