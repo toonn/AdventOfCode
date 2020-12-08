@@ -17,11 +17,12 @@ import Paths_AoC2020
 type Parser = Parsec Void String
 type Parsed a = Either (ParseErrorBundle String Void) a
 
-data Instruction = Acc Integer | Jmp Integer | Nop
+data Instruction = Acc Integer | Jmp Integer | Nop Integer
 type Program = V.Vector Instruction
 data ProgramState = ProgramState { address :: Integer
-                                 , argument :: Integer
+                                 , accumulator :: Integer
                                  }
+                  | FinalState { accumulator :: Integer }
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme (L.space hspace1 empty empty)
@@ -42,7 +43,7 @@ instruction = do
   pure $ case inst of
     "acc" -> Acc arg
     "jmp" -> Jmp arg
-    "nop" -> Nop
+    "nop" -> Nop arg
 
 program :: Parser Program
 program = V.fromList <$> sepEndBy instruction eol
@@ -62,20 +63,21 @@ printAnswer question answer =
 step :: ProgramState -> Program -> ProgramState
 step (ProgramState addr acc) program =
   case program V.!? fromInteger addr of
-    Nothing -> error (L.intercalate " "
-      [ "Address"
-      , show addr
-      , "exceeds the upper bound of the program"
-      , show (V.length program)
-      ])
+    Nothing | V.length program == fromInteger addr -> FinalState acc
+            | otherwise -> error (L.intercalate " "
+              [ "Address"
+              , show addr
+              , "exceeds the upper bound of the program"
+              , show (V.length program)
+              ])
     Just inst -> case inst of
       Acc inc -> ProgramState (addr + 1) (acc + inc)
       Jmp offset -> ProgramState (addr + offset) acc
-      Nop -> ProgramState (addr + 1) acc
+      Nop _ -> ProgramState (addr + 1) acc
 
-accumulator :: ProgramState -> Program -> Integer
-accumulator pState program = go (step pState program)
-                                (S.singleton (address pState))
+accumulatedAfterIteration :: ProgramState -> Program -> Integer
+accumulatedAfterIteration pState program = go (step pState program)
+                                              (S.singleton (address pState))
   where
     go pS@(ProgramState addr acc) visited
       | addr `S.member` visited = acc
@@ -83,13 +85,31 @@ accumulator pState program = go (step pState program)
 
 part1 :: Parsed Program -> IO ()
 part1 input = do
-  let answer = accumulator (ProgramState 0 0) <$> input
+  let answer = accumulatedAfterIteration (ProgramState 0 0) <$> input
   printAnswer "Accumulator after one iteration: " answer
+
+alterations :: Program -> [Program]
+alterations program = V.ifoldr alter [] program
+  where
+    alter index (Jmp v) ps = program V.// [(index, Nop v)]:ps
+    alter index (Nop v) ps | v /= 0 = program V.// [(index, Jmp v)]:ps
+    alter _ _ ps = ps
+
+accumulatedAfterTermination :: ProgramState -> Program -> Integer
+accumulatedAfterTermination pState program =
+  foldr (go pState (S.empty))
+        (error "No terminating alteration found")
+        (alterations program)
+  where
+    go pS@(ProgramState addr acc) visited prog next
+      | addr `S.member` visited = next
+      | otherwise = go (step pS prog) (S.insert addr visited) prog next
+    go (FinalState acc) _ _ _ = acc
 
 part2 :: Parsed Program -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "Not an answer: " answer
+  let answer = accumulatedAfterTermination (ProgramState 0 0) <$> input
+  printAnswer "Accumulator after termination: " answer
 
 main :: IO ()
 main = do
