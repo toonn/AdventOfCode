@@ -18,6 +18,7 @@ data Distribution = Distribution { one :: Integer
                                  , two :: Integer
                                  , three :: Integer
                                  }
+  deriving Show
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme (L.space hspace1 empty empty)
@@ -56,10 +57,29 @@ part1 input = do
            <$> input
   printAnswer "Product of 1- and 3-jolt differences: " answer
 
+oneSequences :: [Integer] -> [Integer]
+oneSequences adapters = foldr tally end adapters 0 0
+  where
+    end _ running | running > 1 = [running - 1]
+                  | otherwise = []
+    tally adap next last running | adap - last == 1 = next adap (running + 1)
+                                 | running > 1 = (running - 1) : next adap 0
+                                 | otherwise = next adap 0
+
+combinations :: Integer -> Integer
+combinations 1 = 2
+combinations 2 = 4
+combinations 3 = 7
+combinations 4 = 13
+
 part2 :: Parsed [Integer] -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "Not an answer: " answer
+  let answer = L.foldl' (*) 1
+             . map combinations
+             . oneSequences
+             . L.sort
+           <$> input
+  printAnswer "Distinct adapter combinations: " answer
 
 main :: IO ()
 main = do
