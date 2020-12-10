@@ -66,6 +66,7 @@ oneSequences adapters = foldr tally end adapters 0 0
                                  | running > 1 = (running - 1) : next adap 0
                                  | otherwise = next adap 0
 
+-- This is basically tribonacci (x + 4)
 combinations :: Integer -> Integer
 combinations 1 = 2
 combinations 2 = 4
