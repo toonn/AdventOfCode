@@ -1,7 +1,7 @@
 module Main where
 
 import Criterion.Main
-import qualified Data.List as L
+import qualified Data.Vector as V
 import Data.Void (Void)
 import System.FilePath ((</>))
 import System.IO.Silently (silence)
@@ -16,6 +16,7 @@ type Parsed a = Either (ParseErrorBundle String Void) a
 
 data Seat = Empty | Occupied | Floor
   deriving Eq
+type Seats = V.Vector (V.Vector Seat)
 
 seat :: Char -> Seat
 seat 'L' = Empty
@@ -42,11 +43,11 @@ printAnswer question answer =
          (putStrLn . (question <>) . show)
          answer
 
-nrOccupied :: [Seat] -> Int
-nrOccupied = length  . filter (== Occupied)
+nrOccupied :: [Seat ]-> Int
+nrOccupied = length . filter (== Occupied)
 
-stepRow :: [Seat] -> [Seat] -> [Seat] -> [Seat]
-stepRow a b c = Empty : go a b c
+rule1Row :: [Seat] -> [Seat] -> [Seat] -> [Seat]
+rule1Row a b c = Empty : go a b c
   where
     go (ul:above@(um:ur:_)) (cl:current@(cc:cr:_)) (bl:below@(bm:br:_))
       | cc == Empty   , nrOccupied adjacentSeats == 0 = Occupied : rest
@@ -57,28 +58,58 @@ stepRow a b c = Empty : go a b c
         rest = go above current below
     go _ (_:Floor:_) _ = [Floor]
 
-step :: [[Seat]] -> [[Seat]]
-step seats = emptyRow :
-  zipWith3 stepRow seats (drop 1 seats) (drop 2 seats)
+rule1 :: [[Seat]] -> [[Seat]]
+rule1 seats = emptyRow :
+  zipWith3 rule1Row seats (drop 1 seats) (drop 2 seats)
   <> [emptyRow]
   where
     emptyRow = replicate (length (head seats)) Floor
 
-simulate :: [[Seat]] -> [[Seat]]
-simulate seats | seats == seats' = seats'
-               | otherwise = simulate seats'
+simulate :: Eq a => (a -> a) -> a -> a
+simulate step seats | seats == seats' = seats'
+                    | otherwise = simulate step seats'
   where
     seats' = step seats
 
 part1 :: Parsed [[Seat]] -> IO ()
 part1 input = do
-  let answer = nrOccupied . concat . simulate <$> input
+  let answer = nrOccupied . concat . simulate rule1 <$> input
   printAnswer "Occupied seats: " answer
+
+rule2Seat :: Seats -> Int -> Int -> Seat -> Seat
+rule2Seat seats y x seat
+  | seat == Empty, nrOccupied visibleSeats == 0 = Occupied
+  | seat == Occupied, nrOccupied visibleSeats >= 5 = Empty
+  | otherwise = seat
+  where
+    directions = [(dx, dy) | dx <- [-1,0,1], dy <- [-1,0,1], dx /= 0 || dy /= 0]
+    firstVisible (x,y) (dx, dy)
+      | x' == 0 || y' == 0
+        || y' == V.length seats - 1 || x' == V.length (seats V.! y) - 1
+        = Empty
+      | seat' == Floor = firstVisible (x',y') (dx,dy)
+      | otherwise = seat'
+      where
+        x' = x + dx
+        y' = y + dy
+        seat' = seats V.! y' V.! x'
+    visibleSeats = map (firstVisible (x,y)) directions
+
+rule2Row :: Seats -> Int -> V.Vector Seat -> V.Vector Seat
+rule2Row seats y row | y == 0 || y == V.length seats - 1 = row
+                     | otherwise = V.imap (rule2Seat seats y) row
+
+rule2 :: Seats -> Seats
+rule2 seats = V.imap (rule2Row seats) seats
 
 part2 :: Parsed [[Seat]] -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "Not an answer: " answer
+  let answer = nrOccupied . concat
+             . map V.toList . V.toList
+             . simulate rule2
+             . V.fromList . map V.fromList
+           <$> input
+  printAnswer "Occupied seats by sight: " answer
 
 main :: IO ()
 main = do
