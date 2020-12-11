@@ -84,8 +84,12 @@ rule2Seat seats y x seat
   where
     directions = [(dx, dy) | dx <- [-1,0,1], dy <- [-1,0,1], dx /= 0 || dy /= 0]
     -- Precomputing firstVisible for the whole step could be more efficient.
+    --
     -- Someone mentioned you only need to check seats that either changed in
     -- the last step or which have an adjacent or visible which changed.
+    -- Turns out that doesn't work, checking all the seats that are affected by
+    -- a seat is more work and slows down the calculation. It's simpler and
+    -- faster to just check for every seat whether it needs updating.
     firstVisible (x,y) (dx, dy)
       | x' == 0 || y' == 0
         || y' == V.length seats - 1 || x' == V.length (seats V.! y) - 1
