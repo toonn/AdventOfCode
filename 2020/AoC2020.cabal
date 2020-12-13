@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2020
-version:             2020.12.12.2
+version:             2020.12.13.1
 synopsis:            Advent of Code 2020
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -154,5 +154,19 @@ executable RainRisk
                     , vector ^>= 0.12.1.2
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 12: Rain Risk"
+  default-language:   Haskell2010
+
+executable ShuttleSearch
+  main-is:            ShuttleSearch.hs
+  build-depends:      base ^>=4.14.1.0
+                    , containers ^>= 0.6.2.1
+                    , criterion ^>= 1.5.9.0
+                    , filepath ^>= 1.4.2.1
+                    , megaparsec ^>= 9.0.1
+                    , mtl ^>= 2.2.2
+                    , silently ^>= 1.2.5.1
+                    , vector ^>= 0.12.1.2
+  other-modules:      Paths_AoC2020
+  hs-source-dirs:     "Day 13: Shuttle Search"
   default-language:   Haskell2010
 
