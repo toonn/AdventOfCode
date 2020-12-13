@@ -66,11 +66,35 @@ part1 input = do
   let answer = productEarliestBusAndTime <$> input
   printAnswer "Product of earliest bus ID and waiting time: " answer
 
+tagOrDrop :: BusID -> (Integer -> [(Integer, Integer)]) -> Integer
+          -> [(Integer, Integer)]
+tagOrDrop X rest i = rest (i + 1)
+tagOrDrop (ID a) rest i = (a, i) : rest (i + 1)
+
+tag :: [BusID] -> [(Integer, Integer)]
+tag buses = foldr tagOrDrop (\_ -> []) buses 0
+
+offset :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer
+       -> Integer -> Integer
+offset a1 a b o1 o a' i | o < 0 = offset a1 a b o1 ((a + o) `rem` b) a' (i - 1)
+                        | a'' == o = (i + 1) * a1 + o1
+                        | otherwise = offset a1 a b o1 o a'' (i + 1)
+  where
+    a'' = (a + a') `rem` b
+
+combine' :: (Integer, Integer) -> (Integer, Integer) -> (Integer, Integer)
+combine' (a, o1) (b, o2) =
+  (lcm a b, offset a (a `rem` b) b o1 (-(o1 + o2) `rem` b) 0 0)
+
+combine :: [(Integer, Integer)] -> (Integer, Integer)
+combine [x] = x
+combine (x:y:rest) = combine (combine' x y : rest)
+
 part2 :: Parsed (Integer, [BusID]) -> IO ()
 part2 input = do
-  let answer = const 'P'
+  let answer = snd . combine . tag . snd
            <$> input
-  printAnswer "Not an answer: " answer
+  printAnswer "Earliest time buses depart at their offsets: " answer
 
 main :: IO ()
 main = do
