@@ -74,8 +74,6 @@ in memory after it completes?*
 
 Your puzzle answer was `8332632930672`.
 
-The first half of this puzzle is complete! It provides one gold star: \*
-
 \-\-- Part Two \-\-- {#part2}
 --------------------
 
@@ -152,3 +150,8 @@ memory at the end of the program. In this example, the sum is *`208`*.
 Execute the initialization program using an emulator for a version 2
 decoder chip. *What is the sum of all values left in memory after it
 completes?*
+
+Your puzzle answer was `4753238784664`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*

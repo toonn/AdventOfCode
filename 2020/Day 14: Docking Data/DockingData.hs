@@ -17,10 +17,10 @@ type Parsed a = Either (ParseErrorBundle String Void) a
 
 type Address = Integer
 type Value = Integer
-type Mask = (Value, Value)
+type Mask = String
 data Instruction = Mask Mask | Mem Address Value
 type Instructions = [Instruction]
-type Memory = M.Map Address (Value, Mask)
+type Memory a = M.Map Address a
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme (L.space hspace1 empty empty)
@@ -37,22 +37,12 @@ equals = lexeme (char '=')
 bits :: Parser [Char]
 bits = lexeme (takeWhile1P (Just "Mask bit") (`elem` "X01"))
 
-zeros :: Integer -> [Char] -> Integer
-zeros x [] = x
-zeros x ('0':rest) = zeros (2*x) rest
-zeros x (_:rest) = zeros (2*x + 1) rest
-
-ones :: Integer -> [Char] -> Integer
-ones x [] = x
-ones x ('1':rest) = ones (2*x + 1) rest
-ones x (_:rest) = ones (2*x) rest
-
 mask :: Parser Instruction
 mask = do
   word "mask"
   equals
   value <- bits
-  pure $ Mask (zeros 0 value, ones 0 value)
+  pure $ Mask value
 
 mem :: Parser Instruction
 mem = do
@@ -84,30 +74,74 @@ printAnswer question answer =
          (putStrLn . (question <>) . show)
          answer
 
-applyMask :: Value -> Mask -> Value
-applyMask val (zeros, ones) = val .&. zeros .|. ones
+zeros :: Integer -> [Char] -> Integer
+zeros x [] = x
+zeros x ('0':rest) = zeros (2*x) rest
+zeros x (_:rest) = zeros (2*x + 1) rest
 
-initialize :: Mask -> Memory -> Instructions -> Memory
+ones :: Integer -> [Char] -> Integer
+ones x [] = x
+ones x ('1':rest) = ones (2*x + 1) rest
+ones x (_:rest) = ones (2*x) rest
+
+maskToPair :: Mask -> (Value, Value)
+maskToPair value = (zeros 0 value, ones 0 value)
+
+applyMask :: Value -> Mask -> Value
+applyMask val mask = val .&. zeros .|. ones
+  where
+    (zeros, ones) = maskToPair mask
+
+initialize :: Mask -> Memory (Value, Mask)-> Instructions
+           -> Memory (Value, Mask)
 initialize _ memory [] = memory
 initialize mask memory (Mask v:rest) = initialize v memory rest
 initialize mask memory (Mem a v:rest) =
   initialize mask (M.insert a (v, mask) memory) rest
 
-sumMemory :: Memory -> Integer
+sumMemory :: Memory (Value, Mask) -> Integer
 sumMemory = M.foldr (\(v, mask) x -> x + applyMask v mask) 0
 
 part1 :: Parsed Instructions -> IO ()
 part1 input = do
   let answer = sumMemory
-             . initialize (2^36-1, 0) M.empty
+             . initialize "" M.empty
            <$> input
   printAnswer "Sum of values in memory: " answer
 
+combinations :: Num a => [a] -> [a] -> [a]
+combinations as [] = as
+combinations as bs = do
+  a <- as
+  b <- bs
+  pure (a + b)
+
+addresses :: Address -> Mask -> [Address]
+addresses a m = foldr combinations [] $ do
+  (power, mbit) <- zip [35,34..0] m
+  let factor = case mbit of
+        '0' | testBit a power -> [2^power]
+            | otherwise -> [0]
+        '1' -> [2^power]
+        'X' -> [0, 2^power]
+  pure factor
+
+initialize2 :: Mask -> Memory Value -> Instructions -> Memory Value
+initialize2 _ memory [] = memory
+initialize2 mask memory (Mask m:rest) = initialize2 m memory rest
+initialize2 mask memory (Mem a v:rest) = initialize2 mask memory' rest
+  where
+    memory' = foldr (\a' m -> M.insert a' v m) memory (addresses a mask)
+
+sumValues :: Memory Value -> Integer
+sumValues = M.foldr (+) 0
+
 part2 :: Parsed Instructions -> IO ()
 part2 input = do
-  let answer = const 'P'
+  let answer = sumValues
+             . initialize2 "" M.empty
            <$> input
-  printAnswer "Not an answer: " answer
+  printAnswer "Sum of values in memory with version 2 decoder: " answer
 
 main :: IO ()
 main = do
