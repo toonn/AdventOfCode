@@ -62,10 +62,10 @@ part1 input = do
   let answer = (2020 `th`) . iterate recite <$> input
   printAnswer "The 2020th number is: " answer
 
-reciteFastTo :: Int -> Numbers Int (M.Map Int) -> Int
+reciteFastTo :: Int -> Numbers Int IM.IntMap -> Int
 reciteFastTo i (j, n, seen)
   | i == j = n
-  | otherwise = reciteFastTo i (j + 1, age (M.!?) (j, n, seen), M.insert n j seen)
+  | otherwise = reciteFastTo i (j + 1, age (IM.!?) (j, n, seen), IM.insert n j seen)
 
 toIntMap :: Numbers Int (M.Map Int) -> Numbers Int IM.IntMap
 toIntMap (i, n, seen) = (i, n, IM.fromDistinctAscList (M.toAscList seen))
@@ -73,6 +73,7 @@ toIntMap (i, n, seen) = (i, n, IM.fromDistinctAscList (M.toAscList seen))
 part2 :: Parsed (Numbers Int (M.Map Int)) -> IO ()
 part2 input = do
   let answer = reciteFastTo 2020
+             . toIntMap
            <$> input
   printAnswer "The 30000000th number is: " answer
 
