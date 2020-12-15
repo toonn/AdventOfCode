@@ -58,11 +58,15 @@ part1 input = do
   let answer = (2020 `th`) . iterate recite <$> input
   printAnswer "The 2020th number is: " answer
 
+reciteFastTo :: Integer -> Numbers -> Integer
+reciteFastTo i (j, n, seen)
+  | i == j = n
+  | otherwise = reciteFastTo i (j + 1, age (j, n, seen), M.insert n j seen)
+
 part2 :: Parsed Numbers -> IO ()
 part2 input = do
-  let answer = const 'P'
-           <$> input
-  printAnswer "Not an answer: " answer
+  let answer = reciteFastTo 2020 <$> input
+  printAnswer "The 30000000th number is: " answer
 
 main :: IO ()
 main = do
