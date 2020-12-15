@@ -72,7 +72,7 @@ toIntMap (i, n, seen) = (i, n, IM.fromDistinctAscList (M.toAscList seen))
 
 part2 :: Parsed (Numbers Int (M.Map Int)) -> IO ()
 part2 input = do
-  let answer = reciteFastTo 2020
+  let answer = reciteFastTo 30000000
              . toIntMap
            <$> input
   printAnswer "The 30000000th number is: " answer
