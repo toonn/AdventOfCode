@@ -1,6 +1,7 @@
 module Main where
 
 import Criterion.Main
+import Data.List (isPrefixOf)
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.Void (Void)
@@ -42,7 +43,7 @@ rule = do
   pure (field, mconcat ranges)
 
 ticket :: Parser Ticket
-ticket = sepBy integer (char ',')
+ticket = sepBy1 integer (char ',')
 
 tickets :: Parser Tickets
 tickets = do
@@ -83,11 +84,44 @@ part1 input = do
   let answer = scanningErrorRate <$> input
   printAnswer "Nearby ticket scanning error rate: " answer
 
+departureFieldProduct :: Tickets -> Integer
+departureFieldProduct (rules, myTicket, tickets) =
+  foldr (*) 1 departureFields
+  where
+    valid = M.foldr (<>) S.empty rules
+    validTickets = foldr (\t vTs -> if S.size (S.fromList t S.\\ valid) == 0
+                                    then t:vTs else vTs)
+                         []
+                         tickets
+    fieldSets = foldr (\t next fSets -> next (map (\(v, vs) -> S.insert v vs)
+                                                  (zip t fSets)
+                                             )
+                      )
+                      id
+                      validTickets
+                      (replicate (length myTicket) S.empty)
+    possibleFields nrs = M.foldrWithKey (\k v ks -> if S.size (nrs S.\\ v) == 0
+                                                    then S.insert k ks
+                                                    else ks)
+                                        S.empty
+                                        rules
+    possibleFieldSets = map possibleFields fieldSets
+    eliminate fieldSets | fieldSets /= fieldSets' = eliminate fieldSets'
+                        | otherwise = fieldSets'
+      where
+        unique = foldr (\s uniq -> if S.size s == 1 then uniq <> s else uniq)
+                       S.empty
+                       fieldSets
+        fieldSets' = map (\s -> if S.size s == 1 then s else s S.\\ unique)
+                         fieldSets
+    fieldOrder = map (S.foldr const "") (eliminate possibleFieldSets)
+    departureFields = map snd (filter (\(f,_) -> "departure" `isPrefixOf` f)
+                                      (zip fieldOrder myTicket))
+
 part2 :: Parsed Tickets -> IO ()
 part2 input = do
-  let answer = const 'P'
-           <$> input
-  printAnswer "Not an answer: " answer
+  let answer = departureFieldProduct <$> input
+  printAnswer "Product of all six departure fields: " answer
 
 main :: IO ()
 main = do
