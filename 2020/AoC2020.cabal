@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2020
-version:             2020.12.16.2
+version:             2020.12.17.1
 synopsis:            Advent of Code 2020
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -206,5 +206,18 @@ executable TicketTranslation
                     , silently ^>= 1.2.5.1
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 16: Ticket Translation"
+  default-language:   Haskell2010
+
+executable ConwayCubes
+  main-is:            ConwayCubes.hs
+  build-depends:      base ^>=4.14.1.0
+                    , containers ^>= 0.6.2.1
+                    , criterion ^>= 1.5.9.0
+                    , filepath ^>= 1.4.2.1
+                    , megaparsec ^>= 9.0.1
+                    , mtl ^>= 2.2.2
+                    , silently ^>= 1.2.5.1
+  other-modules:      Paths_AoC2020
+  hs-source-dirs:     "Day 17: Conway Cubes"
   default-language:   Haskell2010
 
