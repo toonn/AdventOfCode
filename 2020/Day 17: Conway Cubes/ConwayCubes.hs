@@ -1,6 +1,7 @@
 module Main where
 
 import Criterion.Main
+import Control.Monad (guard)
 import Data.Maybe (catMaybes)
 import qualified Data.Set as S
 import Data.Void (Void)
@@ -53,55 +54,17 @@ printAnswer question answer =
          (putStrLn . (question <>) . show)
          answer
 
-to3D :: S.Set (Integer, Integer) -> Cubes
-to3D = S.map (\(x,y) -> (x,y,0))
-
-xyzs :: Cubes -> (S.Set Integer, S.Set Integer, S.Set Integer)
-xyzs cubes = S.foldr (\(x,y,z) next (xs,ys,zs) ->
-                       next (S.insert x xs, S.insert y ys, S.insert z zs)
-                     )
-                     id
-                     cubes
-                     (S.empty, S.empty, S.empty)
-
-bounds :: Cubes -> (Coord, Coord)
-bounds cubes | S.null cubes = ((0,0,0),(0,0,0))
-             | otherwise = ( (S.findMin xs, S.findMin ys, S.findMin zs)
-                           , (S.findMax xs, S.findMax ys, S.findMax zs)
-                           )
-  where
-    (xs, ys, zs) = xyzs cubes
-
-range :: (Coord, Coord) -> [Coord]
-range ((xm,ym,zm),(xM,yM,zM)) = do
-  x <- [xm-1..xM+1]
-  y <- [ym-1..yM+1]
-  z <- [zm-1..zM+1]
-  pure (x,y,z)
-
-neighbors :: Coord -> Cubes
-neighbors cube = S.delete cube (S.fromList (range (cube,cube)))
-
-collectLive :: Cubes -> Coord -> (Cubes -> Cubes) -> Cubes -> Cubes
-collectLive cubes cube next cs
-  | (active && (activeNeighbors == 2 || activeNeighbors == 3))
-    || (not active && activeNeighbors == 3)
-    = next (S.insert cube cs)
-  | otherwise = next cs
-  where
-    active = S.member cube cubes
-    activeNeighbors = S.size (neighbors cube `S.intersection` cubes)
-
-step :: Cubes -> Cubes
-step cubes = foldr (collectLive cubes) id (range (bounds cubes)) S.empty
-
 simulate :: (cubes -> cubes) -> Integer -> cubes -> cubes
 simulate _ 0 cubes = cubes
 simulate step n cubes = simulate step (n - 1) (step cubes)
 
+noW :: HyperCoord -> Bool
+noW (_,_,_,0) = True
+noW _ = False
+
 part1 :: Parsed (S.Set (Integer, Integer)) -> IO ()
 part1 input = do
-  let answer = S.size . simulate step 6 . to3D <$> input
+  let answer = S.size . simulate (step4 noW) 6 . to4D <$> input
   printAnswer "Active cubes after boot: " answer
 
 to4D :: S.Set (Integer, Integer) -> HyperCubes
@@ -126,39 +89,42 @@ bounds4 hypercubes
   where
     (xs, ys, zs, ws) = xyzws hypercubes
 
-range4 :: (HyperCoord, HyperCoord) -> [HyperCoord]
-range4 ((xm,ym,zm,wm),(xM,yM,zM,wM)) = do
+range4 :: (HyperCoord -> Bool) -> (HyperCoord, HyperCoord) -> [HyperCoord]
+range4 pred ((xm,ym,zm,wm),(xM,yM,zM,wM)) = do
   x <- [xm-1..xM+1]
   y <- [ym-1..yM+1]
   z <- [zm-1..zM+1]
   w <- [wm-1..wM+1]
-  pure (x,y,z,w)
+  let coord = (x,y,z,w)
+  guard (pred coord)
+  pure coord
 
-neighbors4 :: HyperCoord -> HyperCubes
-neighbors4 hypercube =
-  S.delete hypercube (S.fromList (range4 (hypercube,hypercube)))
+neighbors4 :: (HyperCoord -> Bool) -> HyperCoord -> HyperCubes
+neighbors4 pred hypercube =
+  S.delete hypercube (S.fromList (range4 pred (hypercube,hypercube)))
 
-collectLive4 :: HyperCubes -> HyperCoord
+collectLive4 :: (HyperCoord -> Bool) -> HyperCubes -> HyperCoord
              -> (HyperCubes -> HyperCubes)
              -> HyperCubes -> HyperCubes
-collectLive4 hypercubes hypercube next hcs
+collectLive4 pred hypercubes hypercube next hcs
   | (active && (activeNeighbors == 2 || activeNeighbors == 3))
     || (not active && activeNeighbors == 3)
     = next (S.insert hypercube hcs)
   | otherwise = next hcs
   where
     active = S.member hypercube hypercubes
-    activeNeighbors = S.size (neighbors4 hypercube `S.intersection` hypercubes)
+    activeNeighbors =
+      S.size (neighbors4 pred hypercube `S.intersection` hypercubes)
 
-step4 :: HyperCubes -> HyperCubes
-step4 hypercubes = foldr (collectLive4 hypercubes)
-                         id
-                         (range4 (bounds4 hypercubes))
-                         S.empty
+step4 :: (HyperCoord -> Bool) -> HyperCubes -> HyperCubes
+step4 pred hypercubes = foldr (collectLive4 pred hypercubes)
+                              id
+                              (range4 pred (bounds4 hypercubes))
+                              S.empty
 
 part2 :: Parsed (S.Set (Integer, Integer)) -> IO ()
 part2 input = do
-  let answer = S.size . simulate step4 6 . to4D <$> input
+  let answer = S.size . simulate (step4 (const True)) 6 . to4D <$> input
   printAnswer "Product of all six departure fields: " answer
 
 main :: IO ()
