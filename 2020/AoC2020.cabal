@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2020
-version:             2020.12.18.1
+version:             2020.12.18.2
 synopsis:            Advent of Code 2020
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -229,6 +229,7 @@ executable OperationOrder
                     , filepath ^>= 1.4.2.1
                     , megaparsec ^>= 9.0.1
                     , mtl ^>= 2.2.2
+                    , parser-combinators ^>= 1.2.1
                     , silently ^>= 1.2.5.1
   other-modules:      Paths_AoC2020
   hs-source-dirs:     "Day 18: Operation Order"

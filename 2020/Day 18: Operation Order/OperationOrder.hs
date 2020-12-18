@@ -1,6 +1,7 @@
 module Main where
 
 import Criterion.Main
+import Control.Monad.Combinators.Expr
 import qualified Data.Monoid as M
 import Data.Void (Void)
 import System.FilePath ((</>))
@@ -19,6 +20,7 @@ data Expression = Value Integer
                 | Product Expression Expression
   deriving Show
 type Expressions = [Expression]
+type Table = [[Operator Parser Expression]]
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme (L.space hspace1 empty empty)
@@ -28,30 +30,20 @@ integer = lexeme L.decimal
 
 value :: Parser Expression
 value = (Value <$> integer)
-    <|> lexeme (between (char '(') (char ')') expression)
 
-rhs :: Expression -> Parser Expression
-rhs l = do
-  o <- char '+' <|> char '*'
-  hspace
-  r <- value
-  let l' = case o of
-             '+' -> Sum l r
-             '*' -> Product l r
-  rhs l' <|> pure l'
+term :: Table -> Parser Expression
+term table = lexeme (between (char '(') (char ')') (expression table)) <|> value
 
-expression :: Parser Expression
-expression = do
-  l <- value
-  (rhs l  <|> pure l)
+expression :: Table -> Parser Expression
+expression table = makeExprParser (term table) table
 
-expressions :: Parser Expressions
-expressions = sepEndBy expression eol <* eof
+expressions :: Table -> Parser Expressions
+expressions table = sepEndBy (expression table) eol <* eof
 
-readInput :: String -> IO (Parsed Expressions)
-readInput day = do
+readInput :: String -> Table -> IO (Parsed Expressions)
+readInput day table = do
   inputFile <- getDataFileName (day </> "input.txt")
-  parse expressions inputFile
+  parse (expressions table) inputFile
     <$> readFile inputFile
 
 printAnswer :: Show a => String -> Parsed a -> IO ()
@@ -65,27 +57,43 @@ evaluate (Value v) = v
 evaluate (Sum l r) = evaluate l + evaluate r
 evaluate (Product l r) = evaluate l * evaluate r
 
-part1 :: Parsed Expressions -> IO ()
+sumResults :: Expressions -> Integer
+sumResults = M.getSum . mconcat . map M.Sum . map evaluate
+
+basicOperators :: Table
+basicOperators = [ [ InfixL (Sum <$ lexeme (char '+'))
+                   , InfixL (Product <$ lexeme (char '*'))
+                   ]
+                 ]
+
+part1 :: (Table -> IO (Parsed Expressions)) -> IO ()
 part1 input = do
-  let answer = M.getSum . mconcat . map M.Sum . map evaluate <$> input
+  input' <- input basicOperators
+  let answer = sumResults <$> input'
   printAnswer "Sum of results: " answer
 
-part2 :: Parsed Expressions -> IO ()
+advancedOperators :: Table
+advancedOperators = [ [ InfixL (Sum <$ lexeme (char '+')) ]
+                 , [ InfixL (Product <$ lexeme (char '*')) ]
+                 ]
+
+part2 :: (Table -> IO (Parsed Expressions)) -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "Not an answer: " answer
+  input' <- input advancedOperators
+  let answer = sumResults <$> input'
+  printAnswer "Sum of advanced results: " answer
 
 main :: IO ()
 main = do
   let day = "Day 18: Operation Order"
-  input <- readInput day
+  let input = readInput day
   putStrLn ""
   part1 input
   part2 input
   putStrLn ""
   defaultMain [
       bgroup "AoC"
-        [ bench "Part 1" $ nfIO (silence $ readInput day >>= part1)
-        , bench "Part 2" $ nfIO (silence $ readInput day >>= part2)
+        [ bench "Part 1" $ nfIO (silence $ part1 $ readInput day)
+        , bench "Part 2" $ nfIO (silence $ part2 $ readInput day)
         ]
     ]
