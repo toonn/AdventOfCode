@@ -101,10 +101,16 @@ part1 input = do
   let answer = length . validMessages <$> input
   printAnswer "Nr of messages matching rule 0: " answer
 
+updateRules8And11 :: (Rules, Messages) -> (Rules, Messages)
+updateRules8And11 (rs, ms) = (update rs, ms)
+  where
+    update = M.insert 8 (Choice [Match [42],Match [42,8]])
+           . M.insert 11 (Choice [Match [42,31],Match [42,11,31]])
+
 part2 :: Parsed (Rules, Messages) -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "Not an answer: " answer
+  let answer = length . validMessages . updateRules8And11 <$> input
+  printAnswer "Nr of matching messages after updating rules 8 and 11: " answer
 
 main :: IO ()
 main = do
