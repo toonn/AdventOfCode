@@ -262,6 +262,7 @@ executable JurassicJigsaw
   main-is:            JurassicJigsaw.hs
   build-depends:      base ^>= 4.14.1.0
                     , AoC2020
+                    , containers ^>= 0.6.2.1
                     , criterion ^>= 1.5.9.0
                     , megaparsec ^>= 9.0.1
                     , silently ^>= 1.2.5.1
