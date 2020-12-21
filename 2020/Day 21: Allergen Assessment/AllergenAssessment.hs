@@ -9,6 +9,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import AoC
 
 import Data.Char (isLower)
+import Data.List (intercalate)
 import qualified Data.Map as M
 import qualified Data.Set as S
 
@@ -29,23 +30,25 @@ food = do
 foods :: Parser [Food]
 foods = sepEndBy food eol <* eof
 
+allergenMap :: [Food] -> M.Map String (S.Set String)
+allergenMap foods =
+  foldr (\(Food ingredients allergens) m ->
+          S.foldr (\allergen m' ->
+                    M.insertWith (S.intersection) allergen ingredients m'
+                  )
+                  m
+                  allergens
+        )
+        M.empty
+        foods
+
 allergenless :: [Food] -> S.Set String
 allergenless foods = allIngredients S.\\ allergenic
   where
     allIngredients = foldr (\(Food ingredients _) rest -> ingredients <> rest)
                            S.empty
                            foods
-    allergenMap =
-      foldr (\(Food ingredients allergens) m ->
-              S.foldr (\allergen m' ->
-                        M.insertWith (S.intersection) allergen ingredients m'
-                      )
-                      m
-                      allergens
-            )
-            M.empty
-            foods
-    allergenic = M.foldr (<>) S.empty allergenMap
+    allergenic = M.foldr (<>) S.empty (allergenMap foods)
 
 countUsage :: S.Set String -> [Food] -> Integer
 countUsage ingredients foods =
@@ -59,10 +62,34 @@ part1 input = do
   let answer = (\foods -> countUsage (allergenless foods) foods) <$> input
   printAnswer "Times allergenless ingredients appear: " answer
 
+singleOut :: M.Map String String -> M.Map String (S.Set String)
+          -> M.Map String String
+singleOut seen allergens
+  | M.null allergens = seen
+  | otherwise = singleOut (M.insert allergen ingredient seen)
+                          (M.map (S.delete ingredient)
+                                 (M.delete allergen allergens)
+                          )
+  where
+    (allergen, ingredient) = M.foldrWithKey (\allergen is next ->
+                                               if S.size is == 1
+                                               then (allergen, S.findMin is)
+                                               else next
+                                            )
+                                            (error "No unique ingredient")
+                                            allergens
+
+sortedIngredients :: M.Map String String -> [String]
+sortedIngredients = map snd . M.toAscList
+
 part2 :: Parsed [Food] -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "Not an answer: " answer
+  let answer = intercalate ","
+             . sortedIngredients
+             . singleOut M.empty
+             . allergenMap
+           <$> input
+  printAnswer "Canonical dangerous ingredients list: " answer
 
 main :: IO ()
 main = do
