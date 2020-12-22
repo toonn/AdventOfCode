@@ -56,15 +56,20 @@ playRecursive seen decks | S.member decks seen = decks
 playRecursive seen decks@(card1 Seq.:<| cards1, card2 Seq.:<| cards2)
   = playRecursive (S.insert decks seen) decks'
   where
+    max s = case Seq.sortBy (flip compare) s of
+              x Seq.:<| _ -> x
     player1Victory
       | card1 <= fromIntegral (Seq.length cards1)
         && card2 <= fromIntegral (Seq.length cards2)
-        = case playRecursive S.empty
-                             ( Seq.take (fromIntegral card1) cards1
-                             , Seq.take (fromIntegral card2) cards2
-                             ) of
-            (deck1, _) | Seq.null deck1 -> False
-                       | otherwise      -> True
+          = let cards1' = Seq.take (fromIntegral card1) cards1
+                cards2' = Seq.take (fromIntegral card2) cards2
+                player1Win | max cards1' > max cards2' = True
+                           | otherwise = case playRecursive
+                                                S.empty
+                                                (cards1', cards2') of
+                                           (deck1, _) | Seq.null deck1 -> False
+                                                      | otherwise      -> True
+             in player1Win
       | card1 > card2 = True
       | otherwise     = False
     decks' | player1Victory = ( cards1 Seq.|> card1 Seq.|> card2
