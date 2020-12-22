@@ -8,9 +8,10 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 import AoC
 
-import qualified Data.Sequence as S
+import qualified Data.Set as S
+import qualified Data.Sequence as Seq
 
-type Deck = S.Seq Integer
+type Deck = Seq.Seq Integer
 type Decks = (Deck, Deck)
 
 decks :: Parser Decks
@@ -23,35 +24,61 @@ decks = do
   eol
   deck2 <- endBy integer eol
   eof
-  pure (S.fromList deck1, S.fromList deck2)
+  pure (Seq.fromList deck1, Seq.fromList deck2)
 
 play :: Decks -> Decks
-play (card1 S.:<| cards1, card2 S.:<| cards2)
-  | card1 > card2 = play ( cards1 S.|> card1 S.|> card2
+play (card1 Seq.:<| cards1, card2 Seq.:<| cards2)
+  | card1 > card2 = play ( cards1 Seq.|> card1 Seq.|> card2
                          , cards2
                          )
   | otherwise     = play ( cards1
-                         , cards2 S.|> card2 S.|> card1
+                         , cards2 Seq.|> card2 Seq.|> card1
                          )
 play decks = decks
 
 cardCount :: Integer -> Deck -> Integer
-cardCount _ S.Empty = 0
-cardCount factor (cards S.:|> card) =
+cardCount _ Seq.Empty = 0
+cardCount factor (cards Seq.:|> card) =
   factor * card + cardCount (factor + 1) cards
 
 score :: Decks -> Integer
-score (deck1, deck2) = cardCount 1 deck1 + cardCount 1 deck2
+score (deck1, deck2) = let cards | Seq.null deck1 = deck2
+                                 | otherwise = deck1
+                        in cardCount 1 cards
 
 part1 :: Parsed Decks -> IO ()
 part1 input = do
   let answer = score . play <$> input
   printAnswer "Winning player's score: " answer
 
+playRecursive :: S.Set Decks -> Decks -> Decks
+playRecursive seen decks | S.member decks seen = decks
+playRecursive seen decks@(card1 Seq.:<| cards1, card2 Seq.:<| cards2)
+  = playRecursive (S.insert decks seen) decks'
+  where
+    player1Victory
+      | card1 <= fromIntegral (Seq.length cards1)
+        && card2 <= fromIntegral (Seq.length cards2)
+        = case playRecursive S.empty
+                             ( Seq.take (fromIntegral card1) cards1
+                             , Seq.take (fromIntegral card2) cards2
+                             ) of
+            (deck1, _) | Seq.null deck1 -> False
+                       | otherwise      -> True
+      | card1 > card2 = True
+      | otherwise     = False
+    decks' | player1Victory = ( cards1 Seq.|> card1 Seq.|> card2
+                              , cards2
+                              )
+           | otherwise      = ( cards1
+                              , cards2 Seq.|> card2 Seq.|> card1
+                              )
+playRecursive _ decks = decks
+
 part2 :: Parsed Decks -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "Not an answer: " answer
+  let answer = score . playRecursive S.empty <$> input
+  printAnswer "Winning score of the recursive game: " answer
 
 main :: IO ()
 main = do
