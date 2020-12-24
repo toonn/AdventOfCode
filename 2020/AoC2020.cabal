@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2020
-version:             2020.12.23.2
+version:             2020.12.24.1
 synopsis:            Advent of Code 2020
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -295,12 +295,21 @@ executable CrabCups
   main-is:            CrabCups.hs
   build-depends:      base ^>= 4.14.1.0
                     , AoC2020
-                    , containers ^>= 0.6.2.1
                     , criterion ^>= 1.5.9.0
                     , megaparsec ^>= 9.0.1
-                    , primitive ^>= 0.7.1.0
                     , silently ^>= 1.2.5.1
                     , vector ^>= 0.12.1.2
   hs-source-dirs:     "Day 23: Crab Cups"
+  default-language:   Haskell2010
+
+executable LobbyLayout
+  main-is:            LobbyLayout.hs
+  build-depends:      base ^>= 4.14.1.0
+                    , AoC2020
+                    , containers ^>= 0.6.2.1
+                    , criterion ^>= 1.5.9.0
+                    , megaparsec ^>= 9.0.1
+                    , silently ^>= 1.2.5.1
+  hs-source-dirs:     "Day 24: Lobby Layout"
   default-language:   Haskell2010
 
