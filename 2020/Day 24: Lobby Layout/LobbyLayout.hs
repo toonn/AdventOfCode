@@ -17,19 +17,17 @@ data Direction = E | W | SE | NW | SW | NE
 type Instruction = [Direction]
 type CInstruction = (Int, Int)
 
-instruction :: Parser Instruction
-instruction = do
-  directions <- takeWhile1P (Just "Direction") (`elem` "eswn")
-  pure . map ( \d -> case d of
-                ('e',_) -> E
-                ('w',_) -> W
-                ('s','e') -> SE
-                ('s','w') -> SW
-                ('n','e') -> NE
-                ('n','w') -> NW
-             )
-       $ zip directions (tail directions)
+toDirections :: String -> Instruction
+toDirections [] = []
+toDirections ('e':rest) = E : toDirections rest
+toDirections ('w':rest) = W : toDirections rest
+toDirections ('s':'e':rest) = SE : toDirections rest
+toDirections ('n':'w':rest) = NW : toDirections rest
+toDirections ('s':'w':rest) = SW : toDirections rest
+toDirections ('n':'e':rest) = NE : toDirections rest
 
+instruction :: Parser Instruction
+instruction = toDirections <$> takeWhile1P (Just "Direction") (`elem` "eswn")
 instructions :: Parser [Instruction]
 instructions = endBy instruction eol <* eof
 
