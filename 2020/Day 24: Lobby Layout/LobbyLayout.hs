@@ -9,6 +9,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 import AoC
 
+import Control.Monad (guard)
 import qualified Data.List as L
 import qualified Data.Set as S
 
@@ -57,10 +58,35 @@ part1 input = do
   let answer = S.size . flipped . map canonicalize <$> input
   printAnswer "Nr of tiles with black side up: " answer
 
+adjacent :: CInstruction -> S.Set CInstruction
+adjacent (x,y) = S.fromList $ do
+  i <- [-1,0,1]
+  j <- [-1,0,1]
+  guard (i /= j)
+  pure (x+i,y+j)
+
+flipTiles :: Int -> S.Set CInstruction -> S.Set CInstruction
+flipTiles 0 tiles = tiles
+flipTiles times tiles = flipTiles (times - 1) (stayBlack <> flipWhite)
+  where
+    stayBlack = S.filter ( \t ->
+                            case S.size (S.intersection (adjacent t) tiles) of
+                              black | black == 0 || black > 2 -> False
+                                    | otherwise -> True
+                         )
+                         tiles
+    neighbors = (S.foldr (\t ts -> adjacent t <> ts) S.empty tiles) S.\\ tiles
+    flipWhite = S.filter ( \t ->
+                            case S.size (S.intersection (adjacent t) tiles) of
+                              black | black == 2 -> True
+                                    | otherwise -> False
+                         )
+                         neighbors
+
 part2 :: Parsed [Instruction] -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "Not an answer: " answer
+  let answer = S.size . flipTiles 100 . flipped . map canonicalize <$> input
+  printAnswer "Nr of black tiles after 100 days: " answer
 
 main :: IO ()
 main = do
