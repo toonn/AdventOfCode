@@ -11,6 +11,7 @@ import AoC
 
 import Control.Monad (guard)
 import qualified Data.List as L
+import qualified Data.Map as M
 import qualified Data.Set as S
 
 data Direction = E | W | SE | NW | SW | NE
@@ -58,8 +59,8 @@ part1 input = do
   let answer = S.size . flipped . map canonicalize <$> input
   printAnswer "Nr of tiles with black side up: " answer
 
-adjacent :: CInstruction -> S.Set CInstruction
-adjacent (x,y) = S.fromList $ do
+adjacent :: CInstruction -> [CInstruction]
+adjacent (x,y) = do
   i <- [-1,0,1]
   j <- [-1,0,1]
   guard (i /= j)
@@ -67,21 +68,20 @@ adjacent (x,y) = S.fromList $ do
 
 flipTiles :: Int -> S.Set CInstruction -> S.Set CInstruction
 flipTiles 0 tiles = tiles
-flipTiles times tiles = flipTiles (times - 1) (stayBlack <> flipWhite)
+flipTiles times tiles = flipTiles (times - 1) (M.keysSet black)
   where
-    stayBlack = S.filter ( \t ->
-                            case S.size (S.intersection (adjacent t) tiles) of
-                              black | black == 0 || black > 2 -> False
-                                    | otherwise -> True
-                         )
-                         tiles
-    neighbors = (S.foldr (\t ts -> adjacent t <> ts) S.empty tiles) S.\\ tiles
-    flipWhite = S.filter ( \t ->
-                            case S.size (S.intersection (adjacent t) tiles) of
-                              black | black == 2 -> True
-                                    | otherwise -> False
-                         )
-                         neighbors
+    neighbors = S.foldr ( \t ns ->
+                           foldr (\n -> M.insertWith (+) n 1) ns (adjacent t)
+                        )
+                        M.empty
+                        tiles
+    black = M.filterWithKey ( \t n -> case S.member t tiles of
+                                        True  | n == 0 || n > 2 -> False
+                                              | otherwise -> True
+                                        False | n == 2 -> True
+                                              | otherwise -> False
+                            )
+                            neighbors
 
 part2 :: Parsed [Instruction] -> IO ()
 part2 input = do
