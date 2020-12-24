@@ -1,3 +1,4 @@
+{-# LANGUAGE RankNTypes #-}
 module Main where
 
 import Criterion.Main
@@ -8,84 +9,74 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 import AoC
 
+import Control.Monad.ST
 import Data.Char (digitToInt, intToDigit, isDigit)
-import Data.Foldable (toList)
-import qualified Data.Map as M
-import qualified Data.Sequence as Seq
+import qualified Data.Vector.Unboxed as U
+import qualified Data.Vector.Unboxed.Mutable as MU
+import qualified Data.Vector.Generic.Mutable as GM
 
-type Cups = Seq.Seq Integer
+type Cups = U.Vector Int
+type MCups s = MU.MVector s Int
 
-cups :: Parser Cups
-cups = Seq.fromList . map (fromIntegral . digitToInt)
-   <$> (takeWhile1P (Just "Digit") isDigit <* eol <* eof)
+cups :: Parser [Int]
+cups = map digitToInt <$> (takeWhile1P (Just "Digit") isDigit <* eol <* eof)
 
-destination :: Integer -> Integer -> Cups -> Integer
-destination max 0 three = destination max max three
-destination max cup three = case Seq.elemIndexL cup three of
-  Nothing -> cup
-  Just _ -> destination max (cup - 1) three
+destination :: Int -> Int -> Int -> Int -> Int -> Int
+destination max a b c cup | cup == 0 = destination max a b c max
+                          | a /= cup && b /= cup && c /= cup = cup
+                          | otherwise = destination max a b c (cup - 1)
 
-pop :: Ord k => k -> M.Map k v -> (Maybe v, M.Map k v)
-pop = M.updateLookupWithKey (\_ _ -> Nothing)
-
-insert :: (M.Map Integer Cups, Cups) -> (M.Map Integer Cups, Cups)
-insert (inserts, (cup Seq.:<| cups)) = case insert (inserts', cups') of
-  (inserts'', cups'') -> (inserts'', cup Seq.:<| cups'')
-  where
-    (mCs, inserts') = pop cup inserts
-    cups' | Just cs <- mCs = cs <> cups
-          | otherwise = cups
-insert cups = cups
-
-play :: Integer -> Integer -> M.Map Integer Cups -> Cups -> Cups
-play _ 0 inserts cups = snd (insert (inserts, cups))
-play max moves inserts (current Seq.:<| cups) =
-  let
-      (inserts', c1 Seq.:<| cups')
-        | (Just cs, inserts') <- pop current inserts
-          = (inserts', cs <> cups)
-        | otherwise = (inserts, cups)
-      (inserts'', c2 Seq.:<| cups'')
-        | (Just cs, inserts'') <- pop c1 inserts'
-          = (inserts'', cs <> cups')
-        | otherwise = (inserts', cups')
-      (inserts''', c3 Seq.:<| cups''')
-        | (Just cs, inserts''') <- pop c2 inserts''
-          = (inserts''', cs <> cups'')
-        | otherwise = (inserts'', cups'')
-      three = Seq.fromList [c1,c2,c3]
-      dest = destination max (current - 1) three
-      (inserts'''', three') = insert (inserts''', three)
-      (three'', rest) = Seq.splitAt 3 three'
-      inserts''''' = M.insertWith (<>) dest three'' inserts''''
-      cups'''' = rest <> cups'''
-   in play max (moves - 1) inserts''''' (cups'''' Seq.:|> current)
+play :: forall s . Int -> Int -> MCups s -> ST s (MCups s)
+play 0 _ cups = pure cups
+play moves current cups = do
+  a <- MU.read cups current
+  b <- MU.read cups a
+  c <- MU.read cups b
+  next <- MU.read cups c
+  let d = destination (MU.length cups - 1) a b c (current - 1)
+  next' <- MU.read cups d
+  MU.write cups current next
+  MU.write cups d a
+  MU.write cups c next'
+  play (moves - 1) next cups
 
 labels :: Cups -> String
-labels cups | Just index <- Seq.elemIndexL 1 cups =
-  case Seq.splitAt index cups of
-    (before, _ Seq.:<| after) ->
-      map (intToDigit . fromIntegral) (toList (after <> before))
+labels cups = go (cups U.! 1)
+  where
+    go 1 = []
+    go i = intToDigit i : go (cups U.! i)
 
-part1 :: Parsed Cups -> IO ()
+part1 :: Parsed [Int] -> IO ()
 part1 input = do
-  let answer = labels . (\cups -> play (maximum cups) 100 M.empty cups)
+  let answer = labels
+             . (\(current, cups) ->
+                 runST (U.thaw cups >>= play 100 current >>= U.freeze)
+               )
+             . (\cups -> ( head cups
+                         , (U.replicate (length cups + 1) 0)
+                           U.// (zip cups (tail cups <> [head cups]))
+                         )
+               )
            <$> input
   printAnswer "Labels after cup 1: " answer
 
-productTwo :: Cups -> Integer
-productTwo cups | Just index <- Seq.elemIndexL 1 cups =
-  let (x,y) = case (fromIntegral index + 2) `compare` Seq.length cups of
-        LT -> (Seq.index cups (index + 1), Seq.index cups (index + 2))
-        EQ -> (Seq.index cups (index + 1), Seq.index cups 0)
-        GT -> (Seq.index cups 0, Seq.index cups 1)
-   in x * y
+productTwo :: Cups -> Int
+productTwo cups = x * y
+  where
+    x = cups U.! 1
+    y = cups U.! x
 
-part2 :: Parsed Cups -> IO ()
+part2 :: Parsed [Int] -> IO ()
 part2 input = do
   let answer = productTwo
-             . play 1000000 10000000 M.empty
-             . (\cups -> cups <> Seq.fromList [maximum cups + 1..1000000])
+             . (\(current, cups) ->
+                 runST (U.thaw cups >>= play 10000000 current >>= U.freeze)
+               )
+             . (\cups -> ( head cups
+                         , (U.enumFromN 1 (1000000 + 1))
+                           U.// (zip (1000000:cups) (cups <> [length cups + 1]))
+                         )
+               )
            <$> input
   printAnswer "Product of two cups following label 1: " answer
 
