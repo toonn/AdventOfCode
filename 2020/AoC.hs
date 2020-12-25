@@ -14,7 +14,7 @@ type Parsed a = Either (ParseErrorBundle String Void) a
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme (L.space hspace1 empty empty)
 
-integer :: Parser Integer
+integer :: Num a => Parser a
 integer = lexeme L.decimal
 
 readInput :: String -> Parser a -> IO (Parsed a)
