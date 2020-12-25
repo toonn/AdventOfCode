@@ -50,8 +50,8 @@ part1 input = do
 
 part2 :: Parsed (Key, Key) -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "Not an answer: " answer
+  let answer = const "No part 2 : )" <$> input
+  printAnswer "Psych: " answer
 
 main :: IO ()
 main = do
