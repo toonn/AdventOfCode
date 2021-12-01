@@ -1,0 +1,34 @@
+cabal-version:       2.4
+name:                AoC2021
+version:             2021.12.1.1
+synopsis:            Advent of Code 2021
+-- description:
+homepage:            https://github.com/toonn/AdventOfCode
+license:             BSD-2-Clause
+license-file:        LICENSE
+author:              toonn
+maintainer:          toonn@toonn.io
+category:            Game
+data-files:          **/*.txt
+
+library
+  build-depends:      base ^>= 4.14.1.0
+                    , filepath ^>= 1.4.2.1
+                    , megaparsec ^>= 9.0.1
+                    , mtl ^>= 2.2.2
+  other-modules:      Paths_AoC2021
+  exposed-modules:    AoC
+  hs-source-dirs:     .
+  default-language:   Haskell2010
+
+executable SonarSweep
+  main-is:            SonarSweep.hs
+  build-depends:      base ^>= 4.14.1.0
+                    , AoC2021
+                    , criterion ^>= 1.5.9.0
+                    , megaparsec ^>= 9.0.1
+                    , silently ^>= 1.2.5.1
+  other-modules:      Paths_AoC2021
+  hs-source-dirs:     "Day 01: Sonar Sweep"
+  default-language:   Haskell2010
+
