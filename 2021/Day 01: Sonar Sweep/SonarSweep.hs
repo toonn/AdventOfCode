@@ -13,21 +13,30 @@ type Measurement = Int
 depthMeasurements :: Parser [Measurement]
 depthMeasurements = manyTill (integer >>= \i -> optional eol >> pure i) eof
 
-increases :: [Measurement] -> Int
-increases measurements = foldr (\d next (d', c) -> case d' < d of
-                                        True -> next (d, c + 1)
-                                        False -> next (d, c)
-                                      ) snd measurements (head measurements, 0)
+increases :: Int -> [Measurement] -> Int
+increases window measurements =
+  foldr (\d next (d':ds', c) ->
+          let sumTail = sum ds'
+              sumOld = d' + sumTail
+              sumNew = sumTail + d
+              ds = ds' <> [d]
+           in case sumOld < sumNew of
+          True -> next (ds, c + 1)
+          False -> next (ds, c)
+        )
+        snd
+        measurements
+        (take window measurements, 0)
 
 part1 :: Parsed [Measurement] -> IO ()
 part1 input = do
-  let answer = increases <$> input
+  let answer = increases 1 <$> input
   printAnswer "Measurement increases: " answer
 
 part2 :: Parsed [Measurement] -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "Not an answer: " answer
+  let answer = increases 3 <$> input
+  printAnswer "Sum increases: " answer
 
 main :: IO ()
 main = do
