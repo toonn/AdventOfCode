@@ -10,6 +10,7 @@ import AoC
 
 data Instruction = Forward Int | Down Int | Up Int
 
+type Aimed = (Int, (Int, Int))
 type Position = (Int, Int)
 
 instruction :: Parser Instruction
@@ -41,10 +42,19 @@ part1 input = do
   let answer = (\(x,y) -> x * y) . move (0,0) <$> input
   printAnswer "Coordinate product: " answer
 
+aimedMove :: [Instruction] -> Aimed
+aimedMove is = foldr (\i next (aim, (x,y)) ->
+                        next (case i of
+                               Forward d -> (aim    , (x + d, y + d * aim))
+                               Down    d -> (aim + d, (x    , y          ))
+                               Up      d -> (aim - d, (x    , y          ))
+                             )
+                      ) id is (0, (0,0))
+
 part2 :: Parsed [Instruction] -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = (\(x,y) -> x * y) . snd . aimedMove <$> input
+  printAnswer "Aimed coordinate product: " answer
 
 main :: IO ()
 main = do
