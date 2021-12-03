@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2021
-version:             2021.12.2.2
+version:             2021.12.3.1
 synopsis:            Advent of Code 2021
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -32,7 +32,6 @@ executable SonarSweep
   hs-source-dirs:     "Day 01: Sonar Sweep"
   default-language:   Haskell2010
 
-
 executable Dive
   main-is:            Dive.hs
   build-depends:      base ^>= 4.14.1.0
@@ -42,4 +41,15 @@ executable Dive
                     , silently ^>= 1.2.5.1
   other-modules:      Paths_AoC2021
   hs-source-dirs:     "Day 02: Dive!"
+  default-language:   Haskell2010
+
+executable BinaryDiagnostic
+  main-is:            BinaryDiagnostic.hs
+  build-depends:      base ^>= 4.14.1.0
+                    , AoC2021
+                    , criterion ^>= 1.5.9.0
+                    , megaparsec ^>= 9.0.1
+                    , silently ^>= 1.2.5.1
+  other-modules:      Paths_AoC2021
+  hs-source-dirs:     "Day 03: Binary Diagnostic"
   default-language:   Haskell2010
