@@ -1,7 +1,6 @@
 module Main where
 
 import Criterion.Main
-import Data.Maybe (mapMaybe)
 import System.IO.Silently (silence)
 import Text.Megaparsec
 import Text.Megaparsec.Char
