@@ -1,6 +1,8 @@
 module Main where
 
 import Criterion.Main
+import Data.List (delete)
+import Data.Maybe (mapMaybe)
 import System.IO.Silently (silence)
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -92,10 +94,52 @@ part1 input = do
   let answer = score . winningBoard <$> input
   printAnswer "Final score of the winning board: " answer
 
+losingBoard :: ([Int], [Bingo]) -> (Int, Bingo)
+losingBoard (draws, boards) =
+  go 0 draws (map (\b -> (zeroes, zeroes, b)) boards)
+  where
+    zeroes = M.fromAscList (map (\a -> (a, 0)) [0..4])
+
+    go :: Int -> [Int] -> [(Seen, Seen, Bingo)] -> (Int, Bingo)
+    go last (d:ds) bs = case mapMaybe (\(xs, ys, b) ->
+                                case M.foldr (\count m ->
+                                               if count == 5
+                                               then Nothing
+                                               else m
+                                             )
+                                             (Just (xs,ys,b))
+                                             xs of
+                                  Just _ -> M.foldr (\count m ->
+                                                       if count == 5
+                                                       then Nothing
+                                                       else m
+                                                     )
+                                                     (Just (xs,ys,b))
+                                                     ys
+                                  Nothing -> Nothing
+                              )
+                              bs of
+      [] -> case bs of
+              [(_,_,b)] -> (last, b)
+      bs' -> go
+        d
+        ds
+        (map (\(xs, ys, b) ->
+               case M.updateLookupWithKey (\_ _ -> Nothing) d b of
+                 (Nothing, b') -> (xs, ys, b')
+                 (Just (x,y), b') ->
+                   ( M.adjust (+ 1) x xs
+                   , M.adjust (+ 1) y ys
+                   , b'
+                   )
+             )
+             bs'
+        )
+
 part2 :: Parsed ([Int], [Bingo]) -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = score . losingBoard <$> input
+  printAnswer "Final score of the losing board: " answer
 
 main :: IO ()
 main = do
