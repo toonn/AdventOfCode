@@ -48,7 +48,7 @@ linePoints ((x1,y1), (x2,y2))
                     | otherwise = (x2,y2,x1,y1)
 
     range a b | a < b = [a..b]
-              | otherwise = reverse [b..a]
+              | otherwise = [a, pred a..b]
 
 intersections :: [S.Set Point] -> S.Set Point
 intersections = fst . foldr (\points (ints, alls) ->
