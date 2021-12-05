@@ -38,8 +38,17 @@ horizontalOrVertical ((x1,y1), (x2,y2)) | x1 == x2 = True
 
 linePoints :: Line -> S.Set Point
 linePoints ((x1,y1), (x2,y2))
-  | x1 == x2 = S.fromAscList (map (\y -> (x1,y)) [min y1 y2..max y1 y2])
-  | y1 == y2 = S.fromAscList (map (\x -> (x,y1)) [min x1 x2..max x1 x2])
+  | x1 == x2 = S.fromAscList (map (\y -> (x1,y)) [y'..y''])
+  | y1 == y2 = S.fromAscList (map (\x -> (x,y1)) [x'..x''])
+  | otherwise = S.fromAscList (zip [x'..x''] (range y' y''))
+  where
+    (x',y',x'',y'') | x1 < x2 = (x1,y1,x2,y2)
+                    | x2 < x1 = (x2,y2,x1,y1)
+                    | y1 < y2 = (x1,y1,x2,y2)
+                    | otherwise = (x2,y2,x1,y1)
+
+    range a b | a < b = [a..b]
+              | otherwise = reverse [b..a]
 
 intersections :: [S.Set Point] -> S.Set Point
 intersections = fst . foldr (\points (ints, alls) ->
@@ -55,8 +64,8 @@ part1 input = do
 
 part2 :: Parsed [Line] -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = S.size . intersections . map linePoints <$> input
+  printAnswer "Overlaps including diagonals: " answer
 
 main :: IO ()
 main = do
