@@ -40,8 +40,8 @@ part1 input = do
 
 part2 :: Parsed Fish -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = tally . simulate 256 <$> input
+  printAnswer "Lanternfish after 256 days: " answer
 
 main :: IO ()
 main = do
