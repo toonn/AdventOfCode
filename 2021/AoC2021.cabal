@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2021
-version:             2021.12.8.2
+version:             2021.12.9.1
 synopsis:            Advent of Code 2021
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -112,4 +112,16 @@ executable SevenSegmentSearch
                     , silently ^>= 1.2.5.1
   other-modules:      Paths_AoC2021
   hs-source-dirs:     "Day 08: Seven Segment Search"
+  default-language:   Haskell2010
+
+executable SmokeBasin
+  main-is:            SmokeBasin.hs
+  build-depends:      base ^>= 4.14.1.0
+                    , AoC2021
+                    , containers ^>= 0.6.2.1
+                    , criterion ^>= 1.5.9.0
+                    , megaparsec ^>= 9.0.1
+                    , silently ^>= 1.2.5.1
+  other-modules:      Paths_AoC2021
+  hs-source-dirs:     "Day 09: Smoke Basin"
   default-language:   Haskell2010
