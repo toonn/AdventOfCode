@@ -69,13 +69,23 @@ step n os = (flashes + flashes', os')
 
 part1 :: Parsed Octopodises -> IO ()
 part1 input = do
-  let answer = step 100 <$> input
+  let answer = fst . step 100 <$> input
   printAnswer "Flashes after 100 steps: " answer
+
+synchronize :: Octopodises -> Int
+synchronize os = go 1 os
+  where
+    all = M.size os
+
+    go :: Int -> Octopodises -> Int
+    go stp os = case step 1 os of
+      (fs, os') | fs == all -> stp
+                | otherwise -> go (stp + 1) os'
 
 part2 :: Parsed Octopodises -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = synchronize <$> input
+  printAnswer "First synchronized flash: " answer
 
 main :: IO ()
 main = do
