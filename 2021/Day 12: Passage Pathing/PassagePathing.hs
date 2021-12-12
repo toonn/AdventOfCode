@@ -36,7 +36,11 @@ mirror [] = []
 mirror ((a,b):cs) = (a,b):(b,a):mirror cs
 
 mapSystem :: Edges -> CaveSystem
-mapSystem = foldr (\(a,b) -> M.insertWith (S.union) a (S.singleton b)) M.empty
+mapSystem = foldr (\(a,b) m -> if b == "start"
+                             then m
+                             else M.insertWith (S.union) a (S.singleton b) m
+                  )
+                  M.empty
 
 pathsFrom :: S.Set Cave -> Cave -> CaveSystem -> [Path]
 pathsFrom visited c caveSystem
@@ -58,10 +62,31 @@ part1 input = do
   let answer = length . pathsFrom S.empty "start" . mapSystem . mirror <$> input
   printAnswer "Paths that visit small caves at most once: " answer
 
+pathsFromTwice :: Bool -> S.Set Cave -> Cave -> CaveSystem -> [Path]
+pathsFromTwice twice visited c caveSystem
+  | c == "end" = [[c]]
+  | twice && visitedBefore = []
+  | otherwise = case M.lookup c caveSystem of
+    Nothing -> []
+    Just cs -> map (c:)
+             . concat
+             . S.map (\c' -> pathsFromTwice twice' visited' c' caveSystem)
+             . (\s -> if twice then s S.\\ visited else s)
+             $ cs
+  where
+    visitedBefore = c `S.member` visited
+    twice' = twice || visitedBefore
+    visited' | any isLower c = S.insert c visited
+             | otherwise = visited
+
 part2 :: Parsed Edges -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = length
+             . pathsFromTwice False S.empty "start"
+             . mapSystem
+             . mirror
+           <$> input
+  printAnswer "Paths visiting a single small cave at most twice: " answer
 
 main :: IO ()
 main = do
