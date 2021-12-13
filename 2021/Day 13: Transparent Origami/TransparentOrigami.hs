@@ -6,6 +6,7 @@ import Text.Megaparsec hiding (chunk)
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
+import Data.List (foldl')
 import qualified Data.Set as S
 
 import AoC
@@ -13,6 +14,11 @@ import AoC
 type Dot = (Int, Int)
 type Page = (Int, Int, S.Set Dot)
 type Instruction = (Char, Int)
+
+newtype Render = Render String
+
+instance Show Render where
+  show (Render s) = s
 
 dot :: Parser Dot
 dot = do
@@ -47,36 +53,32 @@ parser = do
   pure ((xM, yM, S.fromList dots), instructions)
 
 fold :: Instruction -> Page -> Page
-fold ('x', c) (xM, yM, dots) =
-  ( xM'
-  , yM
-  , S.foldr (\(x,y) ds -> case compare x c of
-      LT -> S.insert (x + dLT, y) ds
-      EQ -> ds
-      GT -> S.insert (dGT - x, y) ds
-    )
-    S.empty
-    dots
-  )
+fold ('x', c) (xM, yM, dots) = (xM', yM, dots')
   where
     overlap = 2*c - xM
-    (xM', dLT, dGT) | overlap < 0 = (xM - c, -overlap, xM          )
-                    | otherwise   = (c - 1 , 0       , xM + overlap)
-fold ('y', r) (xM, yM, dots) =
-  ( xM
-  , yM'
-  , S.foldr (\(x,y) ds -> case compare y r of
-      LT -> S.insert (x, y + dLT) ds
-      EQ -> ds
-      GT -> S.insert (x, dGT - y) ds
-    )
-    S.empty
-    dots
-  )
+    dots' = S.foldr (\(x,y) ds -> case compare x c of
+                      LT -> S.insert (x + dLT, y) ds
+                      EQ -> ds
+                      GT -> S.insert (dGT - x, y) ds
+                    )
+                    S.empty
+                    dots
+    xM' = fst (S.findMax dots')
+    (dLT, dGT) | overlap < 0 = (-overlap, xM          )
+               | otherwise   = (0       , xM + overlap)
+fold ('y', r) (xM, yM, dots) = (xM, yM', dots')
   where
     overlap = 2*r - yM
-    (yM', dLT, dGT) | overlap < 0 = (xM - r, -overlap, yM          )
-                    | otherwise   = (r - 1 , 0       , yM + overlap)
+    dots' = S.foldr (\(x,y) ds -> case compare y r of
+                      LT -> S.insert (x, y + dLT) ds
+                      EQ -> ds
+                      GT -> S.insert (x, dGT - y) ds
+                    )
+                    S.empty
+                    dots
+    yM' = S.findMax . S.map snd $ dots'
+    (dLT, dGT) | overlap < 0 = (-overlap, yM          )
+               | otherwise   = (0       , yM + overlap)
 
 visibleDots :: Page -> Int
 visibleDots (_, _, dots) = S.size dots
@@ -86,10 +88,21 @@ part1 input = do
   let answer = visibleDots . (\(page, is) -> fold (head is) page)  <$> input
   printAnswer "Visible dots after first fold: " answer
 
+renderDots :: Page -> Render
+renderDots (xM, yM, dots) = Render $ map
+  (\(x,y) -> case (x,y) `S.member` dots of
+    True -> '#'
+    False | x > xM -> '\n'
+          | otherwise -> ' '
+  )
+  [(x,y) | y <- [0..yM], x <- [0..xM+1]]
+
 part2 :: Parsed (Page, [Instruction]) -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = renderDots
+             . (\(page, is) -> foldl' (flip fold) page is)
+           <$> input
+  printAnswer "Activation code:\n" answer
 
 main :: IO ()
 main = do

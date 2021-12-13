@@ -140,3 +140,21 @@ completed count as a single dot.
 
 *How many dots are visible after completing just the first fold
 instruction on your transparent paper?*
+
+Your puzzle answer was `701`.
+
+\-\-- Part Two \-\-- {#part2}
+--------------------
+
+[Finish
+folding]{title="How can you fold it that many times? You tell me, I'm not the one folding it."}
+the transparent paper according to the instructions. The manual says the
+code is always *eight capital letters*.
+
+*What code do you use to activate the infrared thermal imaging camera
+system?*
+
+Your puzzle answer was `FPEKBEJL`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
