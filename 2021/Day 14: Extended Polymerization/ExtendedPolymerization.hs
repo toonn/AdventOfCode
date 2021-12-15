@@ -49,16 +49,41 @@ part1 input = do
   let answer = (\fs -> (maximum fs) - (minimum fs))
              . M.elems
              . freqs
-             . (\(template, rules) ->
-                  (iterate (polymerize rules) template) !! 10
-               )
+             . (\(template, rules) -> iterate (polymerize rules) template !! 10)
            <$> input
   printAnswer "Difference between most and least common element: " answer
 
+pairs :: Polymer -> M.Map Polymer Int
+pairs polymer = foldr (\p -> M.insertWith (+) p 1)
+                      M.empty
+                      (zipWith (\p1 p2 -> [p1,p2]) polymer (tail polymer))
+
+polymerizePairs :: Rules -> M.Map Polymer Int -> M.Map Polymer Int
+polymerizePairs rules = M.foldrWithKey
+  (\pair@[p1,p2] count m -> case M.lookup pair rules of
+    Nothing -> M.insert pair count m
+    Just e  -> M.insertWith (+) [p1,e] count
+             . M.insertWith (+) [e,p2] count
+             $ m
+  )
+  M.empty
+
+freqs' :: Char -> M.Map Polymer Int -> M.Map Char Int
+freqs' first = M.foldrWithKey (\[_,p2] count m -> M.insertWith (+) p2 count m)
+                              (M.singleton first 1)
+
 part2 :: Parsed (Polymer, Rules) -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = (\fs -> (maximum fs) - (minimum fs))
+             . M.elems
+             . (\(template, rules) -> freqs' (head template)
+                                             (iterate (polymerizePairs rules)
+                                                      (pairs template)
+                                              !! 40
+                                             )
+               )
+           <$> input
+  printAnswer "Difference between most and least common element: " answer
 
 main :: IO ()
 main = do
