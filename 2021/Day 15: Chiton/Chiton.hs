@@ -71,10 +71,28 @@ part1 input = do
   let answer = shortestPath <$> input
   printAnswer "Lowest total risk: " answer
 
+shift :: Int -> Cave -> [Cave]
+shift d cave = map (\(dx,dy) -> M.mapKeys (\(x,y) -> (x+dx,y+dy)) cave)
+                   [ (dx*shiftXY,dy*shiftXY)
+                   | dx <- [0..4], dy <- [0..4], dx + dy == d
+                   ]
+  where
+    shiftXY = case M.findMax cave of
+                ((x,_),_) -> x + 1
+
+completeCave :: Cave -> Cave
+completeCave cave = M.unions
+                  . concat
+                  . map (uncurry shift)
+                  . zip [0..]
+                  . take 9
+                  . iterate (M.map (\r -> if r == 9 then 1 else r + 1))
+                  $ cave
+
 part2 :: Parsed Cave -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = shortestPath . completeCave <$> input
+  printAnswer "Lowest total risk on full map: " answer
 
 main :: IO ()
 main = do
