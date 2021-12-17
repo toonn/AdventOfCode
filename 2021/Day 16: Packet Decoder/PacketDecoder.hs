@@ -12,13 +12,8 @@ import AoC
 
 type Bits = String
 
-data Packet = Literal { getVersion :: Int
-                      , getValue   :: Int
-                      }
-            | Operator { getVersion :: Int
-                       , getTypeID  :: Int
-                       , getPackets :: [Packet]
-                       }
+data Packet = Literal Int Int
+            | Operator Int Int [Packet]
             deriving Show
 
 hexToBits '0' = "0000"
@@ -103,10 +98,23 @@ part1 input = do
   let answer = sum . collectVersions <$> (parse packet "Bits" =<< input)
   printAnswer "Sum of packet versions: " answer
 
+operator :: Int -> ([Int] -> Int)
+operator 0 = sum
+operator 1 = product
+operator 2 = minimum
+operator 3 = maximum
+operator 5 = \[p1,p2] -> if p1 > p2 then 1 else 0
+operator 6 = \[p1,p2] -> if p1 < p2 then 1 else 0
+operator 7 = \[p1,p2] -> if p1 == p2 then 1 else 0
+
+evaluate :: Packet -> Int
+evaluate (Literal _ v) = v
+evaluate (Operator _ tID ps) = operator tID (map evaluate ps)
+
 part2 :: Parsed Bits -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = evaluate <$> (parse packet "Bits" =<< input)
+  printAnswer "Expression value: " answer
 
 main :: IO ()
 main = do
