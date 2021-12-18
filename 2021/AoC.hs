@@ -17,6 +17,9 @@ lexeme = L.lexeme (L.space hspace1 empty empty)
 integer :: Num a => Parser a
 integer = lexeme L.decimal
 
+signed :: Num a => Parser a -> Parser a
+signed = L.signed (L.space empty empty empty)
+
 readInput :: String -> Parser a -> IO (Parsed a)
 readInput day parser = do
   inputFile <- getDataFileName (day </> "input.txt")
