@@ -37,9 +37,12 @@ velocityRangeX (xm, xM, _, _) = ns
          | otherwise = 1
     maxV | xM > 0 = xM
          | otherwise = -1
-    ns = foldr (\n ns -> case triangular n of
-                 t | xm <= t && t <= xM -> n:ns
-                   | otherwise -> ns
+    ns = foldr (\n ns -> if any (\t -> xm <= t && t <= xM)
+                                (map (\n' -> triangular n - triangular n')
+                                     [0,signum n..n]
+                                )
+                         then n:ns
+                         else ns
                )
                []
                [minV..maxV]
@@ -101,8 +104,17 @@ part1 input = do
 
 part2 :: Parsed TargetArea -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = length
+             . (\target ->
+                 filter (crossesTarget target)
+                        (concatMap (\vy -> map (\vx -> (vx,vy))
+                                               (velocityRangeX target)
+                                   )
+                                   (velocityRangeY target)
+                        )
+               )
+           <$> input
+  printAnswer "Distinct initial velocities: " answer
 
 main :: IO ()
 main = do

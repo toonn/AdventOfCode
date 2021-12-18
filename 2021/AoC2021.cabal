@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2021
-version:             2021.12.17.1
+version:             2021.12.17.2
 synopsis:            Advent of Code 2021
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
