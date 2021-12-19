@@ -5,9 +5,12 @@ import System.IO.Silently (silence)
 import Text.Megaparsec hiding (chunk)
 import Text.Megaparsec.Char
 
+import Data.List (delete)
+
 import AoC
 
 data SnailfishNumber = R Int | P SnailfishNumber SnailfishNumber
+       deriving Eq
 
 instance Show SnailfishNumber where
   show (R n) = show n
@@ -114,8 +117,17 @@ part1 input = do
 
 part2 :: Parsed Homework -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = maximum
+             . map (magnitude . uncurry add)
+             . (\homework ->
+                 concatMap (\a ->
+                             map (\b -> (a,b))
+                                 (delete a homework)
+                           )
+                           homework
+               )
+           <$> input
+  printAnswer "Largest magnitude of two different numbers: " answer
 
 main :: IO ()
 main = do
