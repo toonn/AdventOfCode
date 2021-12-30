@@ -187,8 +187,8 @@ transformations overlaps = go pairTransformations (IM.singleton 0 id)
               (pTs', ts') -> go pTs' ts'
           | otherwise -> go pTs' ts'
 
-countBeacons :: Scans -> [(Int, Int)] -> Int
-countBeacons scans overlappingScanners = S.size zeroReferenced
+scannerTransformations :: Scans -> [(Int, Int)] -> IM.IntMap (Coord -> Coord)
+scannerTransformations scans overlappingScanners = transformations overlaps
   where
     overlaps = foldr (\(i,j) os ->
                        ((i,j),overlap (scans !! i) (scans !! j)) : os
@@ -196,7 +196,10 @@ countBeacons scans overlappingScanners = S.size zeroReferenced
                      []
                      overlappingScanners
 
-    ts = transformations overlaps
+beacons :: Scans -> [(Int, Int)] -> S.Set Coord
+beacons scans overlappingScanners = zeroReferenced
+  where
+    ts = scannerTransformations scans overlappingScanners
 
     zeroReferenced = S.fromList
       (concatMap (\(i,s) -> case IM.lookup i ts of
@@ -208,13 +211,27 @@ countBeacons scans overlappingScanners = S.size zeroReferenced
 
 part1 :: Parsed Scans -> IO ()
 part1 input = do
-  let answer = (\scans -> countBeacons scans (overlapping scans)) <$> input
+  let answer = S.size . (\scans -> beacons scans (overlapping scans)) <$> input
   printAnswer "Number of beacons: " answer
+
+manhattan :: Coord -> Coord -> Int
+manhattan (a,b,c) (d,e,f) = abs (a - d) + abs (b - e) + abs (c - f)
+
+greatestDistance :: IM.IntMap (Coord -> Coord) -> Int
+greatestDistance ts = go scanners 0
+  where
+    scanners = (0, 0, 0) : IM.foldr (\t ss -> t (0,0,0) : ss) [] ts
+
+    go [c] m = m
+    go (c:cs) m | m' <- maximum . map (manhattan c) $ cs =
+      if m' < m then go cs m else go cs m'
 
 part2 :: Parsed Scans -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = greatestDistance
+             . (\scans -> scannerTransformations scans (overlapping scans))
+           <$> input
+  printAnswer "Largest Manhattan distance: " answer
 
 main :: IO ()
 main = do

@@ -412,3 +412,24 @@ The full list of beacons (relative to scanner `0`) is:
 In total, there are `79` beacons.
 
 Assemble the full map of beacons. *How many beacons are there?*
+
+Your puzzle answer was `323`.
+
+## \-\-- Part Two \-\-- {#part2}
+
+Sometimes, it\'s a good idea to appreciate just how
+[big]{title="The deepest parts of the ocean are about as deep as the altitude of a normal commercial aircraft, roughly 11 kilometers or 36000 feet."}
+the ocean is. Using the [Manhattan
+distance](https://en.wikipedia.org/wiki/Taxicab_geometry), how far apart
+do the scanners get?
+
+In the above example, scanners `2` (`1105,-1205,1229`) and `3`
+(`-92,-2380,-20`) are the largest Manhattan distance apart. In total,
+they are `1197 + 1175 + 1249 = 3621` units apart.
+
+*What is the largest Manhattan distance between any two scanners?*
+
+Your puzzle answer was `10685`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
