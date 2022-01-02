@@ -116,8 +116,12 @@ part1 input = do
 
 part2 :: Parsed (EnhancementAlgorithm, Image) -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = S.size
+             . unImage
+             . (!! 50)
+             . (\(alg, img) -> iterate (enhanceImage alg) img)
+           <$> input
+  printAnswer "Lit pixels after fifty enhancements: " answer
 
 main :: IO ()
 main = do
