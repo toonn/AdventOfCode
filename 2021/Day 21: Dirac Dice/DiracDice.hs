@@ -5,6 +5,8 @@ import System.IO.Silently (silence)
 import Text.Megaparsec hiding (chunk)
 import Text.Megaparsec.Char
 
+import Data.List (groupBy, partition, sortBy)
+
 import AoC
 
 type Player = (Int, Int)
@@ -57,10 +59,75 @@ part1 input = do
   let answer = play deterministicDie <$> input
   printAnswer "Losing score times number of die rolls: " answer
 
+quantumDice :: [(Int, Int)]
+quantumDice = zip [1,3,6,7,6,3,1] [3..9]
+
+possibleRolls :: Int
+possibleRolls = sum . map fst $ quantumDice
+
+quantumTurn :: Int -> Player -> Player
+quantumTurn roll (p,s) = (p', s + p')
+  where
+    p' = position p roll
+
+futures :: [Player -> (Int, Player)]
+futures = (\(n,r) p -> (n, quantumTurn r p)) <$> quantumDice
+
+allFutures :: Player -> [(Int,Int)]
+allFutures (p,s) | s >= 21 = [(1,0)]
+                 | otherwise = map (\tss -> ( sum . map fst $ tss
+                                            , snd . head $ tss
+                                            )
+                                   )
+                             . groupBy (\(_,s1) (_,s2) -> s1 == s2)
+                             . sortBy (\(_,s1) (_,s2) -> s1 `compare` s2)
+                             . concatMap (\(n,p') ->
+                                           map (\(times,steps) ->
+                                                 (n * times, steps + 1)
+                                               )
+                                               (allFutures p')
+                                         )
+                             . map ($ (p,s))
+                             $ futures
+
+playDirac :: Players -> Int
+playDirac (p1,p2) = max p1Wins p2Wins
+  where
+    p1Fs = allFutures p1
+    p2Fs = allFutures p2
+
+    p1Wins = sum
+           . map (\(times, steps) ->
+                   let losingFutures2 = possibleRolls ^ (steps - 1)
+                                      - ( sum
+                                        . map (\(ts,stps) ->
+                                                ts * 27 ^ (steps - 1 - stps)
+                                              )
+                                        . filter ((< steps) . snd)
+                                        $ p2Fs
+                                        )
+                    in times * losingFutures2
+                 )
+           $ p1Fs
+
+    p2Wins = sum
+           . map (\(times, steps) ->
+                   let losingFutures1 = possibleRolls ^ steps
+                                      - ( sum
+                                        . map (\(ts,stps) ->
+                                                ts * 27 ^ (steps - stps)
+                                              )
+                                        . filter ((<= steps) . snd)
+                                        $ p1Fs
+                                        )
+                    in times * losingFutures1
+                 )
+           $ p2Fs
+
 part2 :: Parsed Players -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = playDirac <$> input
+  printAnswer "Universes the winning player wins in: " answer
 
 main :: IO ()
 main = do
