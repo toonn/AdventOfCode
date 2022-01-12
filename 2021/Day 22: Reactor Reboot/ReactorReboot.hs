@@ -5,7 +5,7 @@ import System.IO.Silently (silence)
 import Text.Megaparsec hiding (chunk)
 import Text.Megaparsec.Char
 
-import Data.Maybe (mapMaybe)
+import Data.Maybe (catMaybes, mapMaybe)
 import qualified Data.Set as S
 
 import AoC
@@ -16,6 +16,7 @@ type RebootSteps = [RebootStep]
 type Coord = (Int, Int, Int)
 type Grid = S.Set Coord
 type RebootSet = Either Grid Grid
+type Ranges = [(Range,Range,Range)]
 
 range :: Parser Range
 range = do
@@ -78,12 +79,65 @@ foldSets steps = foldr (\e next grid ->
 part1 :: Parsed RebootSteps -> IO ()
 part1 input = do
   let answer = S.size . foldSets . rangesToSets . filterRange (-50) 50 <$> input
-  printAnswer "Number of cubes that are on: " answer
+  printAnswer "Number of cubes that are on in the region: " answer
+
+detract :: (Range,Range,Range) -> (Range,Range,Range) -> [(Range,Range,Range)]
+detract ((xm,xM),ys@(ym,yM),zs@(zm,zM)) ((xm',xM'),(ym',yM'),(zm',zM'))
+  = catMaybes ([ case min xM (xm' - 1) of
+                   xM'' | xm <= xM'' -> Just ((xm,xM''),ys,zs)
+                        | otherwise -> Nothing
+               , case max xm (xM' + 1) of
+                   xm'' | xm'' <= xM -> Just ((xm'',xM),ys,zs)
+                        | otherwise -> Nothing
+               ] <> case  (max xm xm', min xM xM') of
+                      xs'@(xm'',xM'')
+                        | xm'' > xM'' -> []
+                        | otherwise ->
+                          [ case min yM (ym' - 1) of
+                              yM'' | ym <= yM'' -> Just (xs',(ym,yM''),zs)
+                                   | otherwise -> Nothing
+                          , case max ym (yM' + 1) of
+                              ym'' | ym'' <= yM -> Just (xs',(ym'',yM),zs)
+                                   | otherwise -> Nothing
+                          ] <> case (max ym ym', min yM yM') of
+                                 ys'@(ym'',yM'')
+                                   | ym'' > yM'' -> []
+                                   | otherwise ->
+                                     [ case min zM (zm' - 1) of
+                                         zM'' | zm <= zM'' -> Just ( xs'
+                                                                   , ys'
+                                                                   , (zm,zM'')
+                                                                   )
+                                              | otherwise -> Nothing
+                                     , case max zm (zM' + 1) of
+                                         zm'' | zm'' <= zM -> Just ( xs'
+                                                                   , ys'
+                                                                   , (zm'',zM)
+                                                                   )
+                                              | otherwise -> Nothing
+                                     ]
+              )
+
+coalesce :: Ranges -> RebootStep -> Ranges
+coalesce [] (Left r') = [r']
+coalesce [] (Right _) = []
+coalesce (r:rs) step = detract r (either id id step) <> coalesce rs step
+
+foldSteps :: RebootSteps -> Ranges
+foldSteps steps = foldr (\e next rs ->
+                          next (coalesce rs e)
+                        )
+                        id
+                        steps
+                        []
+
+size :: (Range,Range,Range) -> Int
+size ((xm,xM),(ym,yM),(zm,zM)) = (xM - xm + 1) * (yM - ym + 1) * (zM - zm + 1)
 
 part2 :: Parsed RebootSteps -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . map size . foldSteps <$> input
+  printAnswer "Number of cubes that are on: " answer
 
 main :: IO ()
 main = do
