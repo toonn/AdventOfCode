@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2021
-version:             2021.12.22.2
+version:             2021.12.23.1
 synopsis:            Advent of Code 2021
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -282,4 +282,17 @@ executable ReactorReboot
                     , silently ^>= 1.2.5.1
   other-modules:      Paths_AoC2021
   hs-source-dirs:     "Day 22: Reactor Reboot"
+  default-language:   Haskell2010
+
+executable Amphipod
+  main-is:            Amphipod.hs
+  build-depends:      base ^>= 4.14.1.0
+                    , AoC2021
+                    , containers ^>= 0.6.2.1
+                    , criterion ^>= 1.5.9.0
+                    , megaparsec ^>= 9.0.1
+                    , pqueue ^>= 1.4.1.3
+                    , silently ^>= 1.2.5.1
+  other-modules:      Paths_AoC2021
+  hs-source-dirs:     "Day 23: Amphipod"
   default-language:   Haskell2010
