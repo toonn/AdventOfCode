@@ -33,19 +33,20 @@ parser = do
 manhattan :: Coord -> Coord -> Int
 manhattan (x,y) (x',y') = abs (x - x') + abs (y -y')
 
-home :: Char -> Coord
-home = (M.fromAscList (zip "ABCD" [(x,2) | x <- homes]) M.!)
+home :: Int -> Char -> Coord
+home y = (M.fromAscList (zip "ABCD" [(x,y) | x <- homes]) M.!)
 
 cost :: Char -> Int
 cost = (M.fromAscList (zip "ABCD" [1,10,100,1000]) M.!)
 
-heuristic :: Amphipods -> Int
-heuristic = sum . map (\(a, (x,y)) ->
-                        let h@(hx,_) = home a
-                            correction | x == hx = -y
-                                       | otherwise = y
-                         in cost a * (manhattan (x,0) h + correction)
-                      )
+heuristic :: Int -> Amphipods -> Int
+heuristic my = sum
+             . map (\(a, (x,y)) ->
+                     let h@(hx,_) = home my a
+                         correction | x == hx = -y
+                                    | otherwise = y
+                      in cost a * (manhattan (x,0) h + correction)
+                   )
 
 interleave :: [a] -> [a] -> [a]
 interleave as [] = as
@@ -81,11 +82,16 @@ unobstructedMoves as xy = takeWhile (\xy' -> unobstructed as xy xy')
                         . map (\x' -> (x',0))
                         . filter (not . (`elem` homes))
 
--- Make sure blocked positions are taken into account.
-moves :: Amphipods -> Amphipod -> [(Int, Amphipods)]
-moves as (a, xy@(x,y))
-  | y == 0 = let g | (a, (hx,hy)) `elem` as = (hx,1)
-                   | otherwise = (hx,hy)
+moves :: Int -> Amphipods -> Amphipod -> [(Int, Amphipods)]
+moves my as (a, xy@(x,y))
+  | y == 0 = let g = foldr (\y h ->
+                             if (a, (hx,y)) `elem` as then h else (hx,y)
+                           )
+                           (error ( "If one amphipod is at y=0"
+                                 <> " there can't be 4 at y>0."
+                                  )
+                           )
+                           [my, my-1..1]
                  ms | unobstructed as xy g = [ ( cost a * manhattan xy g
                                                , update (a, xy) g as
                                                )
@@ -98,24 +104,25 @@ moves as (a, xy@(x,y))
                  )
                  xys
     where
-      (hx,hy) = home a
+      (hx,_) = home my a
 
       leftward = unobstructedMoves as xy [x, x - 1..0]
       rightward = unobstructedMoves as xy [x..10]
 
       xys = interleave leftward rightward
 
-neighbors :: Amphipods -> [(Int, Amphipods)]
-neighbors as = concatMap (moves as) as
+neighbors :: Int -> Amphipods -> [(Int, Amphipods)]
+neighbors my as = concatMap (moves my as) as
 
 -- A*
 search :: Amphipods -> Int
 search as = go openSet gScore
   where
     as' = sort as
-    openSet = PQ.singleton (heuristic as', as')
+    my = maximum . map (snd . snd) $ as'
+    openSet = PQ.singleton (heuristic my as', as')
     gScore = M.singleton as' 0
-    goal = [(a, (x,y)) | (a,x) <- zip "ABCD" homes, y <- [1,2]]
+    goal = [(a, (x,y)) | (a,x) <- zip "ABCD" homes, y <- [1..my]]
 
     go :: Steps -> M.Map Amphipods Int -> Int
     go oS gS | current == goal = gS M.! goal
@@ -127,7 +134,7 @@ search as = go openSet gScore
                                        = (pOS, pGS)
                                        | otherwise
                                        = ( PQ.insert ( tentative_gS
-                                                     + heuristic nAs
+                                                     + heuristic my nAs
                                                      , nAs
                                                      )
                                                      pOS
@@ -136,7 +143,7 @@ search as = go openSet gScore
                          in (nOS, nGS)
                       )
                       (oS', gS)
-                      (neighbors current)
+                      (neighbors my current)
                )
       where
         ((c, current), oS') = PQ.deleteFindMin oS
@@ -146,10 +153,20 @@ part1 input = do
   let answer = search <$> input
   printAnswer "Least energy to organize amphipods: " answer
 
+insertMissing :: Amphipods -> Amphipods
+insertMissing = ([ ('D', (2,2)),('C', (4,2)),('B', (6,2)),('A', (8,2))
+                 , ('D', (2,3)),('B', (4,3)),('A', (6,3)),('C', (8,3))
+                 ] <>
+                )
+              . map (\(a, (x,y)) -> let y' | y == 2 = 4
+                                           | otherwise = y
+                                     in (a, (x,y'))
+                    )
+
 part2 :: Parsed Amphipods -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = search . insertMissing <$> input
+  printAnswer "Least energy to organize all the amphipods: " answer
 
 main :: IO ()
 main = do
