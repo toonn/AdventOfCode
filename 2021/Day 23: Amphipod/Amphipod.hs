@@ -12,6 +12,17 @@ import qualified Data.Set as S
 
 import AoC
 
+-- Improvement ideas:
+--  - type Amphipods = S.Set Amphipod
+--    Would avoid the sorting and converting to a Set repeatedly.
+--
+--  - https://www.reddit.com/r/adventofcode/comments/rtek4i/is_there_a_way_to_effectively_optimize_aoc23/hqsncbg/
+--    - Divide and Conquer, if A is in the hallway you will have to solve the
+--      sub-problem to the left of A first because it won't move until it can
+--      go home.
+--    - Deadlock detection, if A and D are in the hallway blocking each other
+--      it's a lost cause because they can never move out of each other's way.
+
 type Coord = (Int, Int)
 type Amphipod = (Char, Coord)
 type Amphipods = [Amphipod]
