@@ -67,7 +67,7 @@ instructionConstraint inst vars = do
                 )
   pure $ M.adjust (r:) (var inst) vars
 
-programConstraints :: Instructions -> SBV.Goal
+programConstraints :: Instructions -> SBV.Symbolic Vars
 programConstraints is =
   foldr (\inst next vars -> do
           vars' <- instructionConstraint inst vars
@@ -76,19 +76,23 @@ programConstraints is =
         (\vars -> do
           let z = head (vars M.! 'z')
           SBV.constrain (z SBV..== 0)
-          let ws = vars M.! 'w'
-          foldr (\w next n ->
-                  next (n + 1) *> SBV.maximize ("Model digit " <> show n) w
-                )
-                (const (pure ()))
-                ws
-                0
+          pure vars
         )
         is
         initialEnv
 
-findLargestModelNr :: SBV.Goal -> IO Integer
-findLargestModelNr goal = do
+findModelNr :: (String -> SBV.SInteger -> SBV.Symbolic ()) -> SBV.Symbolic Vars
+            -> IO Integer
+findModelNr optimize constraints = do
+  let goal = do
+        vars <- constraints
+        let ws = vars M.! 'w'
+        foldr (\w next n ->
+                next (n + 1) *> optimize ("Model digit " <> show n) w
+              )
+              (const (pure ()))
+              ws
+              0
   SBV.LexicographicResult model <- SBV.optimize SBV.Lexicographic goal
   let Just modelDigits = traverse ( (\k -> SBV.getModelValue k model)
                                   . ("Model digit " <>)
@@ -101,14 +105,16 @@ findLargestModelNr goal = do
 part1 :: Parsed Instructions -> IO ()
 part1 input = do
   answer <- either (pure . Left)
-                   ((Right <$>) . findLargestModelNr . programConstraints)
+                   ((Right <$>) . findModelNr SBV.maximize . programConstraints)
                    input
   printAnswer "Largest model number accepted by MONAD: " answer
 
 part2 :: Parsed Instructions -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  answer <- either (pure . Left)
+                   ((Right <$>) . findModelNr SBV.minimize . programConstraints)
+                   input
+  printAnswer "Smallest model number accepted by MONAD: " answer
 
 main :: IO ()
 main = do

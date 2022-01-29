@@ -110,3 +110,18 @@ need to *figure out what MONAD does* some other way.
 To enable as many submarine features as possible, find the largest valid
 fourteen-digit model number that contains no `0` digits. *What is the
 largest model number accepted by MONAD?*
+
+Your puzzle answer was `49917929934999`.
+
+## \-\-- Part Two \-\-- {#part2}
+
+As the submarine starts booting up things like the [Retro
+Encabulator](https://www.youtube.com/watch?v=RXJKdh1KZ0w), you realize
+that maybe you don\'t need all these submarine features after all.
+
+*What is the smallest model number accepted by MONAD?*
+
+Your puzzle answer was `11911316711816`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
