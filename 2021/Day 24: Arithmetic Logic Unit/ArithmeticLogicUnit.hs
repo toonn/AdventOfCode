@@ -24,13 +24,7 @@ data Instruction = Inp { var :: Var }
                  deriving Show
 
 type Instructions = [Instruction]
-type Env = M.Map Var Int
 type Vars = M.Map Var [SBV.SInteger]
-
-newtype Strung = Strung { unStrung :: String }
-
-instance Show Strung where
-  show = unStrung
 
 instruction :: Parser Instruction
 instruction = do
@@ -83,7 +77,12 @@ programConstraints is =
           let z = head (vars M.! 'z')
           SBV.constrain (z SBV..== 0)
           let ws = vars M.! 'w'
-          SBV.maximize ("Model Nr") (foldr (\w n -> 10 * n + w) 0 ws)
+          foldr (\w next n ->
+                  next (n + 1) *> SBV.maximize ("Model digit " <> show n) w
+                )
+                (const (pure ()))
+                ws
+                0
         )
         is
         initialEnv
@@ -91,7 +90,12 @@ programConstraints is =
 findLargestModelNr :: SBV.Goal -> IO Integer
 findLargestModelNr goal = do
   SBV.LexicographicResult model <- SBV.optimize SBV.Lexicographic goal
-  let Just modelNr = SBV.getModelValue "Model Nr" model
+  let Just modelDigits = traverse ( (\k -> SBV.getModelValue k model)
+                                  . ("Model digit " <>)
+                                  . show
+                                  )
+                                  [0..13]
+  let modelNr = foldr (\w n -> 10 * n + w) 0 modelDigits
   pure modelNr
 
 part1 :: Parsed Instructions -> IO ()
