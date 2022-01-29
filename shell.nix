@@ -8,5 +8,5 @@ in shell { inherit hsPkgs;
            for = with hsPkgs; [ AoC2021 ];
            buildInputs = (map (p: stackage."${p}".components.exes."${p}")
                               [ "pandoc" ]
-                         );
+                         ) ++ (with (import <nixpkgs> {}); [ z3 ]);
          }
