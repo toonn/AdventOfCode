@@ -6,6 +6,8 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
+import Data.List (sortBy)
+
 import AoC
 
 type Calories = Int
@@ -24,10 +26,13 @@ part1 input = do
   let answer = mostCarried <$> input
   printAnswer "Most calories carried: " answer
 
+topThreeCarried :: [[Calories]] -> Calories
+topThreeCarried = sum . take 3 . sortBy (flip compare) . map sum
+
 part2 :: Parsed [[Calories]] -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = topThreeCarried <$> input
+  printAnswer "Calories carried by the top three: " answer
 
 main :: IO ()
 main = do
