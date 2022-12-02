@@ -59,10 +59,31 @@ part1 input = do
   let answer = accordingGuide <$> input
   printAnswer "Total score according to guide: " answer
 
+shapeValue :: Score -> Char -> Score
+shapeValue opponent 'X' = case opponent - 1 of
+                            0 -> 3
+                            r -> r
+shapeValue opponent 'Y' = opponent
+shapeValue opponent 'Z' = case opponent + 1 of
+                            4 -> 1
+                            r -> r
+
+outcomeValue :: Char -> Score
+outcomeValue 'X' = 0
+outcomeValue 'Y' = 3
+outcomeValue 'Z' = 6
+
+correctScore :: Pairing -> Score
+correctScore (opponent, outcome) =
+  shapeValue (shapeScore . rps $ opponent) outcome + outcomeValue outcome
+
+correctInterpretation :: [Pairing] -> Score
+correctInterpretation = sum . map correctScore
+
 part2 :: Parsed [Pairing] -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = correctInterpretation <$> input
+  printAnswer "Total score according to correct interpretation: " answer
 
 main :: IO ()
 main = do
