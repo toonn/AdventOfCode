@@ -40,10 +40,22 @@ part1 input = do
   let answer = typePrioritySum <$> input
   printAnswer "Sum of priorities of types: " answer
 
+groups :: [Rucksack] -> [[Rucksack]]
+groups [] = []
+groups rs = g : groups rs'
+  where
+    (g, rs') = splitAt 3 rs
+
+badge :: [Rucksack] -> S.Set Item
+badge = foldr1 S.intersection . map (uncurry S.union)
+
+badgePrioritySum :: [Rucksack] -> Priority
+badgePrioritySum = sum . map (S.foldr ((+) . priority) 0) . map badge . groups
+
 part2 :: Parsed [Rucksack] -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = badgePrioritySum <$> input
+  printAnswer "Sum of badge priorities: " answer
 
 main :: IO ()
 main = do
