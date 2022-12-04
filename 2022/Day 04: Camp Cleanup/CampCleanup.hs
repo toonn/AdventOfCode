@@ -41,10 +41,13 @@ part1 input = do
   let answer = nrFullyContained <$> input
   printAnswer "Fully contained ranges: " answer
 
+nrOverlaps :: [Pair] -> Int
+nrOverlaps = length . filter not . map (uncurry S.disjoint)
+
 part2 :: Parsed [Pair] -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = nrOverlaps <$> input
+  printAnswer "Overlapping ranges: " answer
 
 main :: IO ()
 main = do
