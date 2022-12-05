@@ -54,13 +54,16 @@ parser = do
   eof
   pure (crates, instructions)
 
-topCrates :: Input -> String
-topCrates (crates, instructions)
+oneByOne :: [Crate] -> [Crate] -> [Crate]
+oneByOne = (<>) . reverse
+
+topCrates :: ([Crate] -> [Crate] -> [Crate]) -> Input -> [Crate]
+topCrates crateInsertion (crates, instructions)
   = map head
   . M.elems
   $ foldl (\cM (q,f,t) ->
             let topCs = take q (cM M.! f)
-             in M.insertWith (\new old -> foldl (flip (:)) old new)
+             in M.insertWith crateInsertion
                              t
                              topCs
               . M.update (Just . drop q) f
@@ -71,13 +74,16 @@ topCrates (crates, instructions)
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = topCrates <$> input
+  let answer = topCrates oneByOne <$> input
   printAnswer "Crate on top of each stack: " answer
+
+allAtOnce :: [Crate] -> [Crate] -> [Crate]
+allAtOnce = (<>)
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = topCrates allAtOnce <$> input
+  printAnswer "Crate on top after correct rearrangement: " answer
 
 main :: IO ()
 main = do
