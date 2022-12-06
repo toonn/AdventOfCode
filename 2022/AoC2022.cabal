@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2022
-version:             2022.12.5.2
+version:             2022.12.6.1
 synopsis:            Advent of Code 2022
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -77,4 +77,15 @@ executable SupplyStacks
                     , silently ^>= 1.2.5.3
   other-modules:      Paths_AoC2022
   hs-source-dirs:     "Day 05: Supply Stacks"
+  default-language:   Haskell2010
+
+executable TuningTrouble
+  main-is:            TuningTrouble.hs
+  build-depends:      base ^>= 4.16.4.0
+                    , AoC2022
+                    , criterion ^>= 1.6.0.0
+                    , megaparsec ^>= 9.3.0
+                    , silently ^>= 1.2.5.3
+  other-modules:      Paths_AoC2022
+  hs-source-dirs:     "Day 06: Tuning Trouble"
   default-language:   Haskell2010
