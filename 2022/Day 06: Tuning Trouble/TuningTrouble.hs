@@ -15,11 +15,11 @@ type Input = String
 parser :: Parser Input
 parser = takeWhileP (Just "Datastream") isLetter <* eol <* eof
 
-packetPrelude :: Input -> String
-packetPrelude datastream
+marker :: Int -> Input -> String
+marker markerLength datastream
   = foldr (\c more (cs, prelude) ->
              case span (/= c) cs of
-               (cs', []) | length cs' == 3 -> prelude [c]
+               (cs', []) | length cs' == markerLength - 1 -> prelude [c]
                          | otherwise -> more (cs' <> [c], prelude . (c:))
                (_, _:cs') -> more (cs' <> [c], prelude . (c:))
           )
@@ -27,15 +27,22 @@ packetPrelude datastream
           datastream
           ([], id)
 
+
+packetPrelude :: Input -> String
+packetPrelude = marker 4
+
 part1 :: Parsed Input -> IO ()
 part1 input = do
   let answer = length . packetPrelude <$> input
   printAnswer "Characters processed until start-of-packet: " answer
 
+messagePrelude :: Input -> String
+messagePrelude = marker 14
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = length . messagePrelude <$> input
+  printAnswer "Characters processed before first start-of-message: " answer
 
 main :: IO ()
 main = do
