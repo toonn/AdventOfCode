@@ -81,21 +81,27 @@ dirSizes (Dir _ contents)
           [0]
           contents
 
-sumTotalDirectoriesUnder100000 :: Input -> Int
-sumTotalDirectoriesUnder100000 = sum
-                               . filter (< 100000)
-                               . dirSizes
-                               . hierarchyFromCommands
+totalDirectorySizes :: Input -> [Int]
+totalDirectorySizes = dirSizes . hierarchyFromCommands
+
+sumTotalDirectoriesUnder100000 :: [Int] -> Int
+sumTotalDirectoriesUnder100000 = sum . filter (< 100000)
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = sumTotalDirectoriesUnder100000 <$> input
+  let answer = sumTotalDirectoriesUnder100000 . totalDirectorySizes <$> input
   printAnswer "Sum of total sizes of directories under 100000: " answer
+
+sizeOfSmallestFreeingEnoughSpace :: [Int] -> Int
+sizeOfSmallestFreeingEnoughSpace sizes = minimum . filter (> targetFree) $ sizes
+  where
+    currentFree = 70000000 - (head sizes)
+    targetFree = 30000000 - currentFree
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sizeOfSmallestFreeingEnoughSpace . totalDirectorySizes <$> input
+  printAnswer "Size of smallest directory that frees up enough space: " answer
 
 main :: IO ()
 main = do
