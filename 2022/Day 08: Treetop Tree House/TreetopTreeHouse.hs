@@ -7,7 +7,8 @@ import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
 import Data.Char (digitToInt)
-import Data.List (transpose)
+import qualified Data.IntMap as IM
+import Data.List (transpose, zipWith4)
 import qualified Data.Set as S
 import Data.Tuple (swap)
 
@@ -26,7 +27,7 @@ row = manyTill (digitToInt <$> digitChar) eol
 parser :: Parser Grid
 parser = manyTill row eof
 
--- visibleInRows :: Grid -> S.Set Coord
+visibleInRows :: Grid -> S.Set Coord
 visibleInRows grid =
   foldr (\r coords y ->
           S.union ( S.fromList
@@ -61,7 +62,7 @@ visibleInRows grid =
         grid
         0
 
--- visibleTrees :: Grid -> S.Set Coord
+visibleTrees :: Grid -> S.Set Coord
 visibleTrees grid = visibleInRows grid
           `S.union` (S.map swap (visibleInRows (transpose grid)))
 
@@ -70,10 +71,33 @@ part1 input = do
   let answer = S.size . visibleTrees <$> input
   printAnswer "Visible trees from outside the grid: " answer
 
+leftViewable :: Grid -> [[Int]]
+leftViewable = map (\r -> foldr (\t more viewable ->
+                                  (viewable IM.! t)
+                                  : more (IM.mapWithKey (\k n ->
+                                                          if t >= k
+                                                          then 1
+                                                          else 1 + n
+                                                        )
+                                                        viewable
+                                         )
+                                )
+                                (\_ -> [])
+                                r
+                                (IM.fromAscList [(i,0) | i <- [0..9]])
+                   )
+
+scenicScores :: Grid -> [[Int]]
+scenicScores grid = zipWith4 (zipWith4 (\a b c d -> a * b * c * d))
+                             (leftViewable grid)
+                             (map reverse . leftViewable . map reverse $ grid)
+                             (transpose . leftViewable . transpose $ grid)
+                             (transpose . map reverse . leftViewable . map reverse . transpose $ grid)
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = maximum . concat . scenicScores <$> input
+  printAnswer "Highest scenic score: " answer
 
 main :: IO ()
 main = do
