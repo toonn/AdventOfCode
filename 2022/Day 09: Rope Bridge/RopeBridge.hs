@@ -6,11 +6,8 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
-import Data.Char (digitToInt)
-import qualified Data.IntMap as IM
-import Data.List (transpose, zipWith4)
+import Data.List (intercalate)
 import qualified Data.Set as S
-import Data.Tuple (swap)
 
 import AoC
 
@@ -40,37 +37,59 @@ move dir (hX,hY) | dir == 'U' = (hX, hY + 1)
 distance :: Coord -> Coord -> Int
 distance (x,y) (x',y') = max (abs (x - x')) (abs (y - y'))
 
-pull :: Instruction -> Coord -> Coord -> (Coord, Coord, S.Set Coord)
-pull (dir, dist) hP tP = go dist hP tP (S.singleton tP)
-  where
-    go 0 hP tP vs = (hP, tP, vs)
-    go d hP tP vs = let d' = d - 1
-                        hP' = move dir hP
-                        (tP', vs') | distance hP' tP <= 1 = (tP, vs)
-                                   | otherwise = (hP, S.insert hP vs)
-                     in go d' hP' tP' vs'
+follow :: Coord -> [Coord] -> S.Set Coord -> ([Coord], S.Set Coord)
+follow prevP [] vs = ([prevP], S.insert prevP vs)
+follow prevP@(prevX,prevY) (p@(pX,pY):ps) vs
+  | distance prevP p <= 1 = (prevP:p:ps, vs)
+  | let p' | prevX == pX && prevY == pY + 2 = (pX, pY + 1)
+           | (prevX == pX + 1 && prevY == pY + 2)
+             || (prevX == pX + 2 && prevY == pY + 2)
+             || (prevX == pX + 2 && prevY == pY + 1) = (pX + 1, pY + 1)
+           | prevX == pX + 2 && prevY == pY = (pX + 1, pY)
+           | (prevX == pX + 2 && prevY == pY - 1)
+             || (prevX == pX + 2 && prevY == pY - 2)
+             || (prevX == pX + 1 && prevY == pY - 2) = (pX + 1, pY - 1)
+           | prevX == pX && prevY == pY - 2 = (pX, pY - 1)
+           | (prevX == pX - 1 && prevY == pY - 2)
+             || (prevX == pX - 2 && prevY == pY - 2)
+             || (prevX == pX - 2 && prevY == pY - 1) = (pX - 1, pY - 1)
+           | prevX == pX - 2 && prevY == pY = (pX - 1, pY)
+           | (prevX == pX - 2 && prevY == pY + 1)
+             || (prevX == pX - 2 && prevY == pY + 2)
+             || (prevX == pX - 1 && prevY == pY + 2) = (pX - 1, pY + 1)
+           | otherwise = error (intercalate "\n" [show prevP , show p , show ps, show vs])
+        (ps', vs') = follow p' ps vs
+    = (prevP:ps', vs')
 
-tailVisited :: Input -> S.Set Coord
-tailVisited instructions =
+pull :: Instruction -> [Coord] -> ([Coord], S.Set Coord)
+pull (dir, dist) positions = go dist positions (S.singleton (last positions))
+  where
+    go 0 ps vs = (ps, vs)
+    go d (hP:ps) vs = let d' = d - 1
+                          hP' = move dir hP
+                          (ps', vs') = follow hP' ps vs
+                       in go d' ps' vs'
+
+tailVisited :: Int -> Input -> S.Set Coord
+tailVisited knots instructions =
   let start = (0,0)
-   in foldr (\inst visited headPosition tailPosition ->
-              case pull inst headPosition tailPosition of
-                (hP, tP, vs) -> vs `S.union` (visited hP tP)
+   in foldr (\inst visited positions ->
+              case pull inst positions of
+                (ps, vs) -> vs `S.union` (visited ps)
             )
-            (const S.singleton)
+            (S.singleton . last)
             instructions
-            start
-            start
+            (replicate knots start)
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = S.size . tailVisited <$> input
+  let answer = S.size . tailVisited 2 <$> input
   printAnswer "Number of positions visited by the tail: " answer
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = S.size . tailVisited 10 <$> input
+  printAnswer "Number of positions visited by the long tail: " answer
 
 main :: IO ()
 main = do
