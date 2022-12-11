@@ -25,7 +25,7 @@ data Expr = Var
           | Mul Expr Expr
           | Add Expr Expr
 
-type Input = IM.IntMap Monkey
+type Input = ([Int], IM.IntMap Monkey)
 
 interpretWorry :: Expr -> WorryRule
 interpretWorry Var x = x
@@ -46,7 +46,7 @@ parseWorryRule = do
                   (Add <$ lexeme (char '+'))
   pure (interpretWorry expr)
 
-parseThrowRule :: Parser ThrowRule
+parseThrowRule :: Parser (Int, ThrowRule)
 parseThrowRule = do
   hspace
   lexeme (string "Test:")
@@ -58,14 +58,16 @@ parseThrowRule = do
   eol
   ifThrowTo
   falseMonKey <- integer
-  pure (\worry -> if worry `rem` divisor == 0 then trueMonKey else falseMonKey)
+  pure ( divisor
+       , \worry -> if worry `rem` divisor == 0 then trueMonKey else falseMonKey
+       )
   where ifThrowTo = hspace
                  *> lexeme (string "If")
                  *> (string "true" <|> string "false")
                  *> lexeme (string ":")
                  *> lexeme (string "throw to monkey")
 
-monkey :: Parser (MonKey, Monkey)
+monkey :: Parser (Int, (MonKey, Monkey))
 monkey = do
   key <- lexeme (string "Monkey") *> integer <* char ':'
   eol
@@ -75,24 +77,26 @@ monkey = do
   eol
   worryRule <- parseWorryRule
   eol
-  throwRule <- parseThrowRule
+  (divisor, throwRule) <- parseThrowRule
   eol
-  pure (key, (worryRule, throwRule, items))
+  pure (divisor, (key, (worryRule, throwRule, items)))
 
 parser :: Parser Input
-parser = IM.fromAscList <$> (sepBy monkey eol <* eof)
+parser = (\(divisors, ms) -> (divisors, IM.fromAscList ms)) . unzip
+     <$> (sepBy monkey eol <* eof)
 
-keepAwayRound :: IM.IntMap (WorryRule, ThrowRule)
+keepAwayRound :: (Worry -> Worry)
+              -> IM.IntMap (WorryRule, ThrowRule)
               -> IM.IntMap (Int, [Worry])
               -> IM.IntMap (Int, [Worry])
-keepAwayRound monkeys monkeyItems
+keepAwayRound worryReduction monkeys monkeyItems
   = IM.foldrWithKey
       (\k (nr,items) nextMonkey ms ->
         let items' = items <> snd (ms IM.! k)
             nr' = nr + length items'
          in nextMonkey (foldr (\w nextItem ms' ->
                                 let (worryRule, throwRule) = monkeys IM.! k
-                                    w' = worryRule w `quot` 3
+                                    w' = worryReduction (worryRule w)
                                     k' = throwRule w'
                                  in nextItem (IM.insertWith (\(_,ws') (n,ws) ->
                                                               (n,ws <> ws')
@@ -114,27 +118,30 @@ keepAwayRound monkeys monkeyItems
 nTimes :: Int -> (a -> a) -> a -> a
 nTimes rounds = foldr (.) id . replicate rounds
 
-monkeyBusiness :: Int -> Input -> Int
-monkeyBusiness rounds monkeys
+-- monkeyBusiness :: (Worry -> Worry) -> Int -> Input -> Int
+monkeyBusiness worryReduction rounds monkeys
   = product
   . take 2
   . sortBy (flip compare)
   . IM.foldr ((:) . fst)
              []
-  $ nTimes rounds (keepAwayRound monkeyRules) monkeyItems
+  $ nTimes rounds (keepAwayRound worryReduction monkeyRules) monkeyItems
     where
       monkeyRules = IM.map (\(wR,tR,_) -> (wR,tR)) monkeys
       monkeyItems = IM.map (\(_,_,is) -> (0,is)) monkeys
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = monkeyBusiness 20 <$> input
+  let answer = monkeyBusiness (`quot` 3) 20 . snd <$> input
   printAnswer "Monkey business level after 20 rounds: " answer
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = (\(divisors,monkeys) ->
+                 monkeyBusiness (`mod` (product divisors)) 10000 monkeys
+               )
+           <$> input
+  printAnswer "Level after 10000 rounds without worry reduction: " answer
 
 main :: IO ()
 main = do
