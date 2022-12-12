@@ -31,3 +31,7 @@ printAnswer question answer =
   either (putStrLn . errorBundlePretty)
          (putStrLn . (question <>) . show)
          answer
+
+manhattan :: Integral a => (a,a) -> (a,a) -> a
+manhattan (x,y) (x',y') = abs (x - x') + abs (y - y')
+
