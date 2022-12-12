@@ -8,7 +8,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 import Control.Monad (guard)
 import Data.Char (isLetter)
-import Data.Maybe (mapMaybe)
+import Data.Maybe (fromJust, mapMaybe)
 import qualified Data.Map as M
 import qualified Data.PQueue.Min as PQ
 
@@ -41,8 +41,8 @@ neighbors (x,y) = do
   guard (abs dx /= abs dy)
   pure (x+dx,y+dy)
 
-shortestPath :: (Coord, Coord, HeightMap) -> Int
-shortestPath (start, end, heightMap) = go candidates shortestPaths
+shortestPath :: Maybe Int -> (Coord, Coord, HeightMap) -> Maybe Int
+shortestPath mBound (start, end, heightMap) = go candidates shortestPaths
   where
     goal = end
     lowerBound = manhattan start goal
@@ -50,10 +50,13 @@ shortestPath (start, end, heightMap) = go candidates shortestPaths
     shortestPaths = M.singleton start 0
 
     go cs sP
-      | next == goal = d
+      | Nothing <- mNext = Nothing
+      | Just bound <- mBound, d >= bound = Nothing
+      | next == goal = Just d
       | otherwise = go cs'' sP'
       where
-        ((d, next), cs') = PQ.deleteFindMin cs
+        mNext = PQ.minView cs
+        Just ((d, next), cs') = mNext
         ns = let shortestHere = M.lookup next sP
                  Just h = M.lookup next heightMap
               in mapMaybe (\c -> case (M.lookup c heightMap, shortestHere) of
@@ -74,13 +77,31 @@ shortestPath (start, end, heightMap) = go candidates shortestPaths
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = shortestPath <$> input
+  let answer = fromJust . shortestPath Nothing <$> input
   printAnswer "Fewest steps to best signal location: " answer
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = (\(start, end, heightMap) ->
+                 let as = M.foldrWithKey (\c h -> if h == fromEnum 'a'
+                                                 then (c:)
+                                                 else id
+                                        )
+                                        []
+                                        heightMap
+                  in foldr (\a more b ->
+                             case shortestPath b (a, end, heightMap) of
+                               Nothing -> more b
+                               s -> more s
+                           )
+                           (\b -> case b of
+                                    Nothing -> error "No shortest path"
+                                    Just s  -> s
+                           )
+                           as
+                           Nothing
+               ) <$> input
+  printAnswer "Fewest steps from 'a' to best signal location: " answer
 
 main :: IO ()
 main = do
