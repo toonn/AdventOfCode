@@ -6,6 +6,9 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
+import Data.List (elemIndex, sort)
+import Data.Maybe (catMaybes)
+
 import AoC
 
 newtype Packet = Pack { unPack :: Either Int [Packet] } deriving (Eq, Show)
@@ -55,10 +58,30 @@ part1 input = do
   let answer = sum . indices . pairs <$> input
   printAnswer "Sum of indices of pairs: " answer
 
+dividerPacket :: Int -> Packet
+dividerPacket = Pack . Right . (:[]) . Pack . Right . (:[]) . Pack . Left
+
+dividerPackets :: [Packet]
+dividerPackets = [dividerPacket 2, dividerPacket 6]
+
+decoderKey :: [Packet] -> Int
+decoderKey packets = product
+                   . catMaybes
+                   . map (\p -> (+1) <$> elemIndex p packets)
+                   $ dividerPackets
+
+findDecoderKey :: Input -> Int
+findDecoderKey = decoderKey
+               . sort
+               . (dividerPackets <>)
+               . concatMap (\(a,b) -> [a,b])
+  where
+
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = findDecoderKey <$> input
+  printAnswer "Decoder key for the distress signal: " answer
 
 main :: IO ()
 main = do
