@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2022
-version:             2022.12.12.2
+version:             2022.12.13.1
 synopsis:            Advent of Code 2022
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -161,4 +161,16 @@ executable HillClimbingAlgorithm
                     , silently ^>= 1.2.5.3
   other-modules:      Paths_AoC2022
   hs-source-dirs:     "Day 12: Hill Climbing Algorithm"
+  default-language:   Haskell2010
+
+executable DistressSignal
+  main-is:            DistressSignal.hs
+  build-depends:      base ^>= 4.16.4.0
+                    , AoC2022
+                    , containers ^>= 0.6.5.1
+                    , criterion ^>= 1.6.0.0
+                    , megaparsec ^>= 9.3.0
+                    , silently ^>= 1.2.5.3
+  other-modules:      Paths_AoC2022
+  hs-source-dirs:     "Day 13: Distress Signal"
   default-language:   Haskell2010
