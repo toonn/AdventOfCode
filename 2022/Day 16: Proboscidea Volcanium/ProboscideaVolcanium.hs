@@ -7,6 +7,7 @@ import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
 import qualified Data.Map as M
+import Data.Maybe (mapMaybe)
 import qualified Data.Set as S
 
 import AoC
@@ -97,9 +98,14 @@ optimalPath valves
                              )
                            : cs
 
-maximumPressure :: Int -> Input -> Int
-maximumPressure time valves
-  = optimalPath valves valveDistances ("AA", time, brokenValves, 0)
+maximumPressure :: Int
+                -> ( ValveGraph -> Distances -> (Vertex, Int, S.Set Vertex, Int)
+                   -> Int
+                   )
+                -> Input
+                -> Int
+maximumPressure time optimise valves
+  = optimise valves valveDistances ("AA", time, brokenValves, 0)
   where
     brokenValves = M.keysSet . M.filter ((== 0) . fst) $ valves
     valveDistances = distances
@@ -117,13 +123,126 @@ maximumPressure time valves
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = maximumPressure 30 <$> input
+  let answer = maximumPressure 30 optimalPath <$> input
   printAnswer "Most releasable pressure: " answer
+
+optimalTogether :: ValveGraph
+                -> Distances
+                -> (Vertex, Int, Vertex, Int, Int, S.Set Vertex, Int)
+                -> Int
+optimalTogether valves
+                valveDistances
+                ( valve1
+                , time1
+                , valve2
+                , time2
+                , timeLeft
+                , openValves
+                , pressureToBeReleased
+                )
+  | timeLeft == 0 = pressureToBeReleased
+  | time1 == 0, time2 == 0 = pressureToBeReleased
+  | time1 < timeLeft && time2 < timeLeft
+  = optimalTogether valves
+                    valveDistances
+                    ( valve1
+                    , time1
+                    , valve2
+                    , time2
+                    , max time1 time2
+                    , openValves
+                    , pressureToBeReleased
+                    )
+  | otherwise = maximum
+              . (pressureToBeReleased:)
+              . map (optimalTogether valves valveDistances)
+              $ candidates
+  where
+    idealizedPressureRelease = (timeLeft - 1)
+                             * (M.foldr ((+) . fst)
+                                        0
+                                        (M.withoutKeys valves openValves)
+                               )
+    reachableValves1 = M.withoutKeys (valveDistances M.! valve1) openValves
+    reachableValves2 = M.withoutKeys (valveDistances M.! valve2) openValves
+    candidatePressures reachableValves v
+        = M.foldrWithKey (\to d ->
+                           let timeLeft' = timeLeft - d - 1
+                               flowRate = fst (valves M.! to)
+                               next | timeLeft' >= 0 = ( ( to
+                                                         , timeLeft'
+                                                         , timeLeft' * flowRate
+                                                         )
+                                                       :
+                                                       )
+                                    | otherwise = id
+                            in next
+                         )
+                         []
+                         reachableValves
+    cPs1 | time1 == timeLeft
+         = case candidatePressures reachableValves1 valve1 of
+             [] -> [(valve1, 0, 0)]
+             cPs -> cPs
+         | otherwise = [(valve1, time1, 0)]
+    cPs2 | time2 == timeLeft
+         = case candidatePressures reachableValves2 valve2 of
+             [] -> [(valve2, 0, 0)]
+             cPs -> cPs
+         | otherwise = [(valve2, time2, 0)]
+    cs = concatMap
+           (\(v1,t1,p1) ->
+             mapMaybe (\(v2,t2,p2) ->
+                        let c | v1 == v2 = Nothing
+                              | valve1 == v1, time1 == t1
+                              , valve2 == v2, time2 == t2
+                              = Nothing
+                              | otherwise
+                              = Just ( v1
+                                     , t1
+                                     , v2
+                                     , t2
+                                     , timeLeft
+                                     , S.insert v1 (S.insert v2 openValves)
+                                     , pressureToBeReleased + p1 + p2
+                                     )
+                         in c
+                      )
+                      cPs2
+           )
+           cPs1
+    maxCandidatePressure = maximum
+                         . map (\(_,_,_,_,_,_,p) -> p)
+                         $ cs
+    candidates = filter (\(_,_,_,_,_,_,p) ->
+                          p + idealizedPressureRelease > maxCandidatePressure
+                        )
+                        cs
+
+optimalPathTogether :: ValveGraph
+                    -> Distances
+                    -> (Vertex, Int, S.Set Vertex, Int)
+                    -> Int
+optimalPathTogether valves
+                    valveDistances
+                    (start, timeLeft, openValves, pressureToBeReleased)
+  = optimalTogether valves
+                    valveDistances
+                    ( start
+                    , timeLeft'
+                    , start
+                    , timeLeft'
+                    , timeLeft'
+                    , openValves
+                    , pressureToBeReleased
+                    )
+  where
+    timeLeft' = timeLeft - 4
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = maximumPressure 30 optimalPathTogether <$> input
+  printAnswer "Most releasable pressure when working with an elephant: " answer
 
 main :: IO ()
 main = do
