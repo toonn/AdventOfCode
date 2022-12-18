@@ -6,7 +6,7 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
-import Data.List (intercalate)
+import Data.List (elemIndices, intercalate)
 import qualified Data.Set as S
 
 import AoC
@@ -47,11 +47,13 @@ inBounds :: Rock -> Bool
 inBounds cs | let xs = S.map fst cs
             = 0 <= S.findMin xs && S.findMax xs < 7
 
-dropRocks :: [Coord -> Rock] -> JetPattern -> Rock -> Rock
-dropRocks [] _ tower = tower
-dropRocks (rock:rocks) jetPattern tower
-  = uncurry (dropRocks rocks)
-  $ (foldr (\y more x (j:jP) ->
+dropRocks :: [Coord -> Rock] -> JetPattern -> Int -> Rock -> (Int, Rock)
+dropRocks [] _ pushes tower = (pushes, tower)
+dropRocks (rock:rocks) jetPattern pushes tower
+  = (\(jetPattern', pushes', tower') ->
+      dropRocks rocks jetPattern' pushes' tower'
+    )
+  $ (foldr (\y more x (j:jP) ps ->
              let pushedX = push j x
                  pushedRock = rock (pushedX,y)
                  x' | S.disjoint tower pushedRock
@@ -60,28 +62,29 @@ dropRocks (rock:rocks) jetPattern tower
                     | otherwise = x
                  droppedY = y - 1
                  droppedRock = rock (x', droppedY)
-                 (jP',tower') | not (S.disjoint tower droppedRock)
-                              = (jP, rock (x', y) `S.union` tower)
-                              | otherwise = more x' jP
-              in (jP', tower')
+                 (jP',ps',tower') | not (S.disjoint tower droppedRock)
+                                  = (jP, ps + 1, rock (x', y) `S.union` tower)
+                                  | otherwise = more x' jP (ps + 1)
+              in (jP', ps', tower')
            )
-           (\x (j:jP) -> let pushedX = push j x
-                             pushedRock = rock (pushedX,0)
-                             rock' | inBounds pushedRock = pushedRock
-                                   | otherwise = rock (x,0)
-
-                          in (jP, rock' `S.union` tower)
+           (\x (j:jP) ps -> let pushedX = push j x
+                                pushedRock = rock (pushedX,0)
+                                rock' | inBounds pushedRock = pushedRock
+                                      | otherwise = rock (x,0)
+                             in (jP, ps + 1, rock' `S.union` tower)
            )
            ([startY,startY-1..1])
            2
            jetPattern
+           pushes
     )
   where
     startY = 3 + height tower
 
-fall :: Int -> Input -> Rock
+fall :: Int -> Input -> (Int, Rock)
 fall nrRocks jetPattern = dropRocks (take nrRocks (cycle rocks))
                                     (cycle jetPattern)
+                                    0
                                     S.empty
 
 height :: Rock -> Int
@@ -99,13 +102,81 @@ render tower = RS . ('\n':) . intercalate "\n"
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = height . fall 2022 <$> input
+  let answer = height . snd . fall 2022 <$> input
   printAnswer "Tower height after 2022 rocks have fallen: " answer
+
+periodAfterPrefix :: Eq a => [a] -> ([a], [a])
+periodAfterPrefix as
+  = foldr (\oneRep next ->
+            let (pR:potentialRepetition) = reverse (take oneRep as)
+                mPrefixPeriod
+                  = foldr (\periodLength next ->
+                            let (potentialPeriod, rest)
+                                  = splitAt periodLength
+                                            (pR:potentialRepetition)
+                                (potentialRep, potentialPrefix)
+                                  = splitAt periodLength rest
+                                mPrefixPeriod
+                                  | potentialPeriod == potentialRep
+                                  = Just ( reverse potentialPrefix
+                                         , reverse potentialPeriod
+                                         )
+                                  | otherwise = next
+                             in mPrefixPeriod
+                          )
+                          Nothing
+                          (map (+1) (elemIndices pR potentialRepetition))
+                prefixPeriod | Just (pre, per) <- mPrefixPeriod = (pre, per)
+                             | otherwise = next
+             in prefixPeriod
+          )
+          (error "Not a periodic sequence")
+          [2..]
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = (\jetPattern ->
+                 (\(prefix, period) ->
+                   let prefixRocks = 5 * length prefix
+                       periodRocks = 5 * length period
+                       onePeriodHeight = height (snd (fall ( prefixRocks
+                                                           + periodRocks
+                                                           )
+                                                           jetPattern
+                                                     )
+                                                )
+                       twoPeriodHeight = height (snd (fall ( prefixRocks
+                                                           + 2 * periodRocks
+                                                           )
+                                                           jetPattern
+                                                     )
+                                                )
+                       periodHeight = twoPeriodHeight - onePeriodHeight
+                       prefixHeight = onePeriodHeight - periodHeight
+                       (repetitions, remainder) = (1000000000000 - prefixRocks)
+                                        `quotRem` periodRocks
+                       remainderHeight = height (snd (fall ( prefixRocks
+                                                           + periodRocks
+                                                           + remainder
+                                                           )
+                                                           jetPattern
+                                                     )
+                                                )
+                                       - prefixHeight
+                                       - periodHeight
+                    in prefixHeight + repetitions * periodHeight
+                     + remainderHeight
+                 )
+                 . periodAfterPrefix
+                 . map (\rs -> (\(pushes,tower) ->
+                                 pushes `rem` (length jetPattern)
+                               )
+                               (fall rs jetPattern)
+                       )
+                 $ [5,10..]
+
+               ) <$> input
+  printAnswer "Tower height after 1000000000000 rocks have fallen: " answer
 
 main :: IO ()
 main = do
