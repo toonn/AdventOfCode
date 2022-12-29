@@ -9,12 +9,9 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import qualified Data.IntMap as IM
 import qualified Data.Map as M
 import Data.Maybe (mapMaybe)
-import qualified Data.PQueue.Min as PQ
+import qualified Data.PQueue.Prio.Min as PQ
 
 import AoC
-
-import Debug.Trace
-import Data.List
 
 data Resource = Ore | Clay | Obsidian | Geode deriving (Eq, Ord, Show)
 
@@ -162,7 +159,7 @@ produceRobots blueprint resources robots minutes usefulRobots
                )
                usefulRobots
 
-geodes :: Blueprint -> PQ.MinQueue [(Int, (Resources, Robots, [Robot]))] -> Int
+geodes :: Blueprint -> PQ.MinPQueue Int (Resources, Robots, [Robot]) -> Int
        -> Int
 geodes blueprint queue bestSeen
   | PQ.null queue = bestSeen
@@ -172,7 +169,7 @@ geodes blueprint queue bestSeen
     else geodes blueprint queue' bestSeen
   | otherwise
   = geodes blueprint
-           (foldr (\v -> PQ.insert (v:past))
+           (foldr (uncurry PQ.insert)
                   queue'
                   (produceRobots blueprint
                                  resources
@@ -183,7 +180,7 @@ geodes blueprint queue bestSeen
            )
            bestSeen
   where
-    (past@((minutes, (resources, robots, usefulRobots)):_), queue')
+    ((minutes, (resources, robots, usefulRobots)), queue')
       = PQ.deleteFindMin queue
 
 part1 :: Parsed Input -> IO ()
@@ -192,11 +189,11 @@ part1 input = do
                                  let maxGeodes
                                        = geodes blueprint
                                                 (PQ.singleton
-                                                  [(24
-                                                  ,( M.empty
+                                                  24
+                                                  ( M.empty
                                                   , M.singleton Ore 1
                                                   , [Ore, Clay, Obsidian, Geode]
-                                                  ))]
+                                                  )
                                                 )
                                                 0
                                   in iD * maxGeodes + qualitySum
@@ -211,11 +208,11 @@ part2 input = do
              . IM.map (\blueprint ->
                         geodes blueprint
                                (PQ.singleton
-                                 [ (32
-                                   ,( M.empty
+                                 32
+                                 ( M.empty
                                  , M.singleton Ore 1
                                  , [Ore, Clay, Obsidian, Geode]
-                                 ))]
+                                 )
                                )
                                0
                       )
