@@ -13,6 +13,9 @@ import qualified Data.PQueue.Min as PQ
 
 import AoC
 
+import Debug.Trace
+import Data.List
+
 data Resource = Ore | Clay | Obsidian | Geode deriving (Eq, Ord, Show)
 
 type Resources = M.Map Resource Int
@@ -64,52 +67,103 @@ get0 = M.findWithDefault 0
 sufficient :: Resources -> Bool
 sufficient = M.foldr (\qty -> (qty >= 0 &&)) True
 
-produceRobots :: Blueprint -> Resources -> Robots -> Int -> [(Int, Resources, Robots)]
-produceRobots blueprint resources robots minutes
+projected :: Blueprint -> Robot -> Robots -> Resources -> Int
+projected blueprint rob robs ress
+  = M.foldr max
+            0
+  . M.mapWithKey (\res reqty ->
+                   let (q,r) | get0 res robs > 0
+                             = reqty `quotRem` (get0 res robs)
+                             | otherwise = (10000 * reqty, 0)
+                       q' | r == 0 = q
+                          | otherwise = q + 1
+                    in q'
+                 )
+  $ M.filter (> 0)
+             (M.unionWith (+)
+                          (blueprint M.! rob)
+                          (M.map negate ress)
+             )
+
+produceRobots :: Blueprint -> Resources -> Robots -> Int -> [Robot]
+              -> [(Int, (Resources, Robots,[Robot]))]
+produceRobots blueprint resources robots minutes usefulRobots
   | minutes == 0 = error "Can't produce robots without time"
+  | minutes == 1
+  = [ ( 0
+      , ( M.unionWith (+) resources (M.map (* minutes) robots)
+        , robots
+        , []
+        )
+      )
+    ]
   | otherwise
   = ( 0
-    , M.unionWith (+) resources (M.map (* minutes) robots)
-    , robots
-    ) : mapMaybe (\robot ->
-                   let proj = projected robot robots resources
-                       mRobot
-                         | robot == Geode || minutes - proj >= 3
-                         , minutes - proj >= 1
-                         = Just ( minutes - proj - 1
-                                , M.unionWith (+)
-                                              (after robot)
-                                              (M.map (* (proj + 1))
-                                                     robots
-                                              )
-                                , build robot
-                                )
-                         | otherwise = Nothing
-                    in mRobot
-                 )
-                 [Ore, Clay, Obsidian, Geode]
+    , ( M.unionWith (+) resources (M.map (* minutes) robots)
+      , robots
+      , []
+      )
+    ) : ( mapMaybe (\robot ->
+                     let proj = projected blueprint robot robots resources
+                         mRobot
+                           | minutes - proj > thresholds M.! robot
+                           = Just ( minutes - proj - 1
+                                  , ( M.unionWith (+)
+                                                  (after robot)
+                                                  (M.map (* (proj + 1)) robots)
+                                    , build robot
+                                    , usefulRobots'
+                                    )
+                                  )
+                           | otherwise = Nothing
+                      in mRobot
+                   )
+                   usefulRobots'
+        )
   where
     cost rob = M.map negate (blueprint M.! rob)
     after rob = M.unionWith (+) resources (cost rob)
     build rob = M.insertWith (+) rob 1 robots
-    projected rob robs ress
-      = M.foldr max
-                0
-      . M.mapWithKey (\res reqty ->
-                       let (q,r) | get0 res robs > 0
-                                 = reqty `quotRem` (get0 res robs)
-                                 | otherwise = (100 * reqty, 0)
-                           q' | r == 0 = q
-                              | otherwise = q + 1
-                        in q'
-                     )
-      $ M.filter (> 0)
-                 (M.unionWith (+)
-                              (blueprint M.! rob)
-                              (M.map negate ress)
-                 )
+    thresholds = M.fromAscList [(Ore,3), (Clay,5), (Obsidian,3), (Geode,1)]
+    geodeCovered = M.foldrWithKey (\req qty ->
+                                    ( (get0 req robots
+                                      + (get0 req resources
+                                        `quot` (minutes - 1)
+                                        )
+                                      ) >= qty
+                                      &&
+                                    )
+                                  )
+                                  True
+                                  (blueprint M.! Geode)
+    usefulRobots'
+      | geodeCovered = [Geode]
+      | otherwise
+      = filter (\robot ->
+                 let mMaxReq = foldr (\r mMax ->
+                                       let m' = get0 robot (blueprint M.! r)
+                                           mMax' | Nothing <- mMax = Just m'
+                                                 | Just m <- mMax
+                                                 , m' > m
+                                                 = Just m'
+                                                 | otherwise = mMax
+                                        in mMax'
+                                     )
+                                     Nothing
+                                     usefulRobots
+                     enough | robot == Geode = False
+                            | Just maxReq <- mMaxReq
+                            , get0 robot robots
+                            + (get0 robot resources `quot` (minutes - 1))
+                            >= maxReq
+                            = True
+                            | otherwise = False
+                  in not enough
+               )
+               usefulRobots
 
-geodes :: Blueprint -> PQ.MinQueue [(Int, Resources, Robots)] -> Int -> Int
+geodes :: Blueprint -> PQ.MinQueue [(Int, (Resources, Robots, [Robot]))] -> Int
+       -> Int
 geodes blueprint queue bestSeen
   | PQ.null queue = bestSeen
   | minutes == 0, let qty = get0 Geode resources
@@ -117,17 +171,20 @@ geodes blueprint queue bestSeen
     then geodes blueprint queue' qty
     else geodes blueprint queue' bestSeen
   | otherwise
-  = (\q -> geodes blueprint q bestSeen)
-  . foldr (\(minutes', resources', robots') q ->
-            PQ.insert ((minutes', resources', robots'):past) q
-          )
-          queue'
-  $ options
+  = geodes blueprint
+           (foldr (\v -> PQ.insert (v:past))
+                  queue'
+                  (produceRobots blueprint
+                                 resources
+                                 robots
+                                 minutes
+                                 usefulRobots
+                  )
+           )
+           bestSeen
   where
-    (past@((minutes, resources, robots):_), queue')
+    (past@((minutes, (resources, robots, usefulRobots)):_), queue')
       = PQ.deleteFindMin queue
-
-    options = produceRobots blueprint resources robots minutes
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
@@ -135,11 +192,11 @@ part1 input = do
                                  let maxGeodes
                                        = geodes blueprint
                                                 (PQ.singleton
-                                                  [( 24
-                                                  , M.empty
+                                                  [(24
+                                                  ,( M.empty
                                                   , M.singleton Ore 1
-                                                  )
-                                                  ]
+                                                  , [Ore, Clay, Obsidian, Geode]
+                                                  ))]
                                                 )
                                                 0
                                   in iD * maxGeodes + qualitySum
@@ -150,8 +207,21 @@ part1 input = do
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = product
+             . IM.map (\blueprint ->
+                        geodes blueprint
+                               (PQ.singleton
+                                 [ (32
+                                   ,( M.empty
+                                 , M.singleton Ore 1
+                                 , [Ore, Clay, Obsidian, Geode]
+                                 ))]
+                               )
+                               0
+                      )
+             . IM.filterWithKey (\k v -> k <= 3)
+           <$> input
+  printAnswer "Product of maximum geodes for first three blueprints: " answer
 
 main :: IO ()
 main = do
