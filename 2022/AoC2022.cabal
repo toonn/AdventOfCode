@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2022
-version:             2022.12.19.2
+version:             2022.12.20.1
 synopsis:            Advent of Code 2022
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -248,4 +248,18 @@ executable NotEnoughMinerals
                     , silently ^>= 1.2.5.3
   other-modules:      Paths_AoC2022
   hs-source-dirs:     "Day 19: Not Enough Minerals"
+  default-language:   Haskell2010
+
+executable GrovePositioningSystem
+  main-is:            GrovePositioningSystem.hs
+  build-depends:      base ^>= 4.16.4.0
+                    , AoC2022
+                    , containers ^>= 0.6.5.1
+                    , criterion ^>= 1.6.0.0
+                    , data-interval ^>= 2.1.1
+                    , extended-reals ^>= 0.2.4.0
+                    , megaparsec ^>= 9.3.0
+                    , silently ^>= 1.2.5.3
+  other-modules:      Paths_AoC2022
+  hs-source-dirs:     "Day 20: Grove Positioning System"
   default-language:   Haskell2010
