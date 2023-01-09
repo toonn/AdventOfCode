@@ -256,8 +256,6 @@ executable GrovePositioningSystem
                     , AoC2022
                     , containers ^>= 0.6.5.1
                     , criterion ^>= 1.6.0.0
-                    , data-interval ^>= 2.1.1
-                    , extended-reals ^>= 0.2.4.0
                     , megaparsec ^>= 9.3.0
                     , silently ^>= 1.2.5.3
   other-modules:      Paths_AoC2022
