@@ -16,6 +16,8 @@ data Expression = Lit Int
                 | Op Char Monkey Monkey
                 deriving Show
 
+type Problem = M.Map Monkey (Maybe Expression)
+
 type Input = M.Map Monkey Expression
 
 name :: Parser String
@@ -63,10 +65,48 @@ part1 input = do
   let answer = calculate "root" <$> input
   printAnswer "Root yells: " answer
 
+fixTranslation :: Input -> Input
+fixTranslation = M.adjust (\e -> case e of
+                                  Op _ l r -> Op '=' l r
+                          )
+                          "root"
+
+inverse :: Char -> Char
+inverse '+' = '-'
+inverse '-' = '+'
+inverse '*' = '/'
+inverse '/' = '*'
+
+pivot :: Monkey -> Input -> Input
+pivot "root" monkeys = M.delete "root" monkeys
+pivot newRoot monkeys = monkeys''
+  where
+    monkeys' = M.delete newRoot monkeys
+    monkeys''
+      = M.foldrWithKey
+          (\p e next ->
+            let mE | Op o l r <- e
+                   , let left = l == newRoot
+                   , let right = r == newRoot
+                   , left || right
+                   = let e' | left, o == '=' = monkeys' M.! r
+                            | left = Op (inverse o) p r
+                            | right, o == '=' = monkeys' M.! l
+                            | right, o `elem` "+*" = Op (inverse o) p l
+                            | right, o `elem` "-/" = Op o l p
+                      in Just e'
+                   | otherwise = Nothing
+                ms' | Just e' <- mE = M.insert newRoot e' (pivot p monkeys')
+                    | otherwise = next
+             in ms'
+          )
+          (error "No parent!")
+          monkeys'
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = calculate "humn" . pivot "humn" . fixTranslation <$> input
+  printAnswer "Number to yell to pass Root's equality test: " answer
 
 main :: IO ()
 main = do
