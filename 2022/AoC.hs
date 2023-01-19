@@ -35,3 +35,5 @@ printAnswer question answer =
 manhattan :: Integral a => (a,a) -> (a,a) -> a
 manhattan (x,y) (x',y') = abs (x - x') + abs (y - y')
 
+nTimes :: Int -> (a -> a) -> a -> a
+nTimes rounds = foldr (.) id . replicate rounds

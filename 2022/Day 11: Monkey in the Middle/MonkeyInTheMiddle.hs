@@ -115,9 +115,6 @@ keepAwayRound worryReduction monkeys monkeyItems
       monkeyItems
       (IM.map (\(n,ws) -> (n,[])) monkeyItems)
 
-nTimes :: Int -> (a -> a) -> a -> a
-nTimes rounds = foldr (.) id . replicate rounds
-
 -- monkeyBusiness :: (Worry -> Worry) -> Int -> Input -> Int
 monkeyBusiness worryReduction rounds monkeys
   = product

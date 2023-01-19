@@ -17,9 +17,6 @@ type Input = [Int]
 parser :: Parser Input
 parser = sepEndBy (signed integer) eol <* eof
 
-nTimes :: Int -> (a -> a) -> a -> a
-nTimes rounds = foldr (.) id . replicate rounds
-
 coordinates :: DoublyLinkedMap -> [Int]
 coordinates mixed
   = foldr (\index more next shifts mMaxIndex indices ->
