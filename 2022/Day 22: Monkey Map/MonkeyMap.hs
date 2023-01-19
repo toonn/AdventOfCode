@@ -6,22 +6,18 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
+import Data.List ((!!), find)
+import Data.Maybe (fromJust)
 import qualified Data.Set as S
 
 import AoC
+import CubeNets
 
-import Debug.Trace
-
-type Coord = Int
-type Coords = (Coord, Coord)
 type Board = (S.Set Coords, S.Set Coords)
 
 data Instruction = Move Int | Turn Char deriving Show
 
 type Path = [Instruction]
-
-type Direction = Int
-type Position = (Coord, Coord, Direction)
 
 type Input = (Board, Path)
 
@@ -38,8 +34,8 @@ row = foldr (\(x,c) (opens,walls) ->
 
 board :: Parser Board
 board = foldr (\(y,(os,ws)) (opens,walls) ->
-                ( S.union opens (S.fromAscList (map (\x -> (y,x)) os))
-                , S.union walls (S.fromAscList (map (\x -> (y,x)) ws))
+                ( S.union opens (S.fromDistinctAscList (map (\x -> (y,x)) os))
+                , S.union walls (S.fromDistinctAscList (map (\x -> (y,x)) ws))
                 )
               )
               (S.empty, S.empty)
@@ -59,15 +55,8 @@ parser = do b <- board
             eof
             pure (b, p)
 
-north, east, south, west :: Int
-(north, east, south, west) = (3, 0, 1, 2)
-
-turn :: Direction -> Char -> Direction
-turn orientation 'L' = (orientation - 1 + 4) `rem` 4
-turn orientation 'R' = (orientation + 1) `rem` 4
-
-wrap :: Board -> Direction -> Coords -> Either Coords Coords
-wrap (open,wall) o (y,x) = eNext
+wrapFlat :: Board -> Position -> Either Position Position
+wrapFlat (open,wall) (y,x,o) = eith (y', x', o)
   where
     tiles = S.union open wall
     -- Even directions 0 and 2, east and west, are horizontal.
@@ -75,47 +64,57 @@ wrap (open,wall) o (y,x) = eNext
           | otherwise = S.filter (\(_,x') -> x == x') tiles
     -- Directions 0 and 1, east and south, are positive changes to the
     -- coordinate.
-    next | o < 2 = S.findMin slice
-         | otherwise = S.findMax slice
-    eNext | next `S.member` wall = Left next
-          | next `S.member` open = Right next
-          | otherwise = error (show next)
+    (y',x') | o < 2 = S.findMin slice
+          | otherwise = S.findMax slice
+    eith | (y',x') `S.member` wall = Left
+         | (y',x') `S.member` open = Right
 
-move :: Board -> Direction -> Coords -> Int -> Position
-move _ o (y,x) 0 = (y, x, o)
-move (open,wall) o (y,x) d = next
+move :: (Board -> Position -> Either Position Position)
+     -> Board -> Position -> Int -> Position
+move _ _ pos 0 = pos
+move wrap (open,wall) (y,x,o) d = next
   where
-    step | o == north = (y - 1, x)
-         | o == east = (y, x + 1)
-         | o == south = (y + 1, x)
-         | o == west = (y, x - 1)
-    next | step `S.member` open = move (open, wall) o step (d - 1)
-         | step `S.member` wall = (y, x, o)
-         | otherwise = case wrap (open, wall) o (y, x) of
+    (y',x') | o == north = (y - 1, x)
+            | o == east = (y, x + 1)
+            | o == south = (y + 1, x)
+            | o == west = (y, x - 1)
+    next | (y',x') `S.member` open = move wrap (open, wall) (y',x',o) (d - 1)
+         | (y',x') `S.member` wall = (y, x, o)
+         | otherwise = case wrap (open, wall) (y, x, o) of
                          Left _ -> (y, x, o)
-                         Right step' -> move (open, wall) o step' (d - 1)
+                         Right (y',x',o')
+                           -> move wrap (open, wall) (y',x',o') (d - 1)
 
-follow :: Board -> Path -> Position
-follow (open,wall) path = go path start
+follow :: (Board -> Position -> Either Position Position)
+       -> Board -> Path -> Position
+follow wrap (open,wall) path = go path start
   where
     start = (\(y,x) -> (y,x,east)) (S.findMin open)
 
     go [] pos = pos
     go (Turn d:is) (y,x,o) = go is (y, x, turn o d)
-    go (Move d:is) (y,x,o) = go is (move (open, wall) o (y,x) d)
+    go (Move d:is) pos = go is (move wrap (open, wall) pos d)
 
 password :: Position -> Int
 password (y,x,o) = 1000 * y + 4 * x + o
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = password . uncurry follow <$> input
+  let answer = password . uncurry (follow wrapFlat) <$> input
   printAnswer "Final password: " answer
+
+wrapCube :: Board -> Position -> Either Position Position
+wrapCube (open,wall) pos = eith (y', x', o')
+  where
+    tiles = S.union open wall
+    (y',x',o') = candidate tiles pos
+    eith | (y',x') `S.member` wall = Left
+         | (y',x') `S.member` open = Right
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = password . uncurry (follow wrapCube) <$> input
+  printAnswer "Final password on cube: " answer
 
 main :: IO ()
 main = do

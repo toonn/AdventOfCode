@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2022
-version:             2022.12.22.1
+version:             2022.12.22.2
 synopsis:            Advent of Code 2022
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -280,8 +280,28 @@ executable MonkeyMap
                     , AoC2022
                     , containers ^>= 0.6.5.1
                     , criterion ^>= 1.6.0.0
+                    , CubeNets
                     , megaparsec ^>= 9.3.0
                     , silently ^>= 1.2.5.3
   other-modules:      Paths_AoC2022
   hs-source-dirs:     "Day 22: Monkey Map"
   default-language:   Haskell2010
+
+library CubeNets
+  build-depends:      base ^>= 4.16.4.0
+                    , containers ^>= 0.6.5.1
+  exposed-modules:    CubeNets
+  hs-source-dirs:     CubeNets/lib
+  default-language:   Haskell2010
+
+test-suite CubeNetsTest
+  main-is:          CubeNetsTest.hs
+  build-depends:    base ^>= 4.16.4.0
+                  , CubeNets
+                  , containers ^>= 0.6.5.1
+                  , tasty ^>= 1.4.2.3
+                  , tasty-fail-fast ^>= 0.0.3
+                  , tasty-hunit ^>= 0.10.0.3
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   CubeNets/test
+  default-language: Haskell2010
