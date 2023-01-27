@@ -13,9 +13,8 @@ import qualified Data.Set as S
 
 import AoC
 
-import Debug.Trace
-
 type Coord = (Int, Int)
+type Directions = [Coord -> S.Set Coord -> Maybe Coord]
 
 type Input = S.Set Coord
 
@@ -77,11 +76,10 @@ move directions (y,x) elves
   | (n:_) <- mapMaybe (\f -> f (y,x) elves) directions = n
   | otherwise = (y,x)
 
-spreadOut :: Int -> Input -> Input
-spreadOut times elves
-  = fst
-  . nTimes times
-           (\(es, dirs) ->
+spreadOut :: Int -> Directions -> Input -> (Directions, Input)
+spreadOut times directions elves
+  = nTimes times
+           (\(dirs, es) ->
              let dirs' = tail dirs <> take 1 dirs
                  moved = M.mapMaybe id
                        . foldr (\elf -> M.insertWith (\_ _ -> Nothing)
@@ -92,9 +90,9 @@ spreadOut times elves
                        $ es
                  es' = S.union (M.keysSet moved)
                                (es S.\\ S.fromList (M.elems moved))
-              in (es', dirs')
+              in (dirs', es')
            )
-  $ (elves, [north, south, west, east])
+  $ (directions, elves)
 
 emptyTiles :: S.Set Coord -> Int
 emptyTiles elves = (1 + yM - ym) * (1 + xM - xm) - S.size elves
@@ -118,16 +116,24 @@ render elves = intersperse '\n'
     xm = S.findMin xs
     xM = S.findMax xs
 
-
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = emptyTiles . spreadOut 10 <$> input
+  let answer = emptyTiles . snd . spreadOut 10 [north, south, west, east]
+           <$> input
   printAnswer "Empty ground tiles: " answer
+
+roundsToSpread :: Input -> Int
+roundsToSpread elves = go 1 [north, south, west, east] elves
+  where
+    go n dirs es = let (dirs',es') = spreadOut 1 dirs es
+                       n' | es == es' = n
+                          | otherwise = go (n + 1) dirs' es'
+                    in n'
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = roundsToSpread <$> input
+  printAnswer "First round where no Elf moves: " answer
 
 main :: IO ()
 main = do
