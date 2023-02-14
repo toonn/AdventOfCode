@@ -113,7 +113,7 @@ shortestPath (start, end, boundY, boundX, blizzards)
     shortestPaths = M.singleton (start, 0) 0
 
     period = lcm boundY boundX
-    bsAt = (blizzardsMap boundY boundX blizzards IM.!)
+    bsAt = (blizzardsMap boundY boundX blizzards IM.!) . (`rem` period)
 
     go cs sP
       | Nothing <- mNext = Nothing
@@ -125,7 +125,7 @@ shortestPath (start, end, boundY, boundX, blizzards)
 
         Just shortestHere = M.lookup (next, step) sP
         s = 1 + shortestHere
-        step' = s `rem` period
+        step' = (step + 1)
         (cs'', sP')
           = foldr (\n (cs, sP) -> case M.lookup (n, step') sP of
                     Just s' | s >= s' -> (cs, sP)
@@ -143,8 +143,26 @@ part1 input = do
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer
+        = (\(start, end, boundY, boundX, blizzards) ->
+            let period = lcm boundY boundX
+                bsAt = (blizzardsMap boundY boundX blizzards IM.!)
+                     . (`rem` period)
+                Just there
+                  = shortestPath (start, end, boundY, boundX, blizzards)
+                Just back
+                  = shortestPath (end, start, boundY, boundX, bsAt there)
+                step2 = (there + back) `rem` (lcm boundY boundX)
+                Just again
+                  = shortestPath (start
+                                 , end
+                                 , boundY
+                                 , boundX
+                                 , bsAt (there + back)
+                                 )
+             in there + back + again
+          ) <$> input
+  printAnswer "Fewest minutes to the goal then the start and back: " answer
 
 main :: IO ()
 main = do
