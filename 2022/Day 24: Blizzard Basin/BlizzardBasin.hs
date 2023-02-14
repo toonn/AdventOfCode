@@ -9,6 +9,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import Control.Monad (guard)
 import Data.List (elemIndex)
 import Data.Maybe (fromJust)
+import qualified Data.IntMap as IM
 import qualified Data.Map as M
 import qualified Data.PQueue.Min as PQ
 
@@ -81,6 +82,13 @@ blizzardsStep boundY boundX
                    )
                    M.empty
 
+blizzardsMap :: Bound -> Bound -> Blizzards -> IM.IntMap Blizzards
+blizzardsMap boundY boundX blizzards
+  = IM.fromAscList
+  . zip [0..]
+  . take (lcm boundY boundX)
+  $ iterate (blizzardsStep boundY boundX) blizzards
+
 neighbors :: Coord -> Coord -> Bound -> Bound -> Blizzards -> Coord -> [Coord]
 neighbors start end boundY boundX blizzards (y,x) = do
   dy <- [-1,0,1]
@@ -101,10 +109,11 @@ shortestPath (start, end, boundY, boundX, blizzards)
   where
     goal = end
     lowerBound = manhattan start goal
-    candidates = PQ.singleton (lowerBound, start, 0, blizzards)
+    candidates = PQ.singleton (lowerBound, start, 0)
     shortestPaths = M.singleton (start, 0) 0
 
     period = lcm boundY boundX
+    bsAt = (blizzardsMap boundY boundX blizzards IM.!)
 
     go cs sP
       | Nothing <- mNext = Nothing
@@ -112,29 +121,24 @@ shortestPath (start, end, boundY, boundX, blizzards)
       | otherwise = go cs'' sP'
       where
         mNext = PQ.minView cs
-        Just ((d, next, step, bs), cs') = mNext
+        Just ((d, next, step), cs') = mNext
 
         Just shortestHere = M.lookup (next, step) sP
         s = 1 + shortestHere
         step' = s `rem` period
-        bs' = blizzardsStep boundY boundX bs
-        (cs'', sP') = foldr (\n (cs, sP) -> case M.lookup (n, step') sP of
-                              Just s' | s >= s' -> (cs, sP)
-                              _ -> ( PQ.insert (s + manhattan n goal
-                                               , n
-                                               , step'
-                                               , bs'
-                                               )
-                                               cs
-                                   , M.insert (n, step') s sP
-                                   )
-                            )
-                            (cs', sP)
-                            (neighbors start end boundY boundX bs' next)
+        (cs'', sP')
+          = foldr (\n (cs, sP) -> case M.lookup (n, step') sP of
+                    Just s' | s >= s' -> (cs, sP)
+                    _ -> ( PQ.insert (s + manhattan n goal, n, step') cs
+                         , M.insert (n, step') s sP
+                         )
+                  )
+                  (cs', sP)
+                  (neighbors start end boundY boundX (bsAt step') next)
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = fromJust . shortestPath Nothing <$> input
+  let answer = fromJust . shortestPath <$> input
   printAnswer "Fewest minutes avoiding blizzards: " answer
 
 part2 :: Parsed Input -> IO ()
