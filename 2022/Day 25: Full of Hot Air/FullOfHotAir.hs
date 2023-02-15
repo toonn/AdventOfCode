@@ -77,8 +77,8 @@ part1 input = do
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = const "A very young elf found the 50th star fruit" <$> input
+  printAnswer "Psych: " answer
 
 main :: IO ()
 main = do

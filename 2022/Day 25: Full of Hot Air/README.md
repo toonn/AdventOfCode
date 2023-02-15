@@ -1,298 +1,180 @@
-## \-\-- Day 24: Blizzard Basin \-\--
+## \-\-- Day 25: Full of Hot Air \-\--
 
-With everything replanted for next year (and with elephants and monkeys
-to tend the grove), you and the Elves leave for the extraction point.
+As the expedition finally reaches the extraction point, several large
+[hot air
+balloons](https://en.wikipedia.org/wiki/Hot_air_balloon){target="_blank"}
+drift down to meet you. Crews quickly start unloading the equipment the
+balloons brought: many hot air balloon kits, some fuel tanks, and a
+*fuel heating machine*.
 
-Partway up the mountain that shields the grove is a flat, open area that
-serves as the extraction point. It\'s a bit of a climb, but nothing the
-expedition can\'t handle.
+The fuel heating machine is a new addition to the process. When this
+mountain was a volcano, the ambient temperature was more reasonable;
+now, it\'s so cold that the fuel won\'t work at all without being warmed
+up first.
 
-At least, that would normally be true; now that the mountain is covered
-in snow, things have become more difficult than the Elves are used to.
+The Elves, seemingly in an attempt to make the new machine feel welcome,
+have already attached a pair of [googly
+eyes](https://en.wikipedia.org/wiki/Googly_eyes){target="_blank"} and
+started calling it \"Bob\".
 
-As the expedition reaches a valley that must be traversed to reach the
-extraction site, you find that strong, turbulent winds are pushing small
-*blizzards* of snow and sharp ice around the valley. It\'s a good thing
-everyone packed warm clothes! To make it across safely, you\'ll need to
-find a way to avoid them.
+To heat the fuel, Bob needs to know the total amount of fuel that will
+be processed ahead of time so it can correctly calibrate heat output and
+flow rate. This amount is simply the *sum* of the fuel requirements of
+all of the hot air balloons, and those fuel requirements are even listed
+clearly on the side of each hot air balloon\'s burner.
 
-Fortunately, it\'s easy to see all of this from the entrance to the
-valley, so you make a map of the valley and the blizzards (your puzzle
-input). For example:
+You assume the Elves will have no trouble adding up some numbers and are
+about to go back to figuring out which balloon is yours when you get a
+tap on the shoulder. Apparently, the fuel requirements use numbers
+written in a format the Elves don\'t recognize; predictably, they\'d
+like your help deciphering them.
 
-    #.#####
-    #.....#
-    #>....#
-    #.....#
-    #...v.#
-    #.....#
-    #####.#
+You make a list of all of the fuel requirements (your puzzle input), but
+you don\'t recognize the number format either. For example:
 
-The walls of the valley are drawn as `#`; everything else is ground.
-Clear ground - where there is currently no blizzard - is drawn as `.`.
-Otherwise, blizzards are drawn with an arrow indicating their direction
-of motion: up (`^`), down (`v`), left (`<`), or right (`>`).
+    1=-0-2
+    12111
+    2=0=
+    21
+    2=01
+    111
+    20012
+    112
+    1=-1=
+    1-12
+    12
+    1=
+    122
 
-The above map includes two blizzards, one moving right (`>`) and one
-moving down (`v`). In one minute, each blizzard moves one position in
-the direction it is pointing:
+Fortunately, Bob is labeled with a support phone number. Not to be
+deterred, you call and ask for help.
 
-    #.#####
-    #.....#
-    #.>...#
-    #.....#
-    #.....#
-    #...v.#
-    #####.#
+\"That\'s right, just supply the fuel amount to the\-- oh, for more than
+one burner? No problem, you just need to add together our Special
+Numeral-Analogue Fuel Units. Patent pending! They\'re way better than
+normal numbers for\--\"
 
-Due to [conservation of blizzard
-energy]{title="I think, anyway. Do I look like a theoretical blizzacist?"},
-as a blizzard reaches the wall of the valley, a new blizzard forms on
-the opposite side of the valley moving in the same direction. After
-another minute, the bottom downward-moving blizzard has been replaced
-with a new downward-moving blizzard at the top of the valley instead:
+You mention that it\'s quite cold up here and ask if they can skip
+ahead.
 
-    #.#####
-    #...v.#
-    #..>..#
-    #.....#
-    #.....#
-    #.....#
-    #####.#
+\"Okay, our Special Numeral-Analogue Fuel Units - SNAFU for short - are
+sort of like normal numbers. You know how starting on the right, normal
+numbers have a ones place, a tens place, a hundreds place, and so on,
+where the digit in each place tells you how many of that value you
+have?\"
 
-Because blizzards are made of tiny snowflakes, they pass right through
-each other. After another minute, both blizzards temporarily occupy the
-same position, marked `2`:
+\"SNAFU works the same way, except it uses powers of five instead of
+ten. Starting from the right, you have a ones place, a fives place, a
+twenty-fives place, a one-hundred-and-twenty-fives place, and so on.
+It\'s that easy!\"
 
-    #.#####
-    #.....#
-    #...2.#
-    #.....#
-    #.....#
-    #.....#
-    #####.#
+You ask why some of the digits look like `-` or `=` instead of
+\"digits\".
 
-After another minute, the situation resolves itself, giving each
-blizzard back its personal space:
+\"You know, I never did ask the engineers why they did that. Instead of
+using digits four through zero, the digits are *`2`*, *`1`*, *`0`*,
+*minus* (written `-`), and *double-minus* (written `=`). Minus is worth
+-1, and double-minus is worth -2.\"
 
-    #.#####
-    #.....#
-    #....>#
-    #...v.#
-    #.....#
-    #.....#
-    #####.#
+\"So, because ten (in normal numbers) is two fives and no ones, in SNAFU
+it is written `20`. Since eight (in normal numbers) is two fives minus
+two ones, it is written `2=`.\"
 
-Finally, after yet another minute, the rightward-facing blizzard on the
-right is replaced with a new one on the left facing the same direction:
+\"You can do it the other direction, too. Say you have the SNAFU number
+`2=-01`. That\'s `2` in the 625s place, `=` (double-minus) in the 125s
+place, `-` (minus) in the 25s place, `0` in the 5s place, and `1` in the
+1s place. (2 times 625) plus (-2 times 125) plus (-1 times 25) plus (0
+times 5) plus (1 times 1). That\'s 1250 plus -250 plus -25 plus 0
+plus 1. *976*!\"
 
-    #.#####
-    #.....#
-    #>....#
-    #.....#
-    #...v.#
-    #.....#
-    #####.#
+\"I see here that you\'re connected via our premium uplink service, so
+I\'ll transmit our handy SNAFU brochure to you now. Did you need
+anything else?\"
 
-This process repeats at least as long as you are observing it, but
-probably forever.
+You ask if the fuel will even work in these temperatures.
 
-Here is a more complex example:
+\"Wait, it\'s *how* cold? There\'s no *way* the fuel - or *any* fuel -
+would work in those conditions! There are only a few places in the\--
+where did you say you are again?\"
 
-    #.######
-    #>>.<^<#
-    #.<..<<#
-    #>v.><>#
-    #<^v^^>#
-    ######.#
+Just then, you notice one of the Elves pour a few drops from a
+snowflake-shaped container into one of the fuel tanks, thank the support
+representative for their time, and disconnect the call.
 
-Your expedition begins in the only non-wall position in the top row and
-needs to reach the only non-wall position in the bottom row. On each
-minute, you can *move* up, down, left, or right, or you can *wait* in
-place. You and the blizzards act *simultaneously*, and you cannot share
-a position with a blizzard.
+The SNAFU brochure contains a few more examples of decimal (\"normal\")
+numbers and their SNAFU counterparts:
 
-In the above example, the fastest way to reach your goal requires *`18`*
-steps. Drawing the position of the expedition as `E`, one way to achieve
-this is:
+      Decimal          SNAFU
+            1              1
+            2              2
+            3             1=
+            4             1-
+            5             10
+            6             11
+            7             12
+            8             2=
+            9             2-
+           10             20
+           15            1=0
+           20            1-0
+         2022         1=11-2
+        12345        1-0---0
+    314159265  1121-1110-1=0
 
-    Initial state:
-    #E######
-    #>>.<^<#
-    #.<..<<#
-    #>v.><>#
-    #<^v^^>#
-    ######.#
+Based on this process, the SNAFU numbers in the example above can be
+converted to decimal numbers as follows:
 
-    Minute 1, move down:
-    #.######
-    #E>3.<.#
-    #<..<<.#
-    #>2.22.#
-    #>v..^<#
-    ######.#
+     SNAFU  Decimal
+    1=-0-2     1747
+     12111      906
+      2=0=      198
+        21       11
+      2=01      201
+       111       31
+     20012     1257
+       112       32
+     1=-1=      353
+      1-12      107
+        12        7
+        1=        3
+       122       37
 
-    Minute 2, move down:
-    #.######
-    #.2>2..#
-    #E^22^<#
-    #.>2.^>#
-    #.>..<.#
-    ######.#
+In decimal, the sum of these numbers is `4890`.
 
-    Minute 3, wait:
-    #.######
-    #<^<22.#
-    #E2<.2.#
-    #><2>..#
-    #..><..#
-    ######.#
+As you go to input this number on Bob\'s console, you discover that some
+buttons you expected are missing. Instead, you are met with buttons
+labeled `=`, `-`, `0`, `1`, and `2`. Bob needs the input value expressed
+as a SNAFU number, not in decimal.
 
-    Minute 4, move up:
-    #.######
-    #E<..22#
-    #<<.<..#
-    #<2.>>.#
-    #.^22^.#
-    ######.#
+Reversing the process, you can determine that for the decimal number
+`4890`, the SNAFU number you need to supply to Bob\'s console is
+*`2=-1=0`*.
 
-    Minute 5, move right:
-    #.######
-    #2Ev.<>#
-    #<.<..<#
-    #.^>^22#
-    #.2..2.#
-    ######.#
+The Elves are starting to get cold. *What SNAFU number do you supply to
+Bob\'s console?*
 
-    Minute 6, move right:
-    #.######
-    #>2E<.<#
-    #.2v^2<#
-    #>..>2>#
-    #<....>#
-    ######.#
-
-    Minute 7, move down:
-    #.######
-    #.22^2.#
-    #<vE<2.#
-    #>>v<>.#
-    #>....<#
-    ######.#
-
-    Minute 8, move left:
-    #.######
-    #.<>2^.#
-    #.E<<.<#
-    #.22..>#
-    #.2v^2.#
-    ######.#
-
-    Minute 9, move up:
-    #.######
-    #<E2>>.#
-    #.<<.<.#
-    #>2>2^.#
-    #.v><^.#
-    ######.#
-
-    Minute 10, move right:
-    #.######
-    #.2E.>2#
-    #<2v2^.#
-    #<>.>2.#
-    #..<>..#
-    ######.#
-
-    Minute 11, wait:
-    #.######
-    #2^E^2>#
-    #<v<.^<#
-    #..2.>2#
-    #.<..>.#
-    ######.#
-
-    Minute 12, move down:
-    #.######
-    #>>.<^<#
-    #.<E.<<#
-    #>v.><>#
-    #<^v^^>#
-    ######.#
-
-    Minute 13, move down:
-    #.######
-    #.>3.<.#
-    #<..<<.#
-    #>2E22.#
-    #>v..^<#
-    ######.#
-
-    Minute 14, move right:
-    #.######
-    #.2>2..#
-    #.^22^<#
-    #.>2E^>#
-    #.>..<.#
-    ######.#
-
-    Minute 15, move right:
-    #.######
-    #<^<22.#
-    #.2<.2.#
-    #><2>E.#
-    #..><..#
-    ######.#
-
-    Minute 16, move right:
-    #.######
-    #.<..22#
-    #<<.<..#
-    #<2.>>E#
-    #.^22^.#
-    ######.#
-
-    Minute 17, move down:
-    #.######
-    #2.v.<>#
-    #<.<..<#
-    #.^>^22#
-    #.2..2E#
-    ######.#
-
-    Minute 18, move down:
-    #.######
-    #>2.<.<#
-    #.2v^2<#
-    #>..>2>#
-    #<....>#
-    ######E#
-
-*What is the fewest number of minutes required to avoid the blizzards
-and reach the goal?*
-
-Your puzzle answer was `314`.
+Your puzzle answer was `20=2-02-0---02=22=21`.
 
 ## \-\-- Part Two \-\-- {#part2}
 
-As the expedition reaches the far side of the valley, one of the Elves
-looks especially dismayed:
+The [hot air
+balloons]{title="You notice an engraving on the equipment: Balanced Quinary Industries."}
+quickly carry you to the North Pole. As soon as you land, most of the
+expedition is escorted directly to a small building attached to the
+reindeer stables.
 
-He *forgot his snacks* at the entrance to the valley!
+The *head smoothie chef* has just finished warming up the
+industrial-grade smoothie blender as you arrive. It will take *50 stars*
+to fill the blender. The expedition Elves turn their attention to you,
+and you begin emptying the fruit from your pack onto the table.
 
-Since you\'re so good at dodging blizzards, the Elves humbly request
-that you go back for his snacks. From the same initial conditions, how
-quickly can you make it from the start to the goal, then back to the
-start, then back to the goal?
+As you do, a very young Elf - one you recognize from the expedition
+team - approaches the table and holds up a single *star* fruit he found.
+The head smoothie chef places it in the blender.
 
-In the above example, the first trip to the goal takes `18` minutes, the
-trip back to the start takes `23` minutes, and the trip back to the goal
-again takes `13` minutes, for a total time of *`54`* minutes.
+Only *49 stars* to go.
 
-*What is the fewest number of minutes required to reach the goal, go
-back to the start, then reach the goal again?*
-
-Your puzzle answer was `896`.
+If you like, you can .
 
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
