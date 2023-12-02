@@ -62,10 +62,16 @@ part1 input = do
   let answer = sumPossibleIDs <$> input
   printAnswer "Sum of possible game IDs: " answer
 
+power :: Set -> Int
+power (r,g,b) = r * g * b
+
+sumPowers :: Input -> Int
+sumPowers = sum . IM.elems . IM.map (power . mostSeen)
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sumPowers <$> input
+  printAnswer "Sum of powers: " answer
 
 main :: IO ()
 main = do
