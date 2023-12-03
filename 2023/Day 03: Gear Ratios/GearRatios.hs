@@ -91,10 +91,21 @@ part1 input = do
   let answer = sum . partNumbers <$> input
   printAnswer "Sum of part numbers: " answer
 
+potentialGears :: M.Map Coord Symbol -> M.Map Coord Symbol
+potentialGears = M.filter (== '*')
+
+gearRatios :: Input -> [Int]
+gearRatios (nrs, symbols) = map product
+                          . filter ((== 2) . length)
+                          . map (\pGear -> partNumbers (nrs, pGear))
+                          . M.elems
+                          . M.mapWithKey M.singleton
+                          $ potentialGears symbols
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const "P" <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . gearRatios <$> input
+  printAnswer "Sum of gear ratios: " answer
 
 main :: IO ()
 main = do
