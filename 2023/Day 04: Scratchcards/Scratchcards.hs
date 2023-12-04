@@ -45,10 +45,31 @@ part1 input = do
   let answer = totalPoints <$> input
   printAnswer "Total points: " answer
 
+-- totalCards :: Input -> Int
+totalCards original = let scores = M.map (S.size . winningNrs) original
+                          initialCards = M.map (const 1) original
+                       in sum
+                        . M.elems
+                        . M.foldrWithKey (\iD score more nrCards ->
+                                              let n = M.findWithDefault 0
+                                                                        iD
+                                                                        nrCards
+                                                  copyIDs = [ iD + s
+                                                            | s <- [1..score]
+                                                            ]
+                                               in more (foldr (M.adjust (+n))
+                                                              nrCards
+                                                              copyIDs
+                                                       )
+                                         )
+                                         id
+                                         scores
+                        $ initialCards
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = totalCards <$> input
+  printAnswer "Total scratchcards: " answer
 
 main :: IO ()
 main = do
