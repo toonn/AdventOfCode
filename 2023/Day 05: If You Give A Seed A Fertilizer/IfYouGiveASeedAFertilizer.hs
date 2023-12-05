@@ -10,15 +10,17 @@ import qualified Data.ExtendedReal as ER
 import qualified Data.IntegerInterval as II
 import qualified Data.Interval as I
 import qualified Data.IntervalMap.Lazy as IM
+import Data.Maybe (mapMaybe)
 
 import AoC
 
-type Seed = Int
+type Seeds = [Int]
 type Mapping = (Int, Int, Int)
+type SourceToTarget = IM.IntervalMap Integer Integer
 
-type Input = ([Seed], [[Mapping]])
+type Input = (Seeds, [[Mapping]])
 
-seeds :: Parser [Seed]
+seeds :: Parser Seeds
 seeds = lexeme (string "seeds:") *> many integer
 
 mapping :: Parser Mapping
@@ -47,43 +49,83 @@ parser = do
   eof
   pure (s, ms)
 
-mappingToInterval :: Mapping -> (I.Interval Integer, Integer -> Integer)
-mappingToInterval (target, source, rangeLength) =
-  (source <=..< (source + rangeLength), (fromIntegral (target - source) +))
+(<=..<) :: Int -> Int -> I.Interval Integer
+a <=..< b = II.toInterval (finite a II.<=..< finite b)
   where
     finite = ER.Finite . fromIntegral
 
-    (<=..<) :: Int -> Int -> I.Interval Integer
-    a <=..< b = II.toInterval (finite a II.<=..< finite b)
+mappingToInterval :: Mapping -> (I.Interval Integer, Integer)
+mappingToInterval (target, source, rangeLength) =
+  (source <=..< (source + rangeLength), fromIntegral (target - source))
 
-mkMap :: [Mapping] -> IM.IntervalMap Integer (Integer -> Integer)
-mkMap = (<> (IM.whole id))
-      . IM.fromList
+mkMap :: [Mapping] -> SourceToTarget
+mkMap = IM.fromList
       . map mappingToInterval
 
-closestLocation :: Input -> Integer
-closestLocation (s, ms) = minimum
-                        $ foldr (\sToT more sources ->
-                                  more
-                                . map (\source ->
-                                        IM.findWithDefault id source sToT
-                                      $ source
-                                      )
-                                $ sources
+shiftMap :: Integer -> SourceToTarget -> SourceToTarget
+shiftMap shift = IM.map (shift +)
+               . IM.mapKeysMonotonic (\x -> x - shift)
+
+seedToLocationMap :: [[Mapping]] -> SourceToTarget
+seedToLocationMap = foldr (\tMap sToT ->
+                            IM.unions
+                          . (\(as,bs,cs) -> bs <> as <> cs)
+                          . unzip3
+                          . map (\(i,shift) ->
+                                  (\(as,overlaps,cs) ->
+                                    ( as
+                                    , shiftMap shift overlaps
+                                    , cs
+                                    )
+                                  )
+                                $ IM.split (I.mapMonotonic (+ shift) i) sToT
                                 )
-                                id
-                                (map mkMap ms)
-                                (map fromIntegral s)
+                          $ IM.assocs tMap
+                          )
+                          (IM.whole 0)
+                  . map mkMap
+
+seedLocations :: [[Mapping]] -> Seeds -> [Integer]
+seedLocations ms = map (\source ->
+                         source
+                       + IM.findWithDefault 0 source (seedToLocationMap ms)
+                       )
+                 . map fromIntegral
+
+closestLocation :: Input -> Integer
+closestLocation (s, ms) = minimum . seedLocations ms $ s
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
   let answer = closestLocation <$> input
   printAnswer "Closest location: " answer
 
+expandRanges :: Seeds -> [I.Interval Integer]
+expandRanges [] = []
+expandRanges (source:rangeLength:rest) =
+  (source <=..< (source + rangeLength)) : expandRanges rest
+
+lowerBoundLocations :: [[Mapping]] -> [I.Interval Integer] -> [Integer]
+lowerBoundLocations ms =
+  concatMap (\i ->
+              let (_, ms', _) = IM.split i (seedToLocationMap ms)
+               in mapMaybe (\(i',shift) ->
+                             let mLoc | ER.Finite l <- I.lowerBound i'
+                                      = Just (l + shift)
+                                      | otherwise
+                                      = Nothing
+                              in mLoc
+                           )
+                $ IM.assocs ms'
+            )
+
+closestActual :: Input -> Integer
+closestActual (s, ms) = minimum . lowerBoundLocations ms $ expandRanges s
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = closestActual <$> input
+  printAnswer "Closest location of all seeds: " answer
 
 main :: IO ()
 main = do
