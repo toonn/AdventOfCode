@@ -40,10 +40,15 @@ part1 input = do
   let answer = product . map nrWays <$> input
   printAnswer "Product of number of ways to win: " answer
 
+fixKerning :: Input -> (Int, Int)
+fixKerning = (\(t,d) -> (read t, read d))
+           . foldr (\(t,d) (t',d') -> (show t <> t', show d <> d'))
+                   ("","")
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = nrWays . fixKerning <$> input
+  printAnswer "Ways to win in one long race: " answer
 
 main :: IO ()
 main = do
