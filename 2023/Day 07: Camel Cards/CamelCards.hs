@@ -52,24 +52,43 @@ compareHands types h1 h2 = let t1 = types M.! h1
                                         | otherwise = h1 `compare` h2
                             in ordering
 
-totalWinnings :: Input -> Int
-totalWinnings hs = let handBids = M.fromList hs
-                       types = M.mapWithKey (const . handType) handBids
-                       hands = M.keys handBids
-                       ranked = sortBy (compareHands types) hands
-                    in foldr (\(r, h) tot -> r * (handBids M.! h) + tot)
-                             0
-                             (zip [1..] ranked)
+totalWinnings :: (Hand -> HandType) -> Input -> Int
+totalWinnings hT hs = let handBids = M.fromList hs
+                          types = M.mapWithKey (const . hT) handBids
+                          hands = M.keys handBids
+                          ranked = sortBy (compareHands types) hands
+                       in foldr (\(r, h) tot -> r * (handBids M.! h) + tot)
+                                0
+                                (zip [1..] ranked)
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = totalWinnings <$> input
+  let answer = totalWinnings handType <$> input
   printAnswer "Total winnings: " answer
+
+jokerFixup :: Input -> Input
+jokerFixup = map (\(h,b) -> (map (\v -> if v == 11 then 1 else v) h, b))
+
+jokerType :: Hand -> HandType
+jokerType = (\counts ->
+              let jokerCount = M.findWithDefault 0 1 counts
+                  jokerless = M.delete 1 counts
+                  highest = jokerCount + maximum (0 : M.elems jokerless)
+                  hType | highest == 5 = 7
+                        | highest == 4 = 6
+                        | highest == 3, M.size jokerless == 2 = 5
+                        | highest == 3, M.size jokerless == 3 = 4
+                        | highest == 2, M.size jokerless == 3 = 3
+                        | otherwise = highest
+               in hType
+            )
+          . foldr (\c -> M.insertWith (+) c 1)
+                  M.empty
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = totalWinnings jokerType . jokerFixup <$> input
+  printAnswer "Total winnings with joker: " answer
 
 main :: IO ()
 main = do
