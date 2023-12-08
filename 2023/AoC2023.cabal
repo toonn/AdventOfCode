@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2023
-version:             2023.12.7.2
+version:             2023.12.8.1
 synopsis:            Advent of Code 2023
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -104,4 +104,16 @@ executable CamelCards
                     , containers ^>= 0.6.7
   other-modules:      Paths_AoC2023
   hs-source-dirs:     "Day 07: Camel Cards"
+  default-language:   Haskell2010
+
+executable HauntedWasteland
+  main-is:            HauntedWasteland.hs
+  build-depends:      base ^>= 4.17.2.1
+                    , AoC2023
+                    , criterion ^>= 1.6.0.0
+                    , megaparsec ^>= 9.3.0
+                    , silently ^>= 1.2.5.3
+                    , containers ^>= 0.6.7
+  other-modules:      Paths_AoC2023
+  hs-source-dirs:     "Day 08: Haunted Wasteland"
   default-language:   Haskell2010
