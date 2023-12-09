@@ -11,7 +11,7 @@ import AoC
 type Input = [[Int]]
 
 parser :: Parser Input
-parser = sepEndBy (sepBy (signed integer) hspace) eol <* eof
+parser = sepEndBy (some (signed integer)) eol <* eof
 
 extrapolate :: [Int] -> Int
 extrapolate vs | all (== 0) vs = 0
