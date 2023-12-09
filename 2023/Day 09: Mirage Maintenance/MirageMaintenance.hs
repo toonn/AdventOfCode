@@ -25,10 +25,18 @@ part1 input = do
   let answer = sum . map extrapolate <$> input
   printAnswer "Sum of extrapolated values: " answer
 
+extrapolateBackward :: [Int] -> Int
+extrapolateBackward vs | all (== 0) vs = 0
+                       | otherwise
+                       = let diffs = zipWith (-) (tail vs) vs
+                             extrapolatedDiff = extrapolateBackward diffs
+                             extrapolated = head vs - extrapolatedDiff
+                          in extrapolated
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . map extrapolateBackward <$> input
+  printAnswer "Sum of extrapolated previous values: " answer
 
 main :: IO ()
 main = do
