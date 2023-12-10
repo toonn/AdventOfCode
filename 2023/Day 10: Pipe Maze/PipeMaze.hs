@@ -8,10 +8,34 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 import AoC
 
+import Data.List (partition)
 import qualified Data.Map as M
 import qualified Data.Set as S
 
 type YX = (Int, Int)
+
+data SemiInt = I Int | S Int -- S n = n + 0.5
+  deriving (Eq, Show)
+
+instance Ord SemiInt where
+  compare (I a) (S b) | a == b = LT
+  compare (S a) (I b) | a == b = GT
+  compare l r = compare (case l of
+                           I a -> a
+                           S a -> a
+                        )
+                        (case r of
+                           I b -> b
+                           S b -> b
+                        )
+
+instance Enum SemiInt where
+  toEnum i | (q,r) <- i `quotRem` 2 = let si | r == 0 = I q
+                                             | otherwise = S q
+                                        in si
+
+  fromEnum (I i) = i * 2
+  fromEnum (S i) = i * 2 + 1
 
 type Input = [[S.Set YX]]
 
@@ -95,10 +119,173 @@ part1 input = do
   let answer = farthestDistance . mkField <$> input
   printAnswer "Distance to farthest point: " answer
 
+semicontinue :: [YX] -> S.Set (SemiInt, SemiInt)
+semicontinue loop = S.fromList
+                  $ map (\(y,x) -> (I y, I x)) loop
+                <> zipWith (\(y1,x1) (y2,x2) ->
+                             let semiY | y1 < y2   = S y1
+                                       | y1 > y2   = S y2
+                                       | otherwise = I y1
+                                 semiX | x1 < x2   = S x1
+                                       | x1 > x2   = S x2
+                                       | otherwise = I x1
+                              in (semiY, semiX)
+                           )
+                           loop
+                           (tail loop <> take 1 loop)
+
+semiGrid :: M.Map YX (S.Set YX) -> M.Map (SemiInt, SemiInt) (S.Set YX)
+semiGrid field =
+  let field' = M.mapKeys (\(y,x) -> (I y, I x)) field
+      shiftedDown = field'
+                 <> ( M.fromSet (const S.empty)
+                    . S.map (\(I y,x) -> (S y, x))
+                    . M.keysSet
+                    $ field'
+                    )
+      shiftedRight = shiftedDown
+                  <> ( M.fromSet (const S.empty)
+                     . S.map (\(y,I x) -> (y, S x))
+                     . M.keysSet
+                     $ shiftedDown
+                     )
+      shiftedUp = shiftedRight
+               <> ( M.fromSet (const S.empty)
+                  . S.map (\(I y,x) -> (S (y - 1), x))
+                  . M.keysSet
+                  . M.filterWithKey (\(y, _) _ -> y == I 0)
+                  $ shiftedRight
+                  )
+      semiField = shiftedUp
+               <> ( M.fromSet (const S.empty)
+                  . S.map (\(y,I x) -> (y, S (x - 1)))
+                  . M.keysSet
+                  . M.filterWithKey (\(_, x) _ -> x == I 0)
+                  $ shiftedUp
+                  )
+   in semiField
+
+-- Very inefficient implementation left here for posterity
+--
+-- semiDistance :: SemiInt -> SemiInt -> SemiInt
+-- semiDistance (I a) (I b) = I (abs (a - b))
+-- semiDistance (S a) (I b) | a < b = S (b - a - 1)
+--                          | otherwise = S (a - b)
+-- semiDistance (I a) (S b) | a > b = S (a - b - 1)
+--                          | otherwise = S (b - a)
+-- semiDistance (S a) (S b) = I (abs (a - b))
+--
+-- distance :: (SemiInt, SemiInt) -> (SemiInt, SemiInt) -> SemiInt
+-- distance (sY1, sX1) (sY2, sX2) = let dy = semiDistance sY1 sY2
+--                                      dx = semiDistance sX1 sX2
+--                                      d | I y <- dy, I x <- dx = I (y + x)
+--                                        | I y <- dy, S x <- dx = S (y + x)
+--                                        | S y <- dy, I x <- dx = S (y + x)
+--                                        | S y <- dy, S x <- dx = I (y + x + 1)
+--                                   in d
+--
+-- adjacent :: S.Set (SemiInt, SemiInt) -> S.Set (SemiInt, SemiInt) -> Bool
+-- adjacent s1 s2 = S.foldr (\sYX1 more _ ->
+--                            let r | S.foldr (\sYX2 more _ ->
+--                                              let r | distance sYX1 sYX2 == S 0
+--                                                    = True
+--                                                    | otherwise
+--                                                    = more ()
+--                                               in r
+--                                            )
+--                                            (const False)
+--                                            s2
+--                                            ()
+--                                  = True
+--                                  | otherwise
+--                                  = more ()
+--                             in r
+--                          )
+--                          (const False)
+--                          s1
+--                          ()
+--
+-- mergeFirstAdjacent :: S.Set (SemiInt, SemiInt) -> [S.Set (SemiInt, SemiInt)]
+--                    -> (Bool, [S.Set (SemiInt, SemiInt)])
+-- mergeFirstAdjacent group [] = (False, [])
+-- mergeFirstAdjacent group (g:groups) | adjacent group g
+--                                     = (True, group <> g : groups)
+--                                     | otherwise
+--                                     , (b, groups') <- mergeFirstAdjacent group
+--                                                                          groups
+--                                     = (b, g : groups')
+--
+-- mergeAdjacent :: [S.Set (SemiInt, SemiInt)] -> [S.Set (SemiInt, SemiInt)]
+-- mergeAdjacent [] = []
+-- mergeAdjacent (group : groups) =
+--   let (merged, groups') = mergeFirstAdjacent group groups
+--       contiguousGroups | merged = mergeAdjacent groups'
+--                        | otherwise = group : mergeAdjacent groups'
+--    in contiguousGroups
+
+semiPred :: SemiInt -> SemiInt
+semiPred (I x) = S (x - 1)
+semiPred (S x) = I x
+
+semiSucc :: SemiInt -> SemiInt
+semiSucc (I x) = S x
+semiSucc (S x) = I (x + 1)
+
+sortIntoBins :: [(SemiInt, SemiInt)] -> [S.Set (SemiInt, SemiInt)]
+sortIntoBins ps = foldr (\p more bins ->
+                          let pNs | (y, x) <- p
+                                  = S.fromAscList [ (semiPred y, x)
+                                                  , (y, semiPred x)
+                                                  , (y, semiSucc x)
+                                                  , (semiSucc y, x)
+                                                  ]
+                              (nonAdjacentBins, adjacentBins) =
+                                partition (S.null . S.intersection pNs) bins
+                              adjacentBin | null adjacentBins
+                                          = S.singleton p
+                                          | otherwise
+                                          = S.insert p (mconcat adjacentBins)
+                           in more (adjacentBin : nonAdjacentBins)
+                        )
+                        id
+                        ps
+                        []
+
+contiguous :: S.Set (SemiInt, SemiInt) -> [S.Set (SemiInt, SemiInt)]
+contiguous ps = sortIntoBins
+              . S.toList
+              $ ps
+
+enclosedTiles :: (YX, M.Map YX (S.Set YX)) -> S.Set (SemiInt, SemiInt)
+enclosedTiles (start, field) =
+  let loop = start : follow field start (S.findMin (field M.! start))
+      semicontinuousLoop = semicontinue loop
+      semiField = semiGrid field
+      offLoop = M.withoutKeys semiField semicontinuousLoop
+      contiguousRegions = contiguous . M.keysSet $ offLoop
+      ((minY, minX), (maxY,maxX)) | let ks = M.keysSet semiField
+                                  = (S.findMin ks, S.findMax ks)
+      border = mconcat
+             . map S.fromAscList
+             $ [ [(minY, x) | x <- [minX..maxX]]
+               , [(maxY, x) | x <- [minX..maxX]]
+               , [(y, minX) | y <- [minY..maxY]]
+               , [(y, maxX) | y <- [minY..maxY]]
+               ]
+
+      enclosed = S.filter (\(sy, sx) -> let whole | I _ <- sy, I _ <- sx = True
+                                                  | otherwise = False
+                                         in whole
+                          )
+               . mconcat
+               . filter ((== 0) . S.size . S.intersection border)
+               $ contiguousRegions
+   in enclosed
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = S.size . enclosedTiles . mkField <$> input
+  printAnswer "Tiles enclosed by the loop: " answer
 
 main :: IO ()
 main = do
