@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2023
-version:             2023.12.10.2
+version:             2023.12.11.1
 synopsis:            Advent of Code 2023
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -140,4 +140,16 @@ executable PipeMaze
                     , containers ^>= 0.6.7
   other-modules:      Paths_AoC2023
   hs-source-dirs:     "Day 10: Pipe Maze"
+  default-language:   Haskell2010
+
+executable CosmicExpansion
+  main-is:            CosmicExpansion.hs
+  build-depends:      base ^>= 4.17.2.1
+                    , AoC2023
+                    , criterion ^>= 1.6.0.0
+                    , megaparsec ^>= 9.3.0
+                    , silently ^>= 1.2.5.3
+                    , containers ^>= 0.6.7
+  other-modules:      Paths_AoC2023
+  hs-source-dirs:     "Day 11: Cosmic Expansion"
   default-language:   Haskell2010
