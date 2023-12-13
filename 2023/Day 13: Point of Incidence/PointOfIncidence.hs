@@ -19,8 +19,8 @@ pattern = sepEndBy1 (takeWhile1P (Just "Ash or Rocks") (`elem` ".#")) eol
 parser :: Parser Input
 parser = sepBy1 pattern eol <* eof
 
-reflect :: Eq a => [[a]] -> Int
-reflect rows =
+reflect :: Eq a => ([[a]] -> [[a]] -> Bool) -> [[a]] -> Int
+reflect equals rows =
   let reflectRow =
         findIndex id
                   (zipWith (\init tail ->
@@ -32,7 +32,7 @@ reflect rows =
                                  reflected | null tail'
                                            = False
                                            | otherwise
-                                           = init' == reverse tail'
+                                           = init' `equals` reverse tail'
                               in reflected
                            )
                            (inits rows)
@@ -50,7 +50,7 @@ reflect rows =
                                  reflected | null tail'
                                            = False
                                            | otherwise
-                                           = init' == reverse tail'
+                                           = init' `equals` reverse tail'
                               in reflected
                            )
                            (inits cols)
@@ -62,13 +62,24 @@ reflect rows =
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = sum . map reflect <$> input
+  let answer = sum . map (reflect (==)) <$> input
   printAnswer "Summary: " answer
+
+(##) :: Eq a => [[a]] -> [[a]] -> Bool
+[] ## []         = False
+[] ## _          = False
+_  ## []         = False
+(a:as) ## (b:bs) | a == b
+                 = as ## bs
+                 | a `hamming` b == 1
+                 = as == bs
+                 | otherwise
+                 = False
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . map (reflect (##)) <$> input
+  printAnswer "Summary after fixing smudges: " answer
 
 main :: IO ()
 main = do

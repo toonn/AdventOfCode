@@ -32,6 +32,9 @@ printAnswer question answer =
          (putStrLn . (question <>) . show)
          answer
 
+hamming :: (Eq a, Num d) => [a] -> [a] -> d
+hamming as bs = fromIntegral . length . filter id $ zipWith (/=) as bs
+
 manhattan :: Integral a => (a,a) -> (a,a) -> a
 manhattan (x,y) (x',y') = abs (x - x') + abs (y - y')
 
