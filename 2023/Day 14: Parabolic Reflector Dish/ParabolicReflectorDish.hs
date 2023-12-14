@@ -8,6 +8,7 @@ import Text.Megaparsec.Char
 import AoC
 
 import Control.Arrow (first, second)
+import qualified Data.Map as M
 import qualified Data.Set as S
 
 type YX = (Int, Int)
@@ -53,7 +54,7 @@ groupByIndex toI partition foldable =
                    | otherwise = more f'
            in is : rest
         )
-        (error "Infinite lists don't end")
+        (error "Infinite lists shouldn't end")
         [0..]
         foldable
 
@@ -86,8 +87,8 @@ roll dir (border, mobile, stationary) =
                | otherwise = snd
       rolled = map (\(ms,ss) ->
                      let edge | dir `elem` [North, West] = -1
-                              | dir == East = snd border + 1
-                              | dir == South = fst border + 1
+                              | dir == East = snd border
+                              | dir == South = fst border
                          shifted = shift dir
                                          edge
                                          (S.map variable ms)
@@ -114,10 +115,33 @@ part1 input = do
   let answer = load . roll North . mkPlatform <$> input
   printAnswer "Total load on north support beams: " answer
 
+spinCycle :: Platform -> Platform
+spinCycle platform = foldr (\r more p -> more (r p))
+                           id
+                           (map roll [North, West, South, East])
+                           platform
+
+spinTimes :: Int -> Platform -> Platform
+spinTimes cycles platform =
+  spinForever !! (startUp + (cycles - startUp) `rem` period)
+  where
+    spinForever = iterate spinCycle platform
+    (startUp, period) = foldr (\p more seen cycle ->
+                                let r | Just n <- seen M.!? p
+                                      = (n - 1, cycle - n)
+                                      | otherwise
+                                      = more (M.insert p cycle seen) (cycle + 1)
+                                 in r
+                              )
+                              (error "Spinning forever somehow stopped")
+                              spinForever
+                              M.empty
+                              0
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = load . spinTimes 1000000000 . mkPlatform <$> input
+  printAnswer "Load after 1000000000 spin cycles: " answer
 
 main :: IO ()
 main = do
