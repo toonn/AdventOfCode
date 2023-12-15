@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2023
-version:             2023.12.14.2
+version:             2023.12.15.1
 synopsis:            Advent of Code 2023
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -188,4 +188,16 @@ executable ParabolicReflectorDish
                     , containers ^>= 0.6.7
   other-modules:      Paths_AoC2023
   hs-source-dirs:     "Day 14: Parabolic Reflector Dish"
+  default-language:   Haskell2010
+
+executable LensLibrary
+  main-is:            LensLibrary.hs
+  build-depends:      base ^>= 4.17.2.1
+                    , AoC2023
+                    , criterion ^>= 1.6.0.0
+                    , megaparsec ^>= 9.3.0
+                    , silently ^>= 1.2.5.3
+                    , containers ^>= 0.6.7
+  other-modules:      Paths_AoC2023
+  hs-source-dirs:     "Day 15: Lens Library"
   default-language:   Haskell2010
