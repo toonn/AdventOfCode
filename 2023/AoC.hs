@@ -1,6 +1,9 @@
 module AoC where
 
+import Control.Arrow ((***))
+import Control.Monad (join)
 import Data.Void (Void)
+import qualified Data.Map as M
 import System.FilePath ((</>))
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -31,6 +34,23 @@ printAnswer question answer =
   either (putStrLn . errorBundlePretty)
          (putStrLn . (question <>) . show)
          answer
+
+both :: (a -> b) -> (a,a) -> (b,b)
+both = join (***)
+
+type YX = (Int, Int)
+
+foldYX :: [[a]] -> M.Map YX a
+foldYX rows = M.fromAscList
+            $ foldr (\row more y ->
+                      foldr (\a more x -> ((y, x), a) : more (x + 1))
+                            (const (more (y + 1)))
+                            row
+                            0
+                    )
+                    (const [])
+                    rows
+                    0
 
 hamming :: (Eq a, Num d) => [a] -> [a] -> d
 hamming as bs = fromIntegral . length . filter id $ zipWith (/=) as bs
