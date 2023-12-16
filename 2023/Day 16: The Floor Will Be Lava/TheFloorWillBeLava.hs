@@ -86,18 +86,30 @@ beam (border, grid) dir (y,x) visited
                     | otherwise = visited'
      in visitedNext
 
-energized :: Grid -> Int
-energized grid = M.size . beam grid '>' (0,0) $ M.empty
+energized :: Char -> YX -> Grid -> Int
+energized dir yx grid = M.size . beam grid dir yx $ M.empty
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = energized . mkGrid <$> input
+  let answer = energized '>' (0,0) . mkGrid <$> input
   printAnswer "Energized tiles: " answer
+
+startingConfigurations :: Grid -> [(Char, YX)]
+startingConfigurations ((bY,bX), _) =
+  [('>', (y,0)) | y <- [0..bY] ]
+  <> [('<', (y,bX)) | y <- [0..bY] ]
+  <> [('v', (0,x)) | x <- [0..bX] ]
+  <> [('^', (bY,x)) | x <- [0..bX] ]
+
+maximumPower :: Grid -> Int
+maximumPower grid = maximum
+                  . map (($ grid) . uncurry energized)
+                  $ startingConfigurations grid
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = maximumPower . mkGrid <$> input
+  printAnswer "Largest number of tiles energized: " answer
 
 main :: IO ()
 main = do
