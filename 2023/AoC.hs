@@ -1,7 +1,8 @@
 module AoC where
 
-import Control.Arrow ((***))
+import Control.Arrow ((&&&), (***))
 import Control.Monad (join)
+import qualified Data.PQueue.Prio.Min as PQ
 import Data.Void (Void)
 import qualified Data.Map as M
 import System.FilePath ((</>))
@@ -38,6 +39,9 @@ printAnswer question answer =
 both :: (a -> b) -> (a,a) -> (b,b)
 both = join (***)
 
+dupe :: a -> (a,a)
+dupe = id &&& id
+
 type YX = (Int, Int)
 
 foldYX :: [[a]] -> M.Map YX a
@@ -60,3 +64,46 @@ manhattan (x,y) (x',y') = abs (x - x') + abs (y - y')
 
 nTimes :: Int -> (a -> a) -> a -> a
 nTimes rounds = foldr (.) id . replicate rounds
+
+-- | A* - Because it comes back every year.
+--
+-- Based on the [pseudocode on Wikipedia](
+-- https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode).
+--
+-- @since 2023.12.17.1
+aStar :: (Ord state, Show state)
+      => (state -> [state])
+      -> (state -> state -> Int)
+      -> (state -> Int)
+      -> (state -> Bool)
+      -> state
+      -> Int
+aStar neighbors distance heuristic isGoal start =
+  go (M.singleton start 0) (PQ.singleton (heuristic start) start)
+  where
+    -- Can't provide a type signature without ScopedTypeVariables because state
+    -- here should be the same as in the signature for aStar.
+    -- go :: M.Map state Int -> PQ.MinPQueue Int state -> Int
+    go shortestPaths ((_, current) PQ.:< openSet)
+      | isGoal current = shortestPaths M.! current
+      | current_sP <- shortestPaths M.! current
+      = uncurry go
+      $ foldr (\neighbor more (sPs, oS) ->
+                let tentative_sP = current_sP + distance current neighbor
+                    next | Just neighbor_sP <- shortestPaths M.!? neighbor
+                         , tentative_sP >= neighbor_sP
+                         = (sPs, oS)
+                         | otherwise
+                         = ( M.insert neighbor tentative_sP sPs
+                           , -- The pseudocode avoids duplicating states in the
+                             -- openSet. It shouldn't matter much, as long as
+                             -- the duplicated work is small enough.
+                             PQ.insert (tentative_sP + heuristic neighbor)
+                                       neighbor
+                                       oS
+                           )
+                 in more next
+              )
+              id
+              (neighbors current)
+              (shortestPaths, openSet)
