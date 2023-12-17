@@ -69,10 +69,52 @@ part1 input = do
              . mkGrid <$> input
   printAnswer "Least heat loss: " answer
 
+ultraNeighbors :: YX -> CountDirPlace -> [CountDirPlace]
+ultraNeighbors (bY,bX) (sameDirCount, dir, (y,x))
+  = mapMaybe (\(d, (y',x')) -> let sameDirCount' | dir == d = sameDirCount + 1
+                                                 | otherwise = 1
+                                   s | dir /= opposite d
+                                     , sameDirCount' <= 10
+                                     , 0 <= y' && y' <= bY
+                                     , 0 <= x' && x' <= bX
+                                     , dir == d || sameDirCount >= 4
+                                     || dir == '.'
+                                     = Just (sameDirCount', d, (y',x'))
+                                     | otherwise
+                                     = Nothing
+                                in s
+             )
+  $ zip "^<>v"
+        [ (y + dy, x + dx) | dy <- [-1..1], dx <- [-1..1], abs dy /= abs dx ]
+  where
+    opposite '^' = 'v'
+    opposite '>' = '<'
+    opposite 'v' = '^'
+    opposite _   = '>'
+
+ultraTwist :: YX -> CountDirPlace -> Int
+ultraTwist goal (_, _, yx) = uncurry twist (distance goal yx)
+  where
+    distance (y,x) (y',x') = (abs (y - y'), abs (x - x'))
+    twist a b | a > b = twist b a
+              | otherwise = let steps | (q,r) <- b `quotRem` 10
+                                      , q > 0 || r >= 4
+                                      = q + 1
+                                      | otherwise
+                                      = 2
+                             in b + a + (steps - (a `quot` 4 + 1)) * 4
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = (\(goal, blocks) ->
+                 aStar (ultraNeighbors goal)
+                       (heatLoss blocks)
+                       (ultraTwist goal)
+                       (\(_, _, p) -> p == goal)
+                       (0, '.', (0,0))
+               )
+             . mkGrid <$> input
+  printAnswer "Least heat loss with an ultra crucible: " answer
 
 main :: IO ()
 main = do
