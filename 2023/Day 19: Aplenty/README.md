@@ -91,3 +91,30 @@ gives the sum total of *`19114`*.
 Sort through all of the parts you\'ve been given; *what do you get if
 you add together all of the rating numbers for all of the parts that
 ultimately get accepted?*
+
+Your puzzle answer was `509597`.
+
+## \-\-- Part Two \-\-- {#part2}
+
+Even with your help, the sorting process *still* isn\'t fast enough.
+
+One of the Elves comes up with a new plan: rather than sort parts
+individually through all of these workflows, maybe you can figure out in
+advance which combinations of ratings will be accepted or rejected.
+
+Each of the four ratings (`x`, `m`, `a`, `s`) can have an integer value
+ranging from a minimum of `1` to a maximum of `4000`. Of *all possible
+distinct combinations* of ratings, your job is to figure out which ones
+will be *accepted*.
+
+In the above example, there are *`167409079868000`* distinct
+combinations of ratings that will be accepted.
+
+Consider only your list of workflows; the list of part ratings that the
+Elves wanted you to sort is no longer relevant. *How many distinct
+combinations of ratings will be accepted by the Elves\' workflows?*
+
+Your puzzle answer was `143219569011526`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
