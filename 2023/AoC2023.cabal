@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2023
-version:             2023.12.19.2
+version:             2023.12.20.1
 synopsis:            Advent of Code 2023
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -252,4 +252,16 @@ executable Aplenty
                     , extended-reals ^>= 0.2.4.0
   other-modules:      Paths_AoC2023
   hs-source-dirs:     "Day 19: Aplenty"
+  default-language:   Haskell2010
+
+executable PulsePropagation
+  main-is:            PulsePropagation.hs
+  build-depends:      base ^>= 4.17.2.1
+                    , AoC2023 ^>= 2023.12.17.1
+                    , criterion ^>= 1.6.0.0
+                    , megaparsec ^>= 9.3.0
+                    , silently ^>= 1.2.5.3
+                    , containers ^>= 0.6.7
+  other-modules:      Paths_AoC2023
+  hs-source-dirs:     "Day 20: Pulse Propagation"
   default-language:   Haskell2010
