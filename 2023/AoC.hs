@@ -2,9 +2,10 @@ module AoC where
 
 import Control.Arrow ((&&&), (***))
 import Control.Monad (join)
-import qualified Data.PQueue.Prio.Min as PQ
-import Data.Void (Void)
 import qualified Data.Map as M
+import qualified Data.PQueue.Prio.Min as PQ
+import qualified Data.Set as S
+import Data.Void (Void)
 import System.FilePath ((</>))
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -107,3 +108,16 @@ aStar neighbors distance heuristic isGoal start =
               id
               (neighbors current)
               (shortestPaths, openSet)
+
+-- | Transitive Closure of a Map from keys to sets of keys, representing a DAG
+--
+-- Based on repeated BFS.
+transitiveClosure :: Ord a => M.Map a (S.Set a) -> M.Map a (S.Set a)
+transitiveClosure m =
+  let m' = M.map (S.foldr (S.union . (\k -> M.findWithDefault S.empty k m))
+                          S.empty
+                 )
+                 m
+      closure | m == m' = m
+              | otherwise = transitiveClosure m'
+   in closure
