@@ -37,6 +37,10 @@ printAnswer question answer =
          (putStrLn . (question <>) . show)
          answer
 
+-- Parser for the common case of a grid of characters
+characterGrid :: Parser [[Char]]
+characterGrid = sepEndBy1 (takeWhile1P (Just "Any but a newline") (/= '\n')) eol
+
 both :: (a -> b) -> (a,a) -> (b,b)
 both = join (***)
 
