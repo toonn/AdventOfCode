@@ -9,6 +9,7 @@ import AoC
 
 import Data.Char (isLetter)
 import qualified Data.Map as M
+import qualified Data.Set as S
 
 type Name = String
 type Type = Char
@@ -36,21 +37,21 @@ moduleDescription = do
 parser :: Parser Input
 parser = sepEndBy1 moduleDescription eol <* eof
 
+inputs :: Configuration -> M.Map Name [Name]
+inputs = M.foldrWithKey (\n (_,ds) is ->
+                          foldr (\d -> M.insertWith (<>) d [n])
+                                is
+                                ds
+                        )
+                        M.empty
+
 initialStates :: Configuration -> States
 initialStates c = ( 0
                   , 0
                   , M.map (const False) . M.filter ((== '%') . fst) $ c
-                  , let inputs = M.foldrWithKey
-                                   (\n (_,ds) is ->
-                                     foldr (\d -> M.insertWith (<>) d [n])
-                                           is
-                                           ds
-                                   )
-                                   M.empty
-                                   c
-                     in M.mapWithKey (\n _ -> M.fromList
+                  , M.mapWithKey (\n _ -> M.fromList
                                             . map (\i -> (i, False))
-                                            $ inputs M.! n
+                                            $ inputs c M.! n
                                      )
                       . M.filter ((== '&') . fst)
                       $ c
@@ -98,10 +99,33 @@ part1 input = do
            <$> input
   printAnswer "Product of low and high pulses sent: " answer
 
+-- Entirely tailored solution to my input.
+-- Find the period of all the inputs to the conjunction "zh" right before "rx".
+-- Then guess that they output a high pulse on the last step of the period.
+-- Find the LCM of the periods because that's when all of them will
+-- synchronise.
+period :: Configuration -> Int
+period configuration =
+  let states = initialStates configuration
+      is = M.map S.fromList . inputs $ configuration
+      dependencies = transitiveClosure is
+      go :: States -> Int -> Name -> Int
+      go ss n m | n > 0, is <- dependencies M.! m
+                , (_,_,sFFs,sCs) <- ss
+                , (_,_,statesFFs,statesCs) <- states
+                , M.restrictKeys sFFs is == M.restrictKeys statesFFs is
+                , M.restrictKeys sCs is == M.restrictKeys statesCs is
+                = n
+                | otherwise = go (push configuration ss 1) (n + 1) m
+
+      states' = flow configuration states [("button", False, "broadcaster")]
+   in foldr1 lcm . map (go states 0) . S.toList $ is M.! "zh"
+
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = period . M.fromList <$> input
+  printAnswer "Button presses for a low pulse to rx: " answer
 
 main :: IO ()
 main = do

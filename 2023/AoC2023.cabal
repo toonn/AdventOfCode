@@ -231,7 +231,7 @@ executable ClumsyCrucible
 executable LavaductLagoon
   main-is:            LavaductLagoon.hs
   build-depends:      base ^>= 4.17.2.1
-                    , AoC2023 ^>= 2023.12.17.1
+                    , AoC2023
                     , criterion ^>= 1.6.0.0
                     , megaparsec ^>= 9.3.0
                     , silently ^>= 1.2.5.3
@@ -243,7 +243,7 @@ executable LavaductLagoon
 executable Aplenty
   main-is:            Aplenty.hs
   build-depends:      base ^>= 4.17.2.1
-                    , AoC2023 ^>= 2023.12.17.1
+                    , AoC2023
                     , criterion ^>= 1.6.0.0
                     , megaparsec ^>= 9.3.0
                     , silently ^>= 1.2.5.3
@@ -257,7 +257,7 @@ executable Aplenty
 executable PulsePropagation
   main-is:            PulsePropagation.hs
   build-depends:      base ^>= 4.17.2.1
-                    , AoC2023 ^>= 2023.12.17.1
+                    , AoC2023
                     , criterion ^>= 1.6.0.0
                     , megaparsec ^>= 9.3.0
                     , silently ^>= 1.2.5.3
