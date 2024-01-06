@@ -78,10 +78,55 @@ part1 input = do
   let answer = supporting . settle <$> input
   printAnswer "Safe bricks to disintegrate: " answer
 
+above :: (XYZ,XYZ) -> (XYZ,XYZ) -> Bool
+above ((_,_,z1),(_,_,_)) ((_,_,c1),(_,_,_)) = z1 < c1
+
+dropClosure :: [(XYZ,XYZ)] -> [((XYZ,XYZ), [(XYZ,XYZ)])] -> [(XYZ,XYZ)]
+dropClosure disintegrated standing =
+  let (ds, standing') = foldr (\(b, unders) more (dised, sts) ->
+                                let unders' = unders \\ dised
+                                    (dised', sts') | null unders'
+                                                   = (b:dised, sts)
+                                                   | otherwise
+                                                   = (dised, (b, unders') : sts)
+                                 in more (dised', sts')
+                              )
+                              id
+                              standing
+                              (disintegrated, [])
+      disintegrated' | disintegrated == ds = disintegrated
+                     | otherwise = dropClosure ds standing'
+   in disintegrated'
+
+falling :: Input -> [Int]
+falling blocks =
+  let supports = map (\block ->
+                       ( block
+                       , filter (underneath block)
+                       . filter (overlap block)
+                       $ blocks
+                       )
+                     )
+                     blocks
+      uniqueSupports = nub
+                     . mconcat
+                     . filter ((== 1) . length)
+                     . map snd
+                     $ supports
+   in map (\b ->
+            subtract 1
+          . length
+          . dropClosure [b]
+          . filter ((/= b) . fst)
+          . filter (not . null . snd)
+          $ supports
+          )
+          uniqueSupports
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . falling . settle <$> input
+  printAnswer "Sum of fallable bricks: " answer
 
 main :: IO ()
 main = do
