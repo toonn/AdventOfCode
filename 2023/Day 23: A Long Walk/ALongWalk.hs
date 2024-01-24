@@ -9,6 +9,7 @@ import AoC
 
 import Data.List (partition)
 import qualified Data.Map as M
+import Data.Maybe (fromJust)
 import qualified Data.Set as S
 
 type VisitedPotentialPlace = (S.Set YX, Int, YX, Int)
@@ -56,7 +57,7 @@ neighbors trails (visited, potentialPath, yx, l) =
            , location /= contrary
            ]
    in map (\(vs', yx', l') ->
-            (visited <> vs', potentialPath - length vs', yx', l')
+            (vs', potentialPath - length vs', yx', l')
           )
           ns
 
@@ -95,10 +96,53 @@ part1 input = do
            <$> input
   printAnswer "Steps in the longest hike: " answer
 
+adjacency :: HikingTrails -> YX -> M.Map YX (S.Set (YX, Int))
+          -> M.Map YX (S.Set (YX, Int))
+adjacency trails start adM =
+  let ns = S.fromList
+         . map (\(_,_,yx,d) -> (yx,d))
+         $ neighbors trails (S.singleton start, 0, start, 0)
+      newNs = S.filter ((`S.notMember` M.keysSet adM) . fst) ns
+   in S.foldr (adjacency trails . fst)
+              ( M.insert start ns (M.fromSet (const mempty) (S.map fst newNs))
+             <> adM
+              )
+              newNs
+
+dfs' :: M.Map YX (S.Set (YX, Int)) -> YX -> S.Set YX -> YX -> Maybe Int
+dfs' adM goal visited start
+  | goal == start
+  = Just 0
+  | otherwise
+  = let ns = adM M.! start
+        ns' | g <- S.filter ((== goal) . fst) ns, length g == 1 = g
+            | otherwise = S.filter ((`S.notMember` visited) . fst) ns
+     in foldr (\(n, d) mLongest ->
+                let mLonger = (d +) <$> dfs' adM goal (S.insert n visited) n
+                    longest | Nothing <- mLonger
+                            = mLongest
+                            | Nothing <- mLongest
+                            = mLonger
+                            | Just lst <- mLongest, Just ler <- mLonger
+                            = Just (max lst ler)
+                 in longest
+              )
+              Nothing
+              ns'
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = fromJust
+             . (\hikingTrails ->
+                 let start = startYX hikingTrails
+                     goal = goalYX hikingTrails
+                     adM = adjacency hikingTrails start mempty
+                  in dfs' adM goal (S.singleton start) start
+               )
+             . M.map (\c -> if c == '#' then '#' else '.')
+             . foldYX
+           <$> input
+  printAnswer "Longest hike ignoring slopes: " answer
 
 main :: IO ()
 main = do
