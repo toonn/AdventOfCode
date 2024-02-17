@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2023
-version:             2023.12.24.2
+version:             2023.12.25.1
 synopsis:            Advent of Code 2023
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -316,4 +316,16 @@ executable NeverTellMeTheOdds
                     , sbv ^>= 10.0
   other-modules:      Paths_AoC2023
   hs-source-dirs:     "Day 24: Never Tell Me The Odds"
+  default-language:   Haskell2010
+
+executable Snowverload
+  main-is:            Snowverload.hs
+  build-depends:      base ^>= 4.17.2.1
+                    , AoC2023 ^>= 2023.12.21.1
+                    , criterion ^>= 1.6.0.0
+                    , megaparsec ^>= 9.3.0
+                    , silently ^>= 1.2.5.3
+                    , containers ^>= 0.6.7
+  other-modules:      Paths_AoC2023
+  hs-source-dirs:     "Day 25: Snowverload"
   default-language:   Haskell2010
