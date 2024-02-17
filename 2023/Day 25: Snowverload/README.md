@@ -63,3 +63,27 @@ Multiplying the sizes of these groups together produces *`54`*.
 Find the three wires you need to disconnect in order to divide the
 components into two separate groups. *What do you get if you multiply
 the sizes of these two groups together?*
+
+Your puzzle answer was `601344`.
+
+## \-\-- Part Two \-\-- {#part2}
+
+You climb over weather machines, under giant springs, and narrowly avoid
+a pile of pipes as you find and disconnect the three wires.
+
+A moment after you disconnect the last wire, the big red reset button
+module makes a small ding noise:
+
+    System overload resolved! Power required is now 50 stars. 
+
+Out of the corner of your eye, you notice goggles and a loose-fitting
+hard hat peeking at you from behind an ultra crucible. You think you see
+a [faint glow]{title="i help"}, but before you can investigate, you hear
+another small ding:
+
+    Power required is now 49 stars.  Please supply the necessary stars and push the button to restart the system. 
+
+If you like, you can .
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
