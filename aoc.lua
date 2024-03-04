@@ -1,11 +1,3 @@
-function Header (x)
-  if x.level == 2 then
-    return x
-  else
-    return pandoc.Null
-  end
-end
-
 function Div (x)
   for _, role in pairs(x.attributes) do
     if role == 'main' then
@@ -16,7 +8,7 @@ function Div (x)
       return {table.unpack(x.content, 1, length - 3)}
     end
   end
-  return pandoc.Null
+  return {}
 end
 
 function Para (x)
