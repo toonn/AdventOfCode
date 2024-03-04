@@ -19,9 +19,8 @@ questions\")
 [and]{title="My hope is that this abomination of a run-on sentence somehow conveys the chaos of being hastily loaded into a trebuchet."}
 hang on did you just say the sky (\"of course, where do you think snow
 comes from\") when you realize that the Elves are already loading you
-into a
-[trebuchet](https://en.wikipedia.org/wiki/Trebuchet){target="_blank"}
-(\"please hold still, we need to strap you in\").
+into a [trebuchet](https://en.wikipedia.org/wiki/Trebuchet) (\"please
+hold still, we need to strap you in\").
 
 As they\'re making the final adjustments, they discover that their
 calibration document (your puzzle input) has been *amended* by a very
@@ -43,7 +42,7 @@ For example:
     treb7uchet
 
 In this example, the calibration values of these four lines are `12`,
-`38`, `15`, and `77`. Adding these together produces `142`.
+`38`, `15`, and `77`. Adding these together produces *`142`*.
 
 Consider your entire calibration document. *What is the sum of all of
 the calibration values?*
@@ -69,7 +68,7 @@ and last digit on each line. For example:
     7pqrstsixteen
 
 In this example, the calibration values are `29`, `83`, `13`, `24`,
-`42`, `14`, and `76`. Adding these together produces `281`.
+`42`, `14`, and `76`. Adding these together produces *`281`*.
 
 *What is the sum of all of the calibration values?*
 

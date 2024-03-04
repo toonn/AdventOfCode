@@ -7,9 +7,9 @@ hang glider behind.
 
 You wander around for a while, but you don\'t find any people or
 animals. However, you do occasionally find signposts labeled \"[Hot
-Springs](https://en.wikipedia.org/wiki/Hot_spring){target="_blank"}\"
-pointing in a seemingly consistent direction; maybe you can find someone
-at the hot springs and ask them where the desert-machine parts are made.
+Springs](https://en.wikipedia.org/wiki/Hot_spring)\" pointing in a
+seemingly consistent direction; maybe you can find someone at the hot
+springs and ask them where the desert-machine parts are made.
 
 The landscape here is alien; even the flowers and trees are made of
 metal. As you stop to admire some metal grass, you notice something

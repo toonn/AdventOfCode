@@ -102,8 +102,7 @@ Your puzzle answer was `4403592`.
 
 As the race is about to start, you realize the piece of paper with race
 times and record distances you got earlier actually just has [very
-bad]{title="Keming!"}
-[kerning](https://en.wikipedia.org/wiki/Kerning){target="_blank"}.
+bad]{title="Keming!"} [kerning](https://en.wikipedia.org/wiki/Kerning).
 There\'s really *only one race* - ignore the spaces between the numbers
 on each line.
 

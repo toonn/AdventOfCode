@@ -24,8 +24,8 @@ though - er, the small kind surrounded by water, not the floating kind.
 We really need to come up with a better naming scheme. Tell you what: if
 you can help me with something quick, I\'ll let you *borrow my boat* and
 you can go visit the gardener. I got all these
-[scratchcards](https://en.wikipedia.org/wiki/Scratchcard){target="_blank"}
-as a gift, but I can\'t figure out what I\'ve won.\"
+[scratchcards](https://en.wikipedia.org/wiki/Scratchcard) as a gift, but
+I can\'t figure out what I\'ve won.\"
 
 The Elf leads you over to the pile of colorful cards. There, you
 discover dozens of scratchcards, all with their opaque covering already
@@ -51,19 +51,19 @@ For example:
 In the above example, card 1 has five winning numbers (`41`, `48`, `83`,
 `86`, and `17`) and eight numbers you have (`83`, `86`, `6`, `31`, `17`,
 `9`, `48`, and `53`). Of the numbers you have, four of them (`48`, `83`,
-`17`, and `86`) are winning numbers! That means card 1 is worth `8`
+`17`, and `86`) are winning numbers! That means card 1 is worth *`8`*
 points (1 for the first match, then doubled three times for each of the
 three matches after the first).
 
--   Card 2 has two winning numbers (`32` and `61`), so it is worth `2`
+-   Card 2 has two winning numbers (`32` and `61`), so it is worth *`2`*
     points.
--   Card 3 has two winning numbers (`1` and `21`), so it is worth `2`
+-   Card 3 has two winning numbers (`1` and `21`), so it is worth *`2`*
     points.
--   Card 4 has one winning number (`84`), so it is worth `1` point.
+-   Card 4 has one winning number (`84`), so it is worth *`1`* point.
 -   Card 5 has no winning numbers, so it is worth no points.
 -   Card 6 has no winning numbers, so it is worth no points.
 
-So, in this example, the Elf\'s pile of scratchcards is worth `13`
+So, in this example, the Elf\'s pile of scratchcards is worth *`13`*
 points.
 
 Take a seat in the large pile of colorful cards. *How many points are
@@ -119,10 +119,10 @@ This time, the above example goes differently:
     and wins no more cards.
 
 Once all of the originals and copies have been processed, you end up
-with `1` instance of card 1, `2` instances of card 2, `4` instances of
-card 3, `8` instances of card 4, `14` instances of card 5, and `1`
-instance of card 6. In total, this example pile of scratchcards causes
-you to ultimately have `30` scratchcards!
+with *`1`* instance of card 1, *`2`* instances of card 2, *`4`*
+instances of card 3, *`8`* instances of card 4, *`14`* instances of card
+5, and *`1`* instance of card 6. In total, this example pile of
+scratchcards causes you to ultimately have *`30`* scratchcards!
 
 Process all of the original and copied scratchcards until no more
 scratchcards are won. Including the original set of scratchcards, *how

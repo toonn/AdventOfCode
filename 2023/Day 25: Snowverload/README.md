@@ -28,7 +28,10 @@ After a minute or two, you find the reset button; it\'s so big that it
 takes two hands just to get enough leverage to push it. Its screen then
 displays:
 
-    SYSTEM OVERLOAD!  Connected components would require power equal to at least 100 stars! 
+    SYSTEM OVERLOAD!
+
+    Connected components would require
+    power equal to at least 100 stars!
 
 \"Wait, *how* many components did you say are plugged in? With that much
 equipment, you could produce snow for an *entire*\--\" You disconnect
@@ -41,7 +44,19 @@ Christmas! You only have time to disconnect *three wires*.
 Fortunately, someone left a wiring diagram (your puzzle input) that
 shows *how the components are connected*. For example:
 
-    jqt: rhn xhk nvd rsh: frs pzl lsr xhk: hfx cmg: qnr nvd lhk bvb rhn: xhk bvb hfx bvb: xhk hfx pzl: lsr hfx nvd qnr: nvd ntq: jqt hfx bvb xhk nvd: lhk lsr: lhk rzs: qnr cmg lsr rsh frs: qnr lhk lsr 
+    jqt: rhn xhk nvd
+    rsh: frs pzl lsr
+    xhk: hfx
+    cmg: qnr nvd lhk bvb
+    rhn: xhk bvb hfx
+    bvb: xhk hfx
+    pzl: lsr hfx nvd
+    qnr: nvd
+    ntq: jqt hfx bvb xhk
+    nvd: lhk
+    lsr: lhk
+    rzs: qnr cmg lsr rsh
+    frs: qnr lhk lsr
 
 Each line shows the *name of a component*, a colon, and then *a list of
 other components* to which that component is connected. Connections
@@ -74,14 +89,18 @@ a pile of pipes as you find and disconnect the three wires.
 A moment after you disconnect the last wire, the big red reset button
 module makes a small ding noise:
 
-    System overload resolved! Power required is now 50 stars. 
+    System overload resolved!
+    Power required is now 50 stars.
 
 Out of the corner of your eye, you notice goggles and a loose-fitting
 hard hat peeking at you from behind an ultra crucible. You think you see
 a [faint glow]{title="i help"}, but before you can investigate, you hear
 another small ding:
 
-    Power required is now 49 stars.  Please supply the necessary stars and push the button to restart the system. 
+    Power required is now 49 stars.
+
+    Please supply the necessary stars and
+    push the button to restart the system.
 
 If you like, you can .
 

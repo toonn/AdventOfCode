@@ -11,10 +11,10 @@ one made of metal! That must be where the *parts to fix the sand
 machines* come from.
 
 There\'s even a [hang
-glider](https://en.wikipedia.org/wiki/Hang_gliding){target="_blank"}
-partially buried in the sand here; once the sun rises and heats up the
-sand, you might be able to use the glider and the hot air to get all the
-way up to the metal island!
+glider](https://en.wikipedia.org/wiki/Hang_gliding) partially buried in
+the sand here; once the sun rises and heats up the sand, you might be
+able to use the glider and the hot air to get all the way up to the
+metal island!
 
 While you wait for the sun to rise, you admire the oasis hidden here in
 the middle of Desert Island. It must have a delicate ecosystem; you

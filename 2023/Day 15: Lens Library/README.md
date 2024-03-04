@@ -12,8 +12,7 @@ Protective Equipment required beyond this point\".
 
 As you step inside, you are immediately greeted by a somewhat panicked
 [reindeer]{title="do you like my hard hat"} wearing goggles and a
-loose-fitting [hard
-hat](https://en.wikipedia.org/wiki/Hard_hat){target="_blank"}. The
+loose-fitting [hard hat](https://en.wikipedia.org/wiki/Hard_hat). The
 reindeer leads you to a shelf of goggles and hard hats (you quickly find
 some that fit) and then further into the facility. At one point, you
 pass a button with a faint snout mark and the label \"PUSH FOR HELP\".
@@ -35,19 +34,19 @@ Helper algorithm (appendix 1A).\" You turn to appendix 1A. The reindeer
 leans closer with interest.
 
 The HASH algorithm is a way to turn any
-[string](https://en.wikipedia.org/wiki/String_(computer_science)){target="_blank"}
-of characters into a single *number* in the range 0 to 255. To run the
-HASH algorithm on a string, start with a *current value* of `0`. Then,
-for each character in the string starting from the beginning:
+[string](https://en.wikipedia.org/wiki/String_(computer_science)) of
+characters into a single *number* in the range 0 to 255. To run the HASH
+algorithm on a string, start with a *current value* of `0`. Then, for
+each character in the string starting from the beginning:
 
 -   Determine the [ASCII
-    code](https://en.wikipedia.org/wiki/ASCII#Printable_characters){target="_blank"}
-    for the current character of the string.
+    code](https://en.wikipedia.org/wiki/ASCII#Printable_characters) for
+    the current character of the string.
 -   Increase the *current value* by the ASCII code you just determined.
 -   Set the *current value* to itself multiplied by `17`.
 -   Set the *current value* to the
-    [remainder](https://en.wikipedia.org/wiki/Modulo){target="_blank"}
-    of dividing itself by `256`.
+    [remainder](https://en.wikipedia.org/wiki/Modulo) of dividing itself
+    by `256`.
 
 After following these steps for each character in the string in order,
 the *current value* is the output of the HASH algorithm.
@@ -139,7 +138,7 @@ as necessary.
 Along the wall running parallel to the boxes is a large library
 containing lenses organized by *focal length* ranging from `1` through
 `9`. The reindeer also brings you a small handheld [label
-printer](https://en.wikipedia.org/wiki/Label_printer){target="_blank"}.
+printer](https://en.wikipedia.org/wiki/Label_printer).
 
 The book goes on to explain how to perform each step in the
 initialization sequence, a process it calls the Holiday ASCII String

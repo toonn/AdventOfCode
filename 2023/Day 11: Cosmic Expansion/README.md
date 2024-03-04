@@ -1,10 +1,9 @@
 ## \-\-- Day 11: Cosmic Expansion \-\--
 
 You continue following signs for \"Hot Springs\" and eventually come
-across an
-[observatory](https://en.wikipedia.org/wiki/Observatory){target="_blank"}.
-The Elf within turns out to be a researcher studying cosmic expansion
-using the giant telescope here.
+across an [observatory](https://en.wikipedia.org/wiki/Observatory). The
+Elf within turns out to be a researcher studying cosmic expansion using
+the giant telescope here.
 
 He doesn\'t know anything about the missing machine parts; he\'s only
 visiting for this research project. However, he confirms that the hot

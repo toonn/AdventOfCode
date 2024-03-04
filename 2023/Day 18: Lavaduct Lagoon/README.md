@@ -31,7 +31,7 @@ are given as seen from above, so if \"up\" were north, then \"right\"
 would be east, and so on. Each trench is also listed with *the color
 that the edge of the trench should be painted* as an [RGB hexadecimal
 color
-code](https://en.wikipedia.org/wiki/RGB_color_model#Numeric_representations){target="_blank"}.
+code](https://en.wikipedia.org/wiki/RGB_color_model#Numeric_representations).
 
 When viewed from above, the above example dig plan would result in the
 following loop of *trench* (`#`) having been dug out from otherwise

@@ -48,7 +48,7 @@ the bag had been loaded with that configuration. However, game 3 would
 have been *impossible* because at one point the Elf showed you 20 red
 cubes at once; similarly, game 4 would also have been *impossible*
 because the Elf showed you 15 blue cubes at once. If you add up the IDs
-of the games that would have been possible, you get `8`.
+of the games that would have been possible, you get *`8`*.
 
 Determine which games would have been possible if the bag had been
 loaded with only 12 red cubes, 13 green cubes, and 14 blue cubes. *What
@@ -80,7 +80,6 @@ Again consider the example games from earlier:
     game would have been impossible.
 -   Game 2 could have been played with a minimum of 1 red, 3 green, and
     4 blue cubes.
--   
 -   Game 3 must have been played with at least 20 red, 13 green, and 6
     blue cubes.
 -   Game 4 required at least 14 red, 3 green, and 15 blue cubes.
@@ -90,7 +89,7 @@ Again consider the example games from earlier:
 The *power* of a set of cubes is equal to the numbers of red, green, and
 blue cubes multiplied together. The power of the minimum set of cubes in
 game 1 is `48`. In games 2-5 it was `12`, `1560`, `630`, and `36`,
-respectively. Adding up these five powers produces the sum `2286`.
+respectively. Adding up these five powers produces the sum *`2286`*.
 
 For each game, find the minimum set of cubes that must have been
 present. *What is the sum of the power of these sets?*

@@ -11,8 +11,7 @@ the half below you is a giant factory city!
 You land near the gradually-filling pool of lava at the base of your new
 *lavafall*. Lavaducts will eventually carry the lava throughout the
 city, but to make use of it immediately, Elves are loading it into large
-[crucibles](https://en.wikipedia.org/wiki/Crucible){target="_blank"} on
-wheels.
+[crucibles](https://en.wikipedia.org/wiki/Crucible) on wheels.
 
 The crucibles are top-heavy and pushed by hand. Unfortunately, the
 crucibles become very difficult to steer at high speeds, and so it can

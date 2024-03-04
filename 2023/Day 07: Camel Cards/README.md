@@ -1,8 +1,8 @@
 ## \-\-- Day 7: Camel Cards \-\--
 
 Your all-expenses-paid trip turns out to be a one-way, five-minute ride
-in an [airship](https://en.wikipedia.org/wiki/Airship){target="_blank"}.
-(At least it\'s a [*cool*
+in an [airship](https://en.wikipedia.org/wiki/Airship). (At least it\'s
+a [*cool*
 airship]{title="Please only read this sentence while listening to 'The Airship Blackjack' from the Final Fantasy 6 soundtrack."}!)
 It drops you off at the edge of a vast desert and descends back to
 Island Island.
@@ -11,7 +11,7 @@ Island Island.
 
 You turn around to see an Elf completely covered in white clothing,
 wearing goggles, and riding a large
-[camel](https://en.wikipedia.org/wiki/Dromedary){target="_blank"}.
+[camel](https://en.wikipedia.org/wiki/Dromedary).
 
 \"Did you bring the parts?\" she asks again, louder this time. You
 aren\'t sure what parts she\'s looking for; you\'re here to figure out
@@ -33,8 +33,8 @@ stopped when she asks if you can help. You agree automatically.
 
 Because the journey will take a few days, she offers to teach you the
 game of *Camel Cards*. Camel Cards is sort of similar to
-[poker](https://en.wikipedia.org/wiki/List_of_poker_hands){target="_blank"}
-except it\'s designed to be easier to play while riding a camel.
+[poker](https://en.wikipedia.org/wiki/List_of_poker_hands) except it\'s
+designed to be easier to play while riding a camel.
 
 In Camel Cards, you get a list of *hands*, and your goal is to order
 them based on the *strength* of each hand. A hand consists of *five
@@ -114,9 +114,9 @@ Your puzzle answer was `253910319`.
 
 To make things a little more interesting, the Elf introduces one
 additional rule. Now, `J` cards are
-[jokers](https://en.wikipedia.org/wiki/Joker_(playing_card)){target="_blank"} -
-wildcards that can act like whatever card would make the hand the
-strongest type possible.
+[jokers](https://en.wikipedia.org/wiki/Joker_(playing_card)) - wildcards
+that can act like whatever card would make the hand the strongest type
+possible.
 
 To balance this, *`J` cards are now the weakest* individual cards,
 weaker even than `2`. The other cards stay in the same order: `A`, `K`,

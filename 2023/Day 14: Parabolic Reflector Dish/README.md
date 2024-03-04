@@ -2,7 +2,7 @@
 
 You reach the place where all of the mirrors were pointing: a massive
 [parabolic reflector
-dish](https://en.wikipedia.org/wiki/Parabolic_reflector){target="_blank"}
+dish](https://en.wikipedia.org/wiki/Parabolic_reflector)
 [attached]{title="Why, where do you attach YOUR massive parabolic reflector dishes?"}
 to the side of another large mountain.
 

@@ -8,8 +8,8 @@ you were looking for the hot springs, weren\'t you?\" You indicate that
 this definitely looks like hot springs to you.
 
 \"Oh, sorry, common mistake! This is actually the
-[onsen](https://en.wikipedia.org/wiki/Onsen){target="_blank"}! The hot
-springs are next door.\"
+[onsen](https://en.wikipedia.org/wiki/Onsen)! The hot springs are next
+door.\"
 
 You look in the direction the researcher is pointing and suddenly notice
 the [massive metal helixes]{title="I love this joke. I'm not sorry."}
