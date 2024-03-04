@@ -11,10 +11,10 @@ in shell {
   for = with hsPkgs; [ AoC2023 ];
   buildInputs = let hackageFromExe =
                       mapAttrs (_: p: { inherit compiler-nix-name;
-                                        index-state = "2023-11-30T00:00:00Z";
+                                        index-state = "2024-02-20T00:00:00Z";
                                       } // p)
                                { pandoc = { name = "pandoc-cli";
-                                            version = "0.1.1.1";
+                                            version = "3.1.12.1";
                                           };
                                };
                     hackages = map (exe:
