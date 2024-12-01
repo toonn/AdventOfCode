@@ -10,6 +10,7 @@ import AoC
 
 import Control.Arrow ((***))
 import Data.List (sort)
+import qualified Data.IntMap as IM
 
 type Input = ([Int],[Int])
 
@@ -21,10 +22,17 @@ part1 input = do
   let answer = sum . uncurry (zipWith ((abs .) . (-))) . both sort <$> input
   printAnswer "Total distance: " answer
 
+occurences :: [Int] -> IM.IntMap Int
+occurences = IM.fromListWith (+) . map (\k -> (k,1))
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum
+             . (\(as, bs) ->
+                 map (\k -> k * IM.findWithDefault 0 k (occurences bs)) as
+               )
+           <$> input
+  printAnswer "Similarity score: " answer
 
 main :: IO ()
 main = do
