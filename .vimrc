@@ -18,4 +18,4 @@
 """"
 
 " Couple maps for comfort
-nmap <Leader>e <Cmd>up<CR><Cmd>!cabal run %:r<CR>
+nmap <Leader>e <Cmd>up<CR><Cmd>!cabal run %:t:r<CR>
