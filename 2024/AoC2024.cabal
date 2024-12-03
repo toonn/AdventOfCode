@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2024
-version:             2024.12.3.1
+version:             2024.12.3.2
 synopsis:            Advent of Code 2024
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
