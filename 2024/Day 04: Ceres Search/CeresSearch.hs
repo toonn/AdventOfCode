@@ -21,9 +21,12 @@ matchingKeys p = M.foldrWithKey (\k a -> if p a then (k:) else id) []
 eightWay :: [(Int,Int)]
 eightWay = [ (dy,dx) | dy <- [-1..1], dx <- [-1..1], dy /= 0 || dx /= 0 ]
 
+findWithNL :: Ord k => M.Map k Char -> k -> Char
+findWithNL m k = M.findWithDefault '\n' k m
+
 xmas :: M.Map YX Char -> YX -> (Int,Int) -> Bool
 xmas m (y,x) (dy,dx) = foldr (\(t,c) ->
-                               ( c == M.findWithDefault '\n' (y+t*dy,x+t*dx) m
+                               ( c == findWithNL m (y+t*dy,x+t*dx)
                               &&
                                )
                              )
@@ -45,10 +48,35 @@ part1 input = do
            <$> input
   printAnswer "XMAS occurrences: " answer
 
+diagonals :: [(Int,Int)]
+diagonals = [ (dy,1) | dy <- [1,-1] ]
+
+xedMas :: M.Map YX Char -> YX -> Bool
+xedMas m (y,x) = foldr (\(dy,dx) ->
+                         ( case both (findWithNL m) ((y+dy,x+dx),(y-dy,x-dx)) of
+                             ('M','S') -> True
+                             ('S','M') -> True
+                             _ -> False
+                        &&
+                         )
+                       )
+                       True
+                       diagonals
+
+
+xedMasOccurrences :: M.Map YX Char -> YX -> Int
+xedMasOccurrences m yx | xedMas m yx = 1
+                       | otherwise = 0
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum
+             . (\m -> map (xedMasOccurrences m)
+                          (matchingKeys (== 'A') m)
+               )
+             . foldYX
+           <$> input
+  printAnswer "X-MAS occurrences: " answer
 
 main :: IO ()
 main = do
