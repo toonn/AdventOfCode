@@ -42,10 +42,31 @@ part1 input = do
   let answer = sum . map middle . uncurry (filter . correctOrder) <$> input
   printAnswer "Correctly-ordered middles: " answer
 
+insertOrdered :: IM.IntMap IS.IntSet -> Int -> [Int] -> [Int]
+insertOrdered _ p [] = [p]
+insertOrdered rs p (h:t)
+  | IS.member h (IM.findWithDefault mempty p rs) = p : h : t
+  | otherwise = h : insertOrdered rs p t
+
+order :: IM.IntMap IS.IntSet -> [Int] -> [Int]
+order rs u = foldr (\p more ->
+                     more . insertOrdered rs p
+                   )
+                   id
+                   u
+                   []
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum
+             . map middle
+             . (\(rs,us) ->
+                 map (order rs)
+               . (filter (not . correctOrder rs))
+               $ us
+               )
+           <$> input
+  printAnswer "Incorrectly-ordered middles: " answer
 
 main :: IO ()
 main = do
