@@ -50,12 +50,50 @@ listed above is *`3749`*.
 Determine which equations could possibly be true. *What is their total
 calibration result?*
 
-To begin, [get your puzzle input](7/input).
+Your puzzle answer was `7579994664753`.
 
-Answer:
+## \-\-- Part Two \-\-- {#part2}
+
+The engineers seem concerned; the total calibration result you gave them
+is nowhere close to being within safety tolerances. Just then, you spot
+your mistake: some well-hidden elephants are holding a *third type of
+operator*.
+
+The [concatenation](https://en.wikipedia.org/wiki/Concatenation)
+operator ([`||`]{title="I think you mean \".\"."}) combines the digits
+from its left and right inputs into a single number. For example,
+`12 || 345` would become `12345`. All operators are still evaluated
+left-to-right.
+
+Now, apart from the three equations that could be made true using only
+addition and multiplication, the above example has three more equations
+that can be made true by inserting operators:
+
+-   `156: 15 6` can be made true through a single concatenation:
+    `15 || 6 = 156`.
+-   `7290: 6 8 6 15` can be made true using `6 * 8 || 6 * 15`.
+-   `192: 17 8 14` can be made true using `17 || 8 + 14`.
+
+Adding up all six test values (the three that could be made before using
+only `+` and `*` plus the new three that can now be made by also using
+`||`) produces the new *total calibration result* of *`11387`*.
+
+Using your new knowledge of elephant hiding spots, determine which
+equations could possibly be true. *What is their total calibration
+result?*
+
+Your puzzle answer was `438027111276610`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2024) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](7/input).
 
 You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=%22Bridge+Repair%22+%2D+Day+7+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F7)
+[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Bridge+Repair%22+%2D+Day+7+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F7)
 [Twitter](https://twitter.com/)
 [Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
 puzzle.

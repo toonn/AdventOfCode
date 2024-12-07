@@ -26,10 +26,25 @@ part1 input = do
   let answer = sum . map fst . filter validEquation <$> input
   printAnswer "Total calibration: " answer
 
+concatenation :: Int -> Int -> Int
+concatenation a b = read (show a <> show b)
+
+validWithConcatenation :: (Int, [Int]) -> Bool
+validWithConcatenation (r,is) = foldr (\i more running ->
+                                        running <= r
+                                     && ( more (concatenation running i)
+                                       || more (running * i)
+                                       || more (running + i)
+                                        )
+                                      )
+                                      (== r)
+                                      is
+                                      0
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . map fst . filter validWithConcatenation <$> input
+  printAnswer "Total including concatenation: " answer
 
 main :: IO ()
 main = do
