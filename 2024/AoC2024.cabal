@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2024
-version:             2024.12.7.2
+version:             2024.12.8.1
 synopsis:            Advent of Code 2024
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -102,4 +102,16 @@ executable BridgeRepair
                     , silently ^>= 1.2.5.4
   other-modules:      Paths_AoC2024
   hs-source-dirs:     "Day 07: Bridge Repair"
+  default-language:   Haskell2010
+
+executable ResonantCollinearity
+  main-is:            ResonantCollinearity.hs
+  build-depends:      base ^>= 4.20.0.0
+                    , AoC2024
+                    , criterion ^>= 1.6.4.0
+                    , megaparsec ^>= 9.7.0
+                    , silently ^>= 1.2.5.4
+                    , containers ^>= 0.7
+  other-modules:      Paths_AoC2024
+  hs-source-dirs:     "Day 08: Resonant Collinearity"
   default-language:   Haskell2010
