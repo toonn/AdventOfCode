@@ -47,15 +47,67 @@ compact (fileBlocks,freeBlocks)
                           <> compact (fileBlocks'',freeBlocks')
      in blocks
 
+checksum :: [Int] -> Int
+checksum = sum . zipWith (*) [0..]
+
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = sum . zipWith (*) [0..] . compact . sizeMap <$> input
+  let answer = checksum . compact . sizeMap <$> input
   printAnswer "Compacted checksum: " answer
 
+compactFiles' :: IM.IntMap Int -> IM.IntMap Int
+              -> (IM.IntMap Int, IM.IntMap Int, IM.IntMap [Int])
+compactFiles' fileBlocks freeBlocks
+  = let mF = IM.maxViewWithKey fileBlocks
+        Just ((fID,fSize),fileBlocks') = mF
+        noop = (IM.insert fID fSize, freeBlocks, mempty)
+        (fileIns, freeBlocks', fittedBlock) = IM.foldrWithKey
+          (\freeID freeSize next ->
+            let fitted = IM.singleton freeID (replicate fSize fID)
+                insFree = IM.insertWith (+) (fID - 1) fSize
+                ins = case fSize `compare` freeSize of
+                        LT -> ( id
+                              , insFree (IM.adjust (subtract fSize)
+                                                   freeID
+                                                   freeBlocks
+                                        )
+                              , fitted
+                              )
+                        EQ -> ( id
+                              , insFree (IM.delete freeID freeBlocks)
+                              , fitted
+                              )
+                        GT -> next
+                res | freeID < fID = ins
+                    | otherwise = noop
+             in res
+          )
+          noop
+          freeBlocks
+        res | Nothing <- mF = (mempty, freeBlocks, mempty)
+            | (files, frees, fits) <- compactFiles' fileBlocks' freeBlocks'
+            = (fileIns files, frees, IM.unionWith (<>) fittedBlock fits)
+     in res
+
+represent :: IM.IntMap Int -> IM.IntMap [Int]
+represent = IM.mapWithKey (flip replicate)
+
+compactFiles :: (IM.IntMap Int, IM.IntMap Int) -> [Int]
+compactFiles = mconcat
+             . IM.elems
+             . (\(files, frees, fits) ->
+                 IM.unionsWith (<>) [ represent files
+                                    , fits
+                                    , fmap (flip replicate 0) frees
+                                    ]
+               )
+             . uncurry compactFiles'
+
+-- 6363235997198 too low
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = checksum . compactFiles . sizeMap <$> input
+  printAnswer "Whole file compact checksum: " answer
 
 main :: IO ()
 main = do
