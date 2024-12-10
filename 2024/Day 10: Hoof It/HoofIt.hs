@@ -78,10 +78,14 @@ part1 input = do
            <$> input
   printAnswer "Total trailhead score: " answer
 
+rating :: [[YX]] -> Int
+rating = length
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . M.elems . fmap rating . trails . fmap digitToInt . foldYX
+           <$> input
+  printAnswer "Total trailhead rating: " answer
 
 main :: IO ()
 main = do
