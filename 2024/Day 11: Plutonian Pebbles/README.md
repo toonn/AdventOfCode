@@ -61,12 +61,27 @@ After blinking 25 times, you would have *`55312`* stones!
 Consider the arrangement of stones in front of you. *How many stones
 will you have after blinking 25 times?*
 
-To begin, [get your puzzle input](11/input).
+Your puzzle answer was `188902`.
 
-Answer:
+## \-\-- Part Two \-\-- {#part2}
+
+The Historians sure are taking a long time. To be fair, the infinite
+corridors *are* very large.
+
+*How many stones would you have after blinking a total of 75 times?*
+
+Your puzzle answer was `223894720281135`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2024) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](11/input).
 
 You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=%22Plutonian+Pebbles%22+%2D+Day+11+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F11)
+[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Plutonian+Pebbles%22+%2D+Day+11+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F11)
 [Twitter](https://twitter.com/)
 [Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
 puzzle.
