@@ -8,9 +8,11 @@ import Text.Megaparsec.Char
 
 import AoC
 
-import Control.Arrow ((&&&))
+import Data.Monoid (Sum(..))
 import qualified Data.Map as M
 import qualified Data.Set as S
+
+data Direction = N | E | S | W deriving (Show, Eq, Enum)
 
 type Input = [[Char]]
 
@@ -69,10 +71,34 @@ part1 input = do
   let answer = sum . map price . mconcat . M.elems . segment . foldYX <$> input
   printAnswer "Total fencing price: " answer
 
+step :: Direction -> YX -> YX
+step N (y,x) = (y - 1, x)
+step E (y,x) = (y, x + 1)
+step S (y,x) = (y + 1, x)
+step W (y,x) = (y, x - 1)
+
+sides :: S.Set YX -> Int
+sides seg = let candidates = map (\d -> S.filter (\yx ->
+                                                   S.notMember (step d yx) seg
+                                                 )
+                                                 seg
+                                 )
+                                 [N .. W]
+             in getSum
+              . foldMap ( foldMap (Sum . length)
+                        . segment
+                        . M.fromSet (const ())
+                        )
+              $ candidates
+
+discountPrice :: S.Set YX -> Int
+discountPrice seg = area seg * sides seg
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . map discountPrice . mconcat . M.elems . segment . foldYX
+           <$> input
+  printAnswer "Total discounted price: " answer
 
 main :: IO ()
 main = do
