@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2024
-version:             2024.12.11.2
+version:             2024.12.12.1
 synopsis:            Advent of Code 2024
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -150,4 +150,16 @@ executable PlutonianPebbles
                     , containers ^>= 0.7
   other-modules:      Paths_AoC2024
   hs-source-dirs:     "Day 11: Plutonian Pebbles"
+  default-language:   Haskell2010
+
+executable GardenGroups
+  main-is:            GardenGroups.hs
+  build-depends:      base ^>= 4.20.0.0
+                    , AoC2024
+                    , criterion ^>= 1.6.4.0
+                    , megaparsec ^>= 9.7.0
+                    , silently ^>= 1.2.5.4
+                    , containers ^>= 0.7
+  other-modules:      Paths_AoC2024
+  hs-source-dirs:     "Day 12: Garden Groups"
   default-language:   Haskell2010
