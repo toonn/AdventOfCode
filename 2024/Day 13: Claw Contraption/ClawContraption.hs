@@ -54,10 +54,13 @@ part1 input = do
   let answer = sum . map cost . mapMaybe abPresses <$> input
   printAnswer "Tokens for all prizes: " answer
 
+adjustPrize :: ClawMachine -> ClawMachine
+adjustPrize (a,b,p) = (a,b,both (+ 10000000000000) p)
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . map cost . mapMaybe abPresses . map adjustPrize <$> input
+  printAnswer "Tokens for adjusted prizes: " answer
 
 main :: IO ()
 main = do
