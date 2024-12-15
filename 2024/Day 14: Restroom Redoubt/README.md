@@ -73,12 +73,32 @@ Predict the motion of the robots in your list within a space which is
 `101` tiles wide and `103` tiles tall. *What will the safety factor be
 after exactly 100 seconds have elapsed?*
 
-To begin, [get your puzzle input](14/input).
+Your puzzle answer was `209409792`.
 
-Answer:
+## \-\-- Part Two \-\-- {#part2}
+
+During the bathroom break, someone notices that these robots seem
+awfully similar to ones built and used at the North Pole. If they\'re
+the same type of robots, they should have a hard-coded [Easter
+egg]{title="This puzzle was originally going to be about the motion of space rocks in a fictitious arcade game called Meteoroids, but we just had an arcade puzzle."}:
+very rarely, most of the robots should arrange themselves into *a
+picture of a Christmas tree*.
+
+*What is the fewest number of seconds that must elapse for the robots to
+display the Easter egg?*
+
+Your puzzle answer was `8006`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2024) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](14/input).
 
 You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=%22Restroom+Redoubt%22+%2D+Day+14+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F14)
+[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Restroom+Redoubt%22+%2D+Day+14+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F14)
 [Twitter](https://twitter.com/)
 [Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
 puzzle.

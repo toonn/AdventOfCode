@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2024
-version:             2024.12.14.1
+version:             2024.12.14.2
 synopsis:            Advent of Code 2024
 -- description:
 homepage:            https://github.com/toonn/AdventOfCode
@@ -182,6 +182,7 @@ executable RestroomRedoubt
                     , criterion ^>= 1.6.4.0
                     , megaparsec ^>= 9.7.0
                     , silently ^>= 1.2.5.4
+                    , containers
   other-modules:      Paths_AoC2024
   hs-source-dirs:     "Day 14: Restroom Redoubt"
   default-language:   Haskell2010
