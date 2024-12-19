@@ -14,7 +14,7 @@ import Data.Maybe (mapMaybe)
 
 data Orientation = N | E | S | W deriving (Show, Eq, Ord)
 
-type POGG = (YX, Orientation, YX, M.Map YX Char)
+type POGG = (YX, Orientation)
 
 type Input = [[Char]]
 
@@ -39,10 +39,10 @@ turnLeft E = N
 turnLeft S = E
 turnLeft W = S
 
-neighbors :: POGG -> [POGG]
-neighbors (yx, o, g, grid)
+neighbors :: M.Map YX Char -> YX -> POGG -> [POGG]
+neighbors grid g (yx, o)
   = let step o' | let yx' = move o' yx, Just t <- grid M.!? yx', t `elem` ".ES"
-                = Just (yx', o', g, grid)
+                = Just (yx', o')
                 | otherwise = Nothing
      in mapMaybe step $ [o, turnLeft o, turnRight o]
 
@@ -52,27 +52,34 @@ turns o o' | o == o' = 0
            | otherwise = 2
 
 distance :: POGG -> POGG -> Int
-distance (yx, o, _, _) (yx', o', _, _) = manhattan yx yx' + 1000 * turns o o'
+distance (yx, o) (yx', o') = manhattan yx yx' + 1000 * turns o o'
 
-heuristic :: POGG -> Int
-heuristic (yx, o, g, _) = manhattan yx g + 1000 * ( if fst yx == fst g
-                                                    || snd yx == snd g
-                                                    then 0
-                                                    else 1
-                                                  )
+heuristic :: YX -> POGG -> Int
+heuristic g (yx, o) = manhattan yx g + 1000 * ( if fst yx == fst g
+                                                || snd yx == snd g
+                                                then 0
+                                                else 1
+                                              )
 
-isGoal :: POGG -> Bool
-isGoal (yx, _, g, _) = yx == g
+isGoal :: YX -> POGG -> Bool
+isGoal = (. fst) . (==)
 
 findKey :: Eq a => a -> M.Map k a -> k
 findKey v = (\(Just (k,_)) -> k) . find ((== v) . snd) . M.assocs
 
+shortestPath :: YX -> YX -> M.Map YX Char -> Int
+shortestPath start end grid = aStar (neighbors grid end)
+                                    distance
+                                    (heuristic end)
+                                    (isGoal end)
+                                    (start, E)
+
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = (\grid -> let start = findKey 'S' grid
-                             end = findKey 'E' grid
-                          in aStar neighbors distance heuristic isGoal
-                               (start, E, end, grid)
+  let answer = (\grid ->
+                 let start = findKey 'S' grid
+                     end = findKey 'E' grid
+                  in shortestPath start end grid
                )
              . foldYX
            <$> input
