@@ -57,12 +57,47 @@ Simulate the first kilobyte (`1024` bytes) falling onto your memory
 space. Afterward, *what is the minimum number of steps needed to reach
 the exit?*
 
-To begin, [get your puzzle input](18/input).
+Your puzzle answer was `380`.
 
-Answer:
+## \-\-- Part Two \-\-- {#part2}
+
+The Historians aren\'t as used to moving around in this pixelated
+universe as you are. You\'re afraid they\'re not going to be fast enough
+to make it to the exit before the path is completely blocked.
+
+To determine how fast everyone needs to go, you need to determine *the
+first byte that will cut off the path to the exit*.
+
+In the above example, after the byte at `1,1` falls, there is still a
+path to the exit:
+
+    O..#OOO O##OO#O O#OO#OO OOO#OO# ###OO## .##O### #.#OOOO 
+
+However, after adding the very next byte (at `6,1`), there is no longer
+a path to the exit:
+
+    ...#... .##..## .#..#.. ...#..# ###..## .##.### #.#.... 
+
+So, in this example, the coordinates of the first byte that prevents the
+exit from being reachable are *`6,1`*.
+
+Simulate more of the bytes that are about to corrupt your memory space.
+*What are the coordinates of the first byte that will prevent the exit
+from being reachable from your starting position?* (Provide the answer
+as two integers separated by a comma with no other characters.)
+
+Your puzzle answer was `26,50`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2024) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](18/input).
 
 You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=%22RAM+Run%22+%2D+Day+18+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F18)
+[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22RAM+Run%22+%2D+Day+18+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F18)
 [Twitter](https://twitter.com/)
 [Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
 puzzle.

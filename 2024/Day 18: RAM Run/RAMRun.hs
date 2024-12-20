@@ -44,10 +44,34 @@ part1 input = do
   let answer = minimalSafeSteps (0,0) (70,70) 1024 <$> input
   printAnswer "Minimum steps: " answer
 
+floodFill :: YX -> S.Set YX -> S.Set YX -> S.Set YX
+floodFill end corrupt flooded
+  = let flooded' = flooded <> foldMap (S.fromList . neighbors end corrupt)
+                                      flooded
+        res | flooded == flooded' = flooded
+            | otherwise = floodFill end corrupt flooded'
+     in res
+
+firstBlocker :: YX -> [YX] -> YX
+firstBlocker end bytes
+  = foldr (\blocker more (flood, corrupt) ->
+            let ns = S.fromList (neighbors end corrupt blocker)
+                corrupt' = S.delete blocker corrupt
+                flood' | null (flood S.\\ ns) = flood
+                       | otherwise = floodFill end corrupt' flood
+                res | (0,0) `elem` flood' = blocker
+                    | otherwise = more (flood', corrupt')
+             in res
+          )
+          (const (0,0))
+          (reverse bytes)
+          (S.singleton end, S.fromList bytes)
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = (\(y,x) -> show x <> (',' : show y)) . firstBlocker (70,70)
+           <$> input
+  printAnswer "First byte that prevents exit: " answer
 
 main :: IO ()
 main = do
