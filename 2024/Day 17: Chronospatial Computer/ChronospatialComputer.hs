@@ -9,7 +9,8 @@ import Text.Megaparsec.Char
 import AoC
 
 import Data.Bits (xor)
-import Data.List (intercalate)
+import Data.List (intercalate, isSuffixOf)
+import Data.Maybe (fromJust)
 
 type Input = (Int, Int, Int, [Int])
 
@@ -56,14 +57,34 @@ output = intercalate "," . map show
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = output . (\(regA,regB,regC,p) -> interpret p (regA,regB,regC,p))
+  let answer = (\(regA,regB,regC,p) -> interpret p (regA,regB,regC,p))
            <$> input
   printAnswer "Comma-separated Values: " answer
 
+lowestInitialA :: [Int] -> (Int -> [Int]) -> Int -> Maybe Int
+lowestInitialA p prog a
+  = foldr (\inc next ->
+            let a' = a + inc
+                outp = prog a'
+                res | outp == p = Just a'
+                    | outp `isSuffixOf` p
+                    , a' /= 0
+                    , Just lA <- lowestInitialA p prog (8 * a')
+                    = Just lA
+                    | otherwise = next
+             in res
+          )
+          Nothing
+          [0..7]
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = fromJust
+             . (\(_,regB,regC,p) ->
+                 lowestInitialA p (\a -> interpret p (a,regB,regC,p)) 0
+               )
+           <$> input
+  printAnswer "Lowest initial A to quine: " answer
 
 main :: IO ()
 main = do

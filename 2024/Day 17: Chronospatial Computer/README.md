@@ -116,12 +116,40 @@ to the given values, then run the program. Once it halts, *what do you
 get if you use commas to join the values it output into a single
 string?*
 
-To begin, [get your puzzle input](17/input).
+Your puzzle answer was `1,0,2,0,5,7,2,1,3`.
 
-Answer:
+## \-\-- Part Two \-\-- {#part2}
+
+Digging deeper in the device\'s manual, you discover the problem: this
+program is supposed to *output another copy of the program*!
+Unfortunately, the value in register `A` seems to have been corrupted.
+You\'ll need to find a new value to which you can initialize register
+`A` so that the program\'s output instructions produce an exact copy of
+the program itself.
+
+For example:
+
+    Register A: 2024 Register B: 0 Register C: 0  Program: 0,3,5,4,3,0 
+
+This program outputs a copy of itself if register `A` is instead
+initialized to *`117440`*. (The original initial value of register `A`,
+`2024`, is ignored.)
+
+*What is the lowest positive initial value for register `A` that causes
+the program to output a copy of itself?*
+
+Your puzzle answer was `265652340990875`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2024) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](17/input).
 
 You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=%22Chronospatial+Computer%22+%2D+Day+17+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F17)
+[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Chronospatial+Computer%22+%2D+Day+17+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F17)
 [Twitter](https://twitter.com/)
 [Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
 puzzle.
