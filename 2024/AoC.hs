@@ -1,7 +1,7 @@
 module AoC where
 
 import Control.Arrow ((&&&), (***))
-import Control.Monad (join)
+import Control.Monad (guard, join)
 import qualified Data.Map as M
 import qualified Data.PQueue.Prio.Min as PQ
 import qualified Data.Set as S
@@ -60,6 +60,20 @@ foldYX rows = M.fromAscList
                     (const [])
                     rows
                     0
+
+twoDDeltas :: Num a => [(a,a)]
+twoDDeltas = do dy <- [-1,0,1]
+                dx <- [-1,0,1]
+                pure (dy,dx)
+
+fourWayDeltas :: (Eq a, Num a) => [(a,a)]
+fourWayDeltas = do (dy,dx) <- twoDDeltas
+                   guard (abs dy /= abs dx)
+                   pure (dy, dx)
+
+deltaNeighbors :: [YX] -> YX -> [YX]
+deltaNeighbors deltas (y,x) = do (dy,dx) <- deltas
+                                 pure (y + dy, x + dx)
 
 hamming :: (Eq a, Num d) => [a] -> [a] -> d
 hamming as bs = fromIntegral . length . filter id $ zipWith (/=) as bs
