@@ -9,7 +9,9 @@ import Text.Megaparsec.Char
 import AoC
 
 import Control.Monad (guard)
+import Data.List (elemIndex)
 import qualified Data.Map as M
+import Data.Maybe (fromJust)
 import qualified Data.Set as S
 
 type Input = [[Char]]
@@ -83,10 +85,28 @@ part1 input = do
   let answer = length . hundredPSCheats . foldYX <$> input
   printAnswer "100+ ps cheats: " answer
 
+nr20PSCheats :: [YX] -> Int
+nr20PSCheats [] = 0
+nr20PSCheats (from:rest) = nr20PSCheats rest
+                         + ( length
+                           . filter (\to ->
+                                      (>= 100)
+                                    . (subtract (manhattan from to))
+                                    . (+ 1)
+                                    . fromJust
+                                    . elemIndex to
+                                    $ rest
+                                    )
+                           . filter ((<= 20) . manhattan from)
+                           . drop 100
+                           $ rest
+                           )
+
+-- 8150 too low
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = (\grid -> nr20PSCheats (track grid)) . foldYX <$> input
+  printAnswer "100+ 20 ps cheats: " answer
 
 main :: IO ()
 main = do
