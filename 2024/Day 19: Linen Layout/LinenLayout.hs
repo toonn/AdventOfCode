@@ -9,6 +9,8 @@ import Text.Megaparsec.Char
 import AoC
 
 import Data.List (sortBy, stripPrefix)
+import qualified Data.Map as M
+import Data.Maybe (mapMaybe)
 
 type Input = ([String], [String])
 
@@ -49,10 +51,40 @@ part1 input = do
   let answer = length . possibleDesigns <$> input
   printAnswer "Possible designs: " answer
 
+waysToDesign :: [String] -> M.Map String Int -> String -> M.Map String Int
+waysToDesign _ designWays [] = M.insert "" 1 designWays
+waysToDesign towels designWays design
+  = foldr (\towel more ws ->
+            let ways | Just rest <- stripPrefix towel design
+                     , let ws' | M.member rest ws = ws
+                               | otherwise = waysToDesign towels ws rest
+                     = case ws' M.!? rest of
+                         Just w -> M.insertWith (+) design w ws'
+                         Nothing -> ws
+                     | otherwise = ws
+             in more ways
+          )
+          id
+          towels
+          designWays
+
+ways :: Input -> [Int]
+ways (towels, designs)
+  = let ws = foldr (\design more ws ->
+                     more (waysToDesign (sortBy (invert compare) towels)
+                                        ws
+                                        design
+                          )
+                   )
+                   id
+                   designs
+                   mempty
+     in mapMaybe (ws M.!?) designs
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . ways <$> input
+  printAnswer "Sum of ways to make designs: " answer
 
 main :: IO ()
 main = do

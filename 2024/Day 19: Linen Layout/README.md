@@ -70,12 +70,64 @@ available towel patterns.
 To get into the onsen as soon as possible, consult your list of towel
 patterns and desired designs carefully. *How many designs are possible?*
 
-To begin, [get your puzzle input](19/input).
- 
-Answer:
+Your puzzle answer was `374`.
+
+## \-\-- Part Two \-\-- {#part2}
+
+The staff don\'t really like some of the towel arrangements you came up
+with. To avoid an endless cycle of towel rearrangement, maybe you should
+just give them every possible option.
+
+Here are all of the different ways the above example\'s designs can be
+made:
+
+`brwrr` can be made in two different ways: `b`, `r`, `wr`, `r` *or*
+`br`, `wr`, `r`.
+
+`bggr` can only be made with `b`, `g`, `g`, and `r`.
+
+`gbbr` can be made 4 different ways:
+
+-   `g`, `b`, `b`, `r`
+-   `g`, `b`, `br`
+-   `gb`, `b`, `r`
+-   `gb`, `br`
+
+`rrbgbr` can be made 6 different ways:
+
+-   `r`, `r`, `b`, `g`, `b`, `r`
+-   `r`, `r`, `b`, `g`, `br`
+-   `r`, `r`, `b`, `gb`, `r`
+-   `r`, `rb`, `g`, `b`, `r`
+-   `r`, `rb`, `g`, `br`
+-   `r`, `rb`, `gb`, `r`
+
+`bwurrg` can only be made with `bwu`, `r`, `r`, and `g`.
+
+`brgr` can be made in two different ways: `b`, `r`, `g`, `r` *or* `br`,
+`g`, `r`.
+
+`ubwu` and `bbrgwb` are still impossible.
+
+Adding up all of the ways the towels in this example could be arranged
+into the desired designs yields *`16`* (`2 + 1 + 4 + 6 + 1 + 2`).
+
+They\'ll let you into the onsen as soon as you have the list. *What do
+you get if you add up the number of different ways you could make each
+design?*
+
+Your puzzle answer was `1100663950563322`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2024) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](19/input).
 
 You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=%22Linen+Layout%22+%2D+Day+19+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F19)
+[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Linen+Layout%22+%2D+Day+19+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F19)
 [Twitter](https://twitter.com/)
 [Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
 puzzle.
