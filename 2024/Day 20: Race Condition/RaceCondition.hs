@@ -81,32 +81,28 @@ hundredPSCheats grid = let t = track grid
 part1 :: Parsed Input -> IO ()
 part1 input = do
   let answer = length . hundredPSCheats . foldYX <$> input
+  -- let answer = nr20PSCheats (== 2) . zip [0..] . track . foldYX <$> input
   printAnswer "100+ ps cheats: " answer
 
-nr20PSCheats :: M.Map YX Int -> [YX] -> Int
+nr20PSCheats :: (Int -> Bool) -> [(Int,YX)] -> Int
 nr20PSCheats _ [] = 0
-nr20PSCheats indexes (from:rest) = nr20PSCheats indexes rest
-                                 + ( length
-                                   . filter (\to ->
-                                              (>= 100)
-                                            . (subtract (manhattan from to))
-                                            . (+ 1)
-                                            $ indexes M.! to
-                                            - indexes M.! from
-                                            )
-                                   . filter ((<= 20) . manhattan from)
-                                   . drop 100
-                                   $ rest
-                                   )
---
+nr20PSCheats p ((fi,from):rest)
+  = nr20PSCheats p rest
+  + ( length
+    . filter (\(ti,to) ->
+               (>= 100)
+             . (subtract (manhattan from to))
+             $ ti - fi
+             )
+    . filter (p . manhattan from . snd)
+    . drop 100
+    $ rest
+    )
+
 -- 8150 too low
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = (\grid -> let t = track grid
-                          in nr20PSCheats (M.fromList (zip t [0..])) t
-               )
-             . foldYX
-           <$> input
+  let answer = nr20PSCheats (<= 20) . zip [0..] . track . foldYX <$> input
   printAnswer "100+ 20 ps cheats: " answer
 
 main :: IO ()
