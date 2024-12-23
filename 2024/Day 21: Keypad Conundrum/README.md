@@ -129,12 +129,50 @@ Find the fewest number of button presses you\'ll need to perform in
 order to cause the robot in front of the door to type each code. *What
 is the sum of the complexities of the five codes on your list?*
 
-To begin, [get your puzzle input](21/input).
+Your puzzle answer was `246990`.
 
-Answer:
+## \-\-- Part Two \-\-- {#part2}
+
+Just as the missing Historian is released, The Historians realize that a
+*second* member of their search party has also been missing [this entire
+time]{title="bum bum BUUUUUM"}!
+
+A quick life-form scan reveals the Historian is also trapped in a locked
+area of the ship. Due to a variety of hazards, robots are once again
+dispatched, forming another chain of remote control keypads managing
+robotic-arm-wielding robots.
+
+This time, many more robots are involved. In summary, there are the
+following keypads:
+
+-   One directional keypad that *you* are using.
+-   *25* directional keypads that *robots* are using.
+-   One numeric keypad (on a door) that a *robot* is using.
+
+The keypads form a chain, just like before: your directional keypad
+controls a robot which is typing on a directional keypad which controls
+a robot which is typing on a directional keypad\... and so on, ending
+with the robot which is typing on the numeric keypad.
+
+The door codes are the same this time around; only the number of robots
+and directional keypads has changed.
+
+Find the fewest number of button presses you\'ll need to perform in
+order to cause the robot in front of the door to type each code. *What
+is the sum of the complexities of the five codes on your list?*
+
+Your puzzle answer was `306335137543664`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2024) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](21/input).
 
 You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=%22Keypad+Conundrum%22+%2D+Day+21+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F21)
+[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Keypad+Conundrum%22+%2D+Day+21+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F21)
 [Twitter](https://twitter.com/)
 [Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
 puzzle.
