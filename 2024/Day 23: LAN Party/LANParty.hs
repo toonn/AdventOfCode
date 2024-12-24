@@ -9,9 +9,11 @@ import Text.Megaparsec.Char
 import AoC
 
 import Data.Char (isAlpha)
-import Data.List (sortOn)
+import Data.List (intercalate, maximumBy, sortOn)
 import qualified Data.Map as M
 import qualified Data.Set as S
+
+newtype Password = Password (S.Set String)
 
 type Input = [(String,String)]
 
@@ -58,10 +60,31 @@ part1 input = do
            <$> input
   printAnswer "Triangles with a t: " answer
 
+bronkerbosch :: Ord a => M.Map a (S.Set a) -> S.Set a -> S.Set a -> S.Set a
+             -> S.Set (S.Set a)
+bronkerbosch g r p x
+  | null p, null x = S.singleton r
+  | otherwise
+  = foldr (\v more (r,p,x) ->
+            let restrictN = S.intersection (g M.! v)
+             in bronkerbosch g (S.insert v r) (restrictN p) (restrictN x)
+             <> more (r, S.delete v p, S.insert v x)
+          )
+          (const mempty)
+          p
+          (r,p,x)
+
+maximumClique :: Ord a => M.Map a (S.Set a) -> S.Set a
+maximumClique g = maximumBy (curry (uncurry compare . both length))
+                $ bronkerbosch g mempty (M.keysSet g) mempty
+
+instance Show Password where
+  show (Password p) = intercalate "," . S.toAscList $ p
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = Password . maximumClique . graphFromEdges <$> input
+  printAnswer "Password to get into LAN: " answer
 
 main :: IO ()
 main = do

@@ -38,12 +38,46 @@ to *`7`* sets of three inter-connected computers:
 Find all the sets of three inter-connected computers. *How many contain
 at least one computer with a name that starts with `t`?*
 
-To begin, [get your puzzle input](23/input).
+Your puzzle answer was `1304`.
 
-Answer:
+## \-\-- Part Two \-\-- {#part2}
+
+There are still way too many results to go through them all. You\'ll
+have to find the LAN party another way and go there yourself.
+
+Since it doesn\'t seem like any employees are around, you figure they
+must all be at the LAN party. If that\'s true, the LAN party will be the
+*largest set of computers that are all connected to each other*. That
+is, for each computer at the LAN party, that computer will have a
+connection to every other computer at the LAN party.
+
+In the above example, the largest set of computers that are all
+connected to each other is made up of `co`, `de`, `ka`, and `ta`. Each
+computer in this set has a connection to every other computer in the
+set:
+
+    ka-co ta-co de-co ta-ka de-ta ka-de 
+
+The LAN party posters say that the *password* to get into the LAN party
+is the name of every computer at the LAN party, sorted alphabetically,
+then joined together with commas. (The people running the LAN party are
+clearly a bunch of [nerds]{title="You caught me. I'm a giant nerd."}.)
+In this example, the password would be *`co,de,ka,ta`*.
+
+*What is the password to get into the LAN party?*
+
+Your puzzle answer was `ao,es,fe,if,in,io,ky,qq,rd,rn,rv,vc,vl`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2024) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](23/input).
 
 You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=%22LAN+Party%22+%2D+Day+23+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F23)
+[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22LAN+Party%22+%2D+Day+23+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F23)
 [Twitter](https://twitter.com/)
 [Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
 puzzle.
