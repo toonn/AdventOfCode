@@ -127,15 +127,13 @@ aStar neighbors distance heuristic isGoal start =
               (neighbors current)
               (shortestPaths, openSet)
 
--- | Transitive Closure of a Map from keys to sets of keys, representing a DAG
+-- | Transitive Closure of a Map from keys to monoids keys, representing a DAG
 --
 -- Based on repeated BFS.
-transitiveClosure :: Ord a => M.Map a (S.Set a) -> M.Map a (S.Set a)
-transitiveClosure m =
-  let m' = M.map (S.foldr (S.union . (\k -> M.findWithDefault S.empty k m))
-                          S.empty
-                 )
-                 m
-      closure | m == m' = m
-              | otherwise = transitiveClosure m'
-   in closure
+transitiveClosure :: (Foldable m, Eq (m a), Monoid (m a), Ord a)
+                  => M.Map a (m a) -> M.Map a (m a)
+transitiveClosure m
+  = let m' = M.map (foldMap (\k -> M.findWithDefault mempty k m)) m
+        closure | m == m' = m
+                | otherwise = transitiveClosure m'
+     in closure
