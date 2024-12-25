@@ -23,9 +23,16 @@ function Link (x)
     x.target = 'https://mastodon.social/'
     x.attributes.onclick = nil
   end
+  if x.content[1].text == 'Bluesky' and string.find(x.target, 'intent') then
+    x.target = 'https://bsky.app/'
+  end
   if x.content[1].text == 'Twitter' and string.find(x.target, 'intent') then
     x.target = 'https://twitter.com/'
   end
+  return x
+end
 
+function Span (x)
+  x.classes = {}
   return x
 end
