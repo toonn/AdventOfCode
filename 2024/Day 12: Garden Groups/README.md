@@ -16,7 +16,10 @@ single letter on your map. When multiple garden plots are growing the
 same type of plant and are touching (horizontally or vertically), they
 form a *region*. For example:
 
-    AAAA BBCD BBCC EEEC 
+    AAAA
+    BBCD
+    BBCC
+    EEEC
 
 This 4x4 arrangement includes garden plots growing five different types
 of plants (labeled `A`, `B`, `C`, `D`, and `E`), each grouped into their
@@ -41,12 +44,28 @@ Visually indicating the sides of plots in each region that contribute to
 the perimeter using `-` and `|`, the above map\'s regions\' perimeters
 are measured as follows:
 
-    +-+-+-+-+ |A A A A| +-+-+-+-+     +-+               |D| +-+-+   +-+   +-+ |B B|   |C| +   +   + +-+ |B B|   |C C| +-+-+   +-+ +           |C| +-+-+-+   +-+ |E E E| +-+-+-+ 
+    +-+-+-+-+
+    |A A A A|
+    +-+-+-+-+     +-+
+                  |D|
+    +-+-+   +-+   +-+
+    |B B|   |C|
+    +   +   + +-+
+    |B B|   |C C|
+    +-+-+   +-+ +
+              |C|
+    +-+-+-+   +-+
+    |E E E|
+    +-+-+-+
 
 Plants of the same type can appear in multiple separate regions, and
 regions can even appear within other regions. For example:
 
-    OOOOO OXOXO OOOOO OXOXO OOOOO 
+    OOOOO
+    OXOXO
+    OOOOO
+    OXOXO
+    OOOOO
 
 The above map contains *five* regions, one containing all of the `O`
 garden plots, and the other four each containing a single `X` plot.
@@ -73,7 +92,16 @@ In the second example, the region with all of the `O` plants has price
 
 Here\'s a larger example:
 
-    RRRRIICCFF RRRRIICCCF VVRRRCCFFF VVRCCCJFFF VVVVCJJCFE VVIVCCJJEE VVIIICJJEE MIIIIIJJEE MIIISIJEEE MMMISSJEEE 
+    RRRRIICCFF
+    RRRRIICCCF
+    VVRRRCCFFF
+    VVRCCCJFFF
+    VVVVCJJCFE
+    VVIVCCJJEE
+    VVIIICJJEE
+    MIIIIIJJEE
+    MIIISIJEEE
+    MMMISSJEEE
 
 It contains:
 
@@ -107,7 +135,10 @@ is.
 
 Consider this example again:
 
-    AAAA BBCD BBCC EEEC 
+    AAAA
+    BBCD
+    BBCC
+    EEEC
 
 The region containing type `A` plants has `4` sides, as does each of the
 regions containing plants of type `B`, `D`, and `E`. However, the more
@@ -123,7 +154,11 @@ total price of *`436`*.
 
 Here\'s a map that includes an E-shaped region full of type `E` plants:
 
-    EEEEE EXXXX EEEEE EXXXX EEEEE 
+    EEEEE
+    EXXXX
+    EEEEE
+    EXXXX
+    EEEEE
 
 The E-shaped region has an area of `17` and `12` sides for a price of
 `204`. Including the two regions full of type `X` plants, this map has a
@@ -131,7 +166,12 @@ total price of *`236`*.
 
 This map has a total price of *`368`*:
 
-    AAAAAA AAABBA AAABBA ABBAAA ABBAAA AAAAAA 
+    AAAAAA
+    AAABBA
+    AAABBA
+    ABBAAA
+    ABBAAA
+    AAAAAA
 
 It includes two regions full of type `B` plants (each with `4` sides)
 and a single region full of type `A` plants (with `4` sides on the
@@ -166,13 +206,11 @@ Your puzzle answer was `808796`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](12/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Garden+Groups%22+%2D+Day+12+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F12)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

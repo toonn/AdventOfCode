@@ -15,17 +15,39 @@ unusual, though, as you don\'t merely need to find one instance of
 `XMAS` - you need to find *all of them*. Here are a few ways `XMAS`
 might appear, where irrelevant characters have been replaced with `.`:
 
-    ..X... .SAMX. .A..A. XMAS.S .X.... 
+    ..X...
+    .SAMX.
+    .A..A.
+    XMAS.S
+    .X....
 
 The actual word search will be full of letters instead. For example:
 
-    MMMSXXMASM MSAMXMSMSA AMXSXMAAMM MSAMASMSMX XMASAMXAMM XXAMMXXAMA SMSMSASXSS SAXAMASAAA MAMMMXMMMM MXMXAXMASX 
+    MMMSXXMASM
+    MSAMXMSMSA
+    AMXSXMAAMM
+    MSAMASMSMX
+    XMASAMXAMM
+    XXAMMXXAMA
+    SMSMSASXSS
+    SAXAMASAAA
+    MAMMMXMMMM
+    MXMXAXMASX
 
 In this word search, `XMAS` occurs a total of *`18`* times; here\'s the
 same word search again, but where letters not involved in any `XMAS`
 have been replaced with `.`:
 
-    ....XXMAS. .SAMXMS... ...S..A... ..A.A.MS.X XMASAMX.MM X.....XA.A S.S.S.S.SS .A.A.A.A.A ..M.M.M.MM .X.X.XMASX 
+    ....XXMAS.
+    .SAMXMS...
+    ...S..A...
+    ..A.A.MS.X
+    XMASAMX.MM
+    X.....XA.A
+    S.S.S.S.SS
+    .A.A.A.A.A
+    ..M.M.M.MM
+    .X.X.XMASX
 
 Take a look at the little Elf\'s word search. *How many times does
 `XMAS` appear?*
@@ -42,7 +64,9 @@ this isn\'t actually an *`XMAS`* puzzle; it\'s an
 puzzle in which you\'re supposed to find two `MAS` in the shape of an
 `X`. One way to achieve that is like this:
 
-    M.S .A. M.S 
+    M.S
+    .A.
+    M.S
 
 Irrelevant characters have again been replaced with `.` in the above
 diagram. Within the `X`, each `MAS` can be written forwards or
@@ -51,7 +75,16 @@ backwards.
 Here\'s the same example from before, but this time all of the `X-MAS`es
 have been kept instead:
 
-    .M.S...... ..A..MSMS. .M.S.MAA.. ..A.ASMSM. .M.S.M.... .......... S.S.S.S.S. .A.A.A.A.. M.M.M.M.M. .......... 
+    .M.S......
+    ..A..MSMS.
+    .M.S.MAA..
+    ..A.ASMSM.
+    .M.S.M....
+    ..........
+    S.S.S.S.S.
+    .A.A.A.A..
+    M.M.M.M.M.
+    ..........
 
 In this example, an `X-MAS` appears *`9`* times.
 
@@ -63,13 +96,11 @@ Your puzzle answer was `2034`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](4/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Ceres+Search%22+%2D+Day+4+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F4)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

@@ -43,11 +43,28 @@ of the disk to the leftmost free space block (until there are no gaps
 remaining between file blocks). For the disk map `12345`, the process
 looks like this:
 
-    0..111....22222 02.111....2222. 022111....222.. 0221112...22... 02211122..2.... 022111222...... 
+    0..111....22222
+    02.111....2222.
+    022111....222..
+    0221112...22...
+    02211122..2....
+    022111222......
 
 The first example requires a few more steps:
 
-    00...111...2...333.44.5555.6666.777.888899 009..111...2...333.44.5555.6666.777.88889. 0099.111...2...333.44.5555.6666.777.8888.. 00998111...2...333.44.5555.6666.777.888... 009981118..2...333.44.5555.6666.777.88.... 0099811188.2...333.44.5555.6666.777.8..... 009981118882...333.44.5555.6666.777....... 0099811188827..333.44.5555.6666.77........ 00998111888277.333.44.5555.6666.7......... 009981118882777333.44.5555.6666........... 009981118882777333644.5555.666............ 00998111888277733364465555.66............. 0099811188827773336446555566.............. 
+    00...111...2...333.44.5555.6666.777.888899
+    009..111...2...333.44.5555.6666.777.88889.
+    0099.111...2...333.44.5555.6666.777.8888..
+    00998111...2...333.44.5555.6666.777.888...
+    009981118..2...333.44.5555.6666.777.88....
+    0099811188.2...333.44.5555.6666.777.8.....
+    009981118882...333.44.5555.6666.777.......
+    0099811188827..333.44.5555.6666.77........
+    00998111888277.333.44.5555.6666.7.........
+    009981118882777333.44.5555.6666...........
+    009981118882777333644.5555.666............
+    00998111888277733364465555.66.............
+    0099811188827773336446555566..............
 
 The final step of this file-compacting process is to update the
 *filesystem checksum*. To calculate the checksum, add up the result of
@@ -63,8 +80,8 @@ the sum of these, *`1928`*.
 [Compact the amphipod\'s hard
 drive]{title="Bonus points if you make a cool animation of this process."}
 using the process he requested. *What is the resulting filesystem
-checksum?* [(Be careful copy/pasting the input for this puzzle; it is a
-single, very long line.)]{.quiet}
+checksum?* (Be careful copy/pasting the input for this puzzle; it is a
+single, very long line.)
 
 Your puzzle answer was `6331212425418`.
 
@@ -90,7 +107,11 @@ move.
 
 The first example from above now proceeds differently:
 
-    00...111...2...333.44.5555.6666.777.888899 0099.111...2...333.44.5555.6666.777.8888.. 0099.1117772...333.44.5555.6666.....8888.. 0099.111777244.333....5555.6666.....8888.. 00992111777.44.333....5555.6666.....8888.. 
+    00...111...2...333.44.5555.6666.777.888899
+    0099.111...2...333.44.5555.6666.777.8888..
+    0099.1117772...333.44.5555.6666.....8888..
+    0099.111777244.333....5555.6666.....8888..
+    00992111777.44.333....5555.6666.....8888..
 
 The process of updating the filesystem checksum is the same; now, this
 example\'s checksum would be *`2858`*.
@@ -103,13 +124,11 @@ Your puzzle answer was `6363268339304`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](9/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Disk+Fragmenter%22+%2D+Day+9+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F9)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

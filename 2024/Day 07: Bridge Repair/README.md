@@ -17,7 +17,15 @@ operators into their calibration equations (your puzzle input).
 
 For example:
 
-    190: 10 19 3267: 81 40 27 83: 17 5 156: 15 6 7290: 6 8 6 15 161011: 16 10 13 192: 17 8 14 21037: 9 7 18 13 292: 11 6 16 20 
+    190: 10 19
+    3267: 81 40 27
+    83: 17 5
+    156: 15 6
+    7290: 6 8 6 15
+    161011: 16 10 13
+    192: 17 8 14
+    21037: 9 7 18 13
+    292: 11 6 16 20
 
 Each line represents a single equation. The test value appears before
 the colon on each line; it is your job to determine whether the
@@ -87,13 +95,11 @@ Your puzzle answer was `438027111276610`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](7/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Bridge+Repair%22+%2D+Day+7+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F7)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

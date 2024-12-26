@@ -20,7 +20,12 @@ The unusual data (your puzzle input) consists of many *reports*, one
 report per line. Each report is a list of numbers called *levels* that
 are separated by spaces. For example:
 
-    7 6 4 2 1 1 2 7 8 9 9 7 6 2 1 1 3 2 4 5 8 6 4 4 1 1 3 6 7 9 
+    7 6 4 2 1
+    1 2 7 8 9
+    9 7 6 2 1
+    1 3 2 4 5
+    8 6 4 4 1
+    1 3 6 7 9
 
 This example data contains six reports each containing five levels.
 
@@ -87,13 +92,11 @@ Your puzzle answer was `293`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](2/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Red%2DNosed+Reports%22+%2D+Day+2+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F2)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

@@ -53,7 +53,26 @@ seven stones engraved with the numbers `1 2024 1 0 9 9 2021976`.
 
 Here is a longer example:
 
-    Initial arrangement: 125 17  After 1 blink: 253000 1 7  After 2 blinks: 253 0 2024 14168  After 3 blinks: 512072 1 20 24 28676032  After 4 blinks: 512 72 2024 2 0 2 4 2867 6032  After 5 blinks: 1036288 7 2 20 24 4048 1 4048 8096 28 67 60 32  After 6 blinks: 2097446912 14168 4048 2 0 2 4 40 48 2024 40 48 80 96 2 8 6 7 6 0 3 2 
+    Initial arrangement:
+    125 17
+
+    After 1 blink:
+    253000 1 7
+
+    After 2 blinks:
+    253 0 2024 14168
+
+    After 3 blinks:
+    512072 1 20 24 28676032
+
+    After 4 blinks:
+    512 72 2024 2 0 2 4 2867 6032
+
+    After 5 blinks:
+    1036288 7 2 20 24 4048 1 4048 8096 28 67 60 32
+
+    After 6 blinks:
+    2097446912 14168 4048 2 0 2 4 40 48 2024 40 48 80 96 2 8 6 7 6 0 3 2
 
 In this example, after blinking six times, you would have `22` stones.
 After blinking 25 times, you would have *`55312`* stones!
@@ -75,13 +94,11 @@ Your puzzle answer was `223894720281135`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](11/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Plutonian+Pebbles%22+%2D+Day+11+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F11)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

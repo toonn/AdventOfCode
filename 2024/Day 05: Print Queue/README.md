@@ -27,7 +27,34 @@ whether each update has the pages in the right order.
 
 For example:
 
-    47|53 97|13 97|61 97|47 75|29 61|13 75|53 29|13 97|29 53|29 61|53 97|53 61|29 47|13 75|47 97|75 47|61 75|61 47|29 75|13 53|13  75,47,61,53,29 97,61,53,29,13 75,29,13 75,97,47,61,53 61,13,29 97,13,75,29,47 
+    47|53
+    97|13
+    97|61
+    97|47
+    75|29
+    61|13
+    75|53
+    29|13
+    97|29
+    53|29
+    61|53
+    97|53
+    61|29
+    47|13
+    75|47
+    97|75
+    47|61
+    75|61
+    47|29
+    75|13
+    53|13
+
+    75,47,61,53,29
+    97,61,53,29,13
+    75,29,13
+    75,97,47,61,53
+    61,13,29
+    97,13,75,29,47
 
 The first section specifies the *page ordering rules*, one per line. The
 first rule, `47|53`, means that if an update includes both page number
@@ -82,7 +109,9 @@ correctly-ordered updates, you will need to find the middle page number
 of each correctly-ordered update. In the above example, the
 correctly-ordered updates are:
 
-    75,47,61,53,29 97,61,53,29,13 75,29,13 
+    75,47,61,53,29
+    97,61,53,29,13
+    75,29,13
 
 These have middle page numbers of `61`, `53`, and `29` respectively.
 Adding these page numbers together gives *`143`*.
@@ -123,13 +152,11 @@ Your puzzle answer was `5799`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](5/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Print+Queue%22+%2D+Day+5+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F5)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

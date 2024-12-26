@@ -38,7 +38,16 @@ towel and then a `gr` towel, or even a single massive `rgrgr` towel
 To start, collect together all of the available towel patterns and the
 list of desired designs (your puzzle input). For example:
 
-    r, wr, b, g, bwu, rb, gb, br  brwrr bggr gbbr rrbgbr ubwu bwurrg brgr bbrgwb 
+    r, wr, b, g, bwu, rb, gb, br
+
+    brwrr
+    bggr
+    gbbr
+    rrbgbr
+    ubwu
+    bwurrg
+    brgr
+    bbrgwb
 
 The first line indicates the available towel patterns; in this example,
 the onsen has unlimited towels with a single red stripe (`r`), unlimited
@@ -121,13 +130,11 @@ Your puzzle answer was `1100663950563322`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](19/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Linen+Layout%22+%2D+Day+19+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F19)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

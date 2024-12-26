@@ -36,7 +36,45 @@ possibly fit in a lock.\"
 
 He transmits you some example schematics:
 
-    ##### .#### .#### .#### .#.#. .#... .....  ##### ##.## .#.## ...## ...#. ...#. .....  ..... #.... #.... #...# #.#.# #.### #####  ..... ..... #.#.. ###.. ###.# ###.# #####  ..... ..... ..... #.... #.#.. #.#.# ##### 
+    #####
+    .####
+    .####
+    .####
+    .#.#.
+    .#...
+    .....
+
+    #####
+    ##.##
+    .#.##
+    ...##
+    ...#.
+    ...#.
+    .....
+
+    .....
+    #....
+    #....
+    #...#
+    #.#.#
+    #.###
+    #####
+
+    .....
+    .....
+    #.#..
+    ###..
+    ###.#
+    ###.#
+    #####
+
+    .....
+    .....
+    .....
+    #....
+    #.#..
+    #.#.#
+    #####
 
 \"The locks are schematics that have the top row filled (`#`) and the
 bottom row empty (`.`); the keys have the top row empty and the bottom
@@ -51,11 +89,23 @@ be converted to a list of heights.\"
 
 \"So, you could say the first lock has pin heights `0,5,3,4,3`:\"
 
-    ##### .#### .#### .#### .#.#. .#... ..... 
+    #####
+    .####
+    .####
+    .####
+    .#.#.
+    .#...
+    .....
 
 \"Or, that the first key has heights `5,0,2,1,3`:\"
 
-    ..... #.... #.... #...# #.#.# #.### ##### 
+    .....
+    #....
+    #....
+    #...#
+    #.#.#
+    #.###
+    #####
 
 \"These seem like they should fit together; in the first four columns,
 the pins and key don\'t overlap. However, this key *cannot* be for this
@@ -70,11 +120,14 @@ is at the North\--\" You disconnect the call.
 
 In this example, converting both locks to pin heights produces:
 
-    0,5,3,4,3 1,2,0,5,3 
+    0,5,3,4,3
+    1,2,0,5,3
 
 Converting all three keys to heights produces:
 
-    5,0,2,1,3 4,3,4,0,2 3,0,2,0,1 
+    5,0,2,1,3
+    4,3,4,0,2
+    3,0,2,0,1
 
 Then, you can try every key with every lock:
 
@@ -136,8 +189,6 @@ calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](25/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Code+Chronicle%22+%2D+Day+25+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F25)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

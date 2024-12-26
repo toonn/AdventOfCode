@@ -28,7 +28,21 @@ spend to win as many prizes as possible? You assemble a list of every
 machine\'s button behavior and prize location (your puzzle input). For
 example:
 
-    Button A: X+94, Y+34 Button B: X+22, Y+67 Prize: X=8400, Y=5400  Button A: X+26, Y+66 Button B: X+67, Y+21 Prize: X=12748, Y=12176  Button A: X+17, Y+86 Button B: X+84, Y+37 Prize: X=7870, Y=6450  Button A: X+69, Y+23 Button B: X+27, Y+71 Prize: X=18641, Y=10279 
+    Button A: X+94, Y+34
+    Button B: X+22, Y+67
+    Prize: X=8400, Y=5400
+
+    Button A: X+26, Y+66
+    Button B: X+67, Y+21
+    Prize: X=12748, Y=12176
+
+    Button A: X+17, Y+86
+    Button B: X+84, Y+37
+    Prize: X=7870, Y=6450
+
+    Button A: X+69, Y+23
+    Button B: X+27, Y+71
+    Prize: X=18641, Y=10279
 
 This list describes the button configuration and prize location of four
 different claw machines.
@@ -79,7 +93,21 @@ your measurements, the position of every prize is actually
 Add `10000000000000` to the `X` and `Y` position of every prize. After
 making this change, the example above would now look like this:
 
-    Button A: X+94, Y+34 Button B: X+22, Y+67 Prize: X=10000000008400, Y=10000000005400  Button A: X+26, Y+66 Button B: X+67, Y+21 Prize: X=10000000012748, Y=10000000012176  Button A: X+17, Y+86 Button B: X+84, Y+37 Prize: X=10000000007870, Y=10000000006450  Button A: X+69, Y+23 Button B: X+27, Y+71 Prize: X=10000000018641, Y=10000000010279 
+    Button A: X+94, Y+34
+    Button B: X+22, Y+67
+    Prize: X=10000000008400, Y=10000000005400
+
+    Button A: X+26, Y+66
+    Button B: X+67, Y+21
+    Prize: X=10000000012748, Y=10000000012176
+
+    Button A: X+17, Y+86
+    Button B: X+84, Y+37
+    Prize: X=10000000007870, Y=10000000006450
+
+    Button A: X+69, Y+23
+    Button B: X+27, Y+71
+    Prize: X=10000000018641, Y=10000000010279
 
 Now, it is only possible to win a prize on the second and fourth claw
 machines. Unfortunately, it will take *many more than `100` presses* to
@@ -94,13 +122,11 @@ Your puzzle answer was `72587986598368`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](13/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Claw+Contraption%22+%2D+Day+13+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F13)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

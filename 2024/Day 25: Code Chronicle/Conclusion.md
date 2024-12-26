@@ -1,7 +1,6 @@
-Using the notes from the places marked by all [fifty
-stars]{.day-success}, The Historians finish the chronicle, wrap it, and
-give it to you so you can bring it to Santa before the big sleigh
-launch.
+Using the notes from the places marked by all fifty stars, The
+Historians finish the chronicle, wrap it, and give it to you so you can
+bring it to Santa before the big sleigh launch.
 
 Santa is already in the sleigh making the final launch preparations when
 you arrive. You try to hand him the chronicle, but he doesn\'t take it.
@@ -32,8 +31,6 @@ title="Yep, just like that.  There's at least one in the description for each da
 the easter eggs in each puzzle, just in case you missed any. Hover your
 mouse over them, and the easter egg will appear.
 
-You can [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I+just+completed+all+25+days+of+Advent+of+Code+2024%21+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-moment with your friends or [\[Go Check on Your Calendar\]](/2024).
+You can \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this moment with your friends or [\[Go Check on Your Calendar\]](/2024).

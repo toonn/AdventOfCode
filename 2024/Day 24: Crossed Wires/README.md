@@ -27,7 +27,16 @@ Rather than risk getting shocked while tinkering with the live system,
 you write down all of the gate connections and initial wire values (your
 puzzle input) so you can consider them in relative safety. For example:
 
-    x00: 1 x01: 1 x02: 1 y00: 0 y01: 1 y02: 0  x00 AND y00 -> z00 x01 XOR y01 -> z01 x02 OR y02 -> z02 
+    x00: 1
+    x01: 1
+    x02: 1
+    y00: 0
+    y01: 1
+    y02: 0
+
+    x00 AND y00 -> z00
+    x01 XOR y01 -> z01
+    x02 OR y02 -> z02
 
 Because gates wait for input, some wires need to start with a value (as
 inputs to the entire system). The first section specifies these values.
@@ -53,12 +62,93 @@ which is equal to the decimal number *`4`*.
 
 Here\'s a larger example:
 
-    x00: 1 x01: 0 x02: 1 x03: 1 x04: 0 y00: 1 y01: 1 y02: 1 y03: 1 y04: 1  ntg XOR fgs -> mjb y02 OR x01 -> tnw kwq OR kpj -> z05 x00 OR x03 -> fst tgd XOR rvg -> z01 vdt OR tnw -> bfw bfw AND frj -> z10 ffh OR nrd -> bqk y00 AND y03 -> djm y03 OR y00 -> psh bqk OR frj -> z08 tnw OR fst -> frj gnj AND tgd -> z11 bfw XOR mjb -> z00 x03 OR x00 -> vdt gnj AND wpb -> z02 x04 AND y00 -> kjc djm OR pbm -> qhw nrd AND vdt -> hwm kjc AND fst -> rvg y04 OR y02 -> fgs y01 AND x02 -> pbm ntg OR kjc -> kwq psh XOR fgs -> tgd qhw XOR tgd -> z09 pbm OR djm -> kpj x03 XOR y03 -> ffh x00 XOR y04 -> ntg bfw OR bqk -> z06 nrd XOR fgs -> wpb frj XOR qhw -> z04 bqk OR frj -> z07 y03 OR x01 -> nrd hwm AND bqk -> z03 tgd XOR rvg -> z12 tnw OR pbm -> gnj 
+    x00: 1
+    x01: 0
+    x02: 1
+    x03: 1
+    x04: 0
+    y00: 1
+    y01: 1
+    y02: 1
+    y03: 1
+    y04: 1
+
+    ntg XOR fgs -> mjb
+    y02 OR x01 -> tnw
+    kwq OR kpj -> z05
+    x00 OR x03 -> fst
+    tgd XOR rvg -> z01
+    vdt OR tnw -> bfw
+    bfw AND frj -> z10
+    ffh OR nrd -> bqk
+    y00 AND y03 -> djm
+    y03 OR y00 -> psh
+    bqk OR frj -> z08
+    tnw OR fst -> frj
+    gnj AND tgd -> z11
+    bfw XOR mjb -> z00
+    x03 OR x00 -> vdt
+    gnj AND wpb -> z02
+    x04 AND y00 -> kjc
+    djm OR pbm -> qhw
+    nrd AND vdt -> hwm
+    kjc AND fst -> rvg
+    y04 OR y02 -> fgs
+    y01 AND x02 -> pbm
+    ntg OR kjc -> kwq
+    psh XOR fgs -> tgd
+    qhw XOR tgd -> z09
+    pbm OR djm -> kpj
+    x03 XOR y03 -> ffh
+    x00 XOR y04 -> ntg
+    bfw OR bqk -> z06
+    nrd XOR fgs -> wpb
+    frj XOR qhw -> z04
+    bqk OR frj -> z07
+    y03 OR x01 -> nrd
+    hwm AND bqk -> z03
+    tgd XOR rvg -> z12
+    tnw OR pbm -> gnj
 
 After waiting for values on all wires starting with `z`, the wires in
 this system have the following values:
 
-    bfw: 1 bqk: 1 djm: 1 ffh: 0 fgs: 1 frj: 1 fst: 1 gnj: 1 hwm: 1 kjc: 0 kpj: 1 kwq: 0 mjb: 1 nrd: 1 ntg: 0 pbm: 1 psh: 1 qhw: 1 rvg: 0 tgd: 0 tnw: 1 vdt: 1 wpb: 0 z00: 0 z01: 0 z02: 0 z03: 1 z04: 0 z05: 1 z06: 1 z07: 1 z08: 1 z09: 1 z10: 1 z11: 0 z12: 0 
+    bfw: 1
+    bqk: 1
+    djm: 1
+    ffh: 0
+    fgs: 1
+    frj: 1
+    fst: 1
+    gnj: 1
+    hwm: 1
+    kjc: 0
+    kpj: 1
+    kwq: 0
+    mjb: 1
+    nrd: 1
+    ntg: 0
+    pbm: 1
+    psh: 1
+    qhw: 1
+    rvg: 0
+    tgd: 0
+    tnw: 1
+    vdt: 1
+    wpb: 0
+    z00: 0
+    z01: 0
+    z02: 0
+    z03: 1
+    z04: 0
+    z05: 1
+    z06: 1
+    z07: 1
+    z08: 1
+    z09: 1
+    z10: 1
+    z11: 0
+    z12: 0
 
 Combining the bits from all wires starting with `z` produces the binary
 number `0011111101000`. Converting this number to decimal produces
@@ -97,13 +187,24 @@ eventually find the sum of those two numbers as a five-bit number on the
 system would be to pass `11` on the `x` wires (`1011` in binary) and
 `13` on the `y` wires (`1101` in binary):
 
-    x00: 1 x01: 1 x02: 0 x03: 1 y00: 1 y01: 0 y02: 1 y03: 1 
+    x00: 1
+    x01: 1
+    x02: 0
+    x03: 1
+    y00: 1
+    y01: 0
+    y02: 1
+    y03: 1
 
 If the system were working correctly, then after all gates are finished
 processing, you should find `24` (`11+13`) on the `z` wires as the
 five-bit binary number `11000`:
 
-    z00: 0 z01: 0 z02: 0 z03: 1 z04: 1 
+    z00: 0
+    z01: 0
+    z02: 0
+    z03: 1
+    z04: 1
 
 Unfortunately, your actual system needs to add numbers with many more
 bits and therefore has many more wires.
@@ -119,7 +220,25 @@ the six-bit number on `x00` through `x05` and the six-bit number on
 `y00` through `y05` and then write the result as a six-bit number on
 `z00` through `z05`:
 
-    x00: 0 x01: 1 x02: 0 x03: 1 x04: 0 x05: 1 y00: 0 y01: 0 y02: 1 y03: 1 y04: 0 y05: 1  x00 AND y00 -> z05 x01 AND y01 -> z02 x02 AND y02 -> z01 x03 AND y03 -> z03 x04 AND y04 -> z04 x05 AND y05 -> z00 
+    x00: 0
+    x01: 1
+    x02: 0
+    x03: 1
+    x04: 0
+    x05: 1
+    y00: 0
+    y01: 0
+    y02: 1
+    y03: 1
+    y04: 0
+    y05: 1
+
+    x00 AND y00 -> z05
+    x01 AND y01 -> z02
+    x02 AND y02 -> z01
+    x03 AND y03 -> z03
+    x04 AND y04 -> z04
+    x05 AND y05 -> z00
 
 However, in this example, two pairs of gates have had their output wires
 swapped, causing the system to produce wrong answers. The first pair of
@@ -129,7 +248,12 @@ and `x02 AND y02 -> z01`. Correcting these two swaps results in this
 system that works as intended for any set of initial values on wires
 that start with `x` or `y`:
 
-    x00 AND y00 -> z00 x01 AND y01 -> z01 x02 AND y02 -> z02 x03 AND y03 -> z03 x04 AND y04 -> z04 x05 AND y05 -> z05 
+    x00 AND y00 -> z00
+    x01 AND y01 -> z01
+    x02 AND y02 -> z02
+    x03 AND y03 -> z03
+    x04 AND y04 -> z04
+    x05 AND y05 -> z05
 
 In this example, two pairs of gates have outputs that are involved in a
 swap. By sorting their output wires\' names and joining them with
@@ -154,13 +278,11 @@ Your puzzle answer was `hnv,hth,kfm,tqr,vmv,z07,z20,z28`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](24/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Crossed+Wires%22+%2D+Day+24+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F24)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

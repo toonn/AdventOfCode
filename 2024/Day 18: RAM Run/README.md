@@ -21,7 +21,31 @@ from `0` to `70` both horizontally and vertically. However, for the sake
 of example, suppose you\'re on a smaller grid with coordinates that
 range from `0` to `6` and the following list of incoming byte positions:
 
-    5,4 4,2 4,5 3,0 2,1 6,3 2,4 1,5 0,6 3,3 2,6 5,1 1,2 5,5 2,5 6,5 1,4 0,4 6,4 1,1 6,1 1,0 0,5 1,6 2,0 
+    5,4
+    4,2
+    4,5
+    3,0
+    2,1
+    6,3
+    2,4
+    1,5
+    0,6
+    3,3
+    2,6
+    5,1
+    1,2
+    5,5
+    2,5
+    6,5
+    1,4
+    0,4
+    6,4
+    1,1
+    6,1
+    1,0
+    0,5
+    1,6
+    2,0
 
 Each byte position is given as an `X,Y` coordinate, where `X` is the
 distance from the left edge of your memory space and `Y` is the distance
@@ -44,14 +68,26 @@ In the above example, if you were to draw the memory space after the
 first `12` bytes have fallen (using `.` for safe and `#` for corrupted),
 it would look like this:
 
-    ...#... ..#..#. ....#.. ...#..# ..#..#. .#..#.. #.#.... 
+    ...#...
+    ..#..#.
+    ....#..
+    ...#..#
+    ..#..#.
+    .#..#..
+    #.#....
 
 You can take steps up, down, left, or right. After just 12 bytes have
 corrupted locations in your memory space, the shortest path from the top
 left corner to the exit would take *`22`* steps. Here (marked with `O`)
 is one such path:
 
-    OO.#OOO .O#OO#O .OOO#OO ...#OO# ..#OO#. .#.O#.. #.#OOOO 
+    OO.#OOO
+    .O#OO#O
+    .OOO#OO
+    ...#OO#
+    ..#OO#.
+    .#.O#..
+    #.#OOOO
 
 Simulate the first kilobyte (`1024` bytes) falling onto your memory
 space. Afterward, *what is the minimum number of steps needed to reach
@@ -71,12 +107,24 @@ first byte that will cut off the path to the exit*.
 In the above example, after the byte at `1,1` falls, there is still a
 path to the exit:
 
-    O..#OOO O##OO#O O#OO#OO OOO#OO# ###OO## .##O### #.#OOOO 
+    O..#OOO
+    O##OO#O
+    O#OO#OO
+    OOO#OO#
+    ###OO##
+    .##O###
+    #.#OOOO
 
 However, after adding the very next byte (at `6,1`), there is no longer
 a path to the exit:
 
-    ...#... .##..## .#..#.. ...#..# ###..## .##.### #.#.... 
+    ...#...
+    .##..##
+    .#..#..
+    ...#..#
+    ###..##
+    .##.###
+    #.#....
 
 So, in this example, the coordinates of the first byte that prevents the
 exit from being reachable are *`6,1`*.
@@ -91,13 +139,11 @@ Your puzzle answer was `26,50`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](18/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22RAM+Run%22+%2D+Day+18+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F18)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

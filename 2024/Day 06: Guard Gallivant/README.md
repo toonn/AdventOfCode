@@ -16,7 +16,16 @@ Historians can search safely?
 You start by making a map (your puzzle input) of the situation. For
 example:
 
-    ....#..... .........# .......... ..#....... .......#.. .......... .#..^..... ........#. #......... ......#... 
+    ....#.....
+    .........#
+    ..........
+    ..#.......
+    .......#..
+    ..........
+    .#..^.....
+    ........#.
+    #.........
+    ......#...
 
 The map shows the current position of the guard with `^` (to indicate
 the guard is currently facing *up* from the perspective of the map). Any
@@ -33,29 +42,74 @@ repeatedly following these steps:
 Following the above protocol, the guard moves up several times until she
 reaches an obstacle (in this case, a pile of failed suit prototypes):
 
-    ....#..... ....^....# .......... ..#....... .......#.. .......... .#........ ........#. #......... ......#... 
+    ....#.....
+    ....^....#
+    ..........
+    ..#.......
+    .......#..
+    ..........
+    .#........
+    ........#.
+    #.........
+    ......#...
 
 Because there is now an obstacle in front of the guard, she turns right
 before continuing straight in her new facing direction:
 
-    ....#..... ........># .......... ..#....... .......#.. .......... .#........ ........#. #......... ......#... 
+    ....#.....
+    ........>#
+    ..........
+    ..#.......
+    .......#..
+    ..........
+    .#........
+    ........#.
+    #.........
+    ......#...
 
 Reaching another obstacle (a spool of several *very* long polymers), she
 turns right again and continues downward:
 
-    ....#..... .........# .......... ..#....... .......#.. .......... .#......v. ........#. #......... ......#... 
+    ....#.....
+    .........#
+    ..........
+    ..#.......
+    .......#..
+    ..........
+    .#......v.
+    ........#.
+    #.........
+    ......#...
 
 This process continues for a while, but the guard eventually leaves the
 mapped area (after walking past a tank of universal solvent):
 
-    ....#..... .........# .......... ..#....... .......#.. .......... .#........ ........#. #......... ......#v.. 
+    ....#.....
+    .........#
+    ..........
+    ..#.......
+    .......#..
+    ..........
+    .#........
+    ........#.
+    #.........
+    ......#v..
 
 By predicting the guard\'s route, you can determine which specific
 positions in the lab will be in the patrol path. *Including the guard\'s
 starting position*, the positions visited by the guard before leaving
 the area are marked with an `X`:
 
-    ....#..... ....XXXXX# ....X...X. ..#.X...X. ..XXXXX#X. ..X.X.X.X. .#XXXXXXX. .XXXXXXX#. #XXXXXXX.. ......#X.. 
+    ....#.....
+    ....XXXXX#
+    ....X...X.
+    ..#.X...X.
+    ..XXXXX#X.
+    ..X.X.X.X.
+    .#XXXXXXX.
+    .XXXXXXX#.
+    #XXXXXXX..
+    ......#X..
 
 In this example, the guard will visit *`41`* distinct positions on your
 map.
@@ -97,32 +151,86 @@ where the guard moves both up/down and left/right.
 
 Option one, put a printing press next to the guard\'s starting position:
 
-    ....#..... ....+---+# ....|...|. ..#.|...|. ....|..#|. ....|...|. .#.O^---+. ........#. #......... ......#... 
+    ....#.....
+    ....+---+#
+    ....|...|.
+    ..#.|...|.
+    ....|..#|.
+    ....|...|.
+    .#.O^---+.
+    ........#.
+    #.........
+    ......#...
 
 Option two, put a stack of failed suit prototypes in the bottom right
 quadrant of the mapped area:
 
-    ....#..... ....+---+# ....|...|. ..#.|...|. ..+-+-+#|. ..|.|.|.|. .#+-^-+-+. ......O.#. #......... ......#... 
+    ....#.....
+    ....+---+#
+    ....|...|.
+    ..#.|...|.
+    ..+-+-+#|.
+    ..|.|.|.|.
+    .#+-^-+-+.
+    ......O.#.
+    #.........
+    ......#...
 
 Option three, put a crate of chimney-squeeze prototype fabric next to
 the standing desk in the bottom right quadrant:
 
-    ....#..... ....+---+# ....|...|. ..#.|...|. ..+-+-+#|. ..|.|.|.|. .#+-^-+-+. .+----+O#. #+----+... ......#... 
+    ....#.....
+    ....+---+#
+    ....|...|.
+    ..#.|...|.
+    ..+-+-+#|.
+    ..|.|.|.|.
+    .#+-^-+-+.
+    .+----+O#.
+    #+----+...
+    ......#...
 
 Option four, put an alchemical retroencabulator near the bottom left
 corner:
 
-    ....#..... ....+---+# ....|...|. ..#.|...|. ..+-+-+#|. ..|.|.|.|. .#+-^-+-+. ..|...|.#. #O+---+... ......#... 
+    ....#.....
+    ....+---+#
+    ....|...|.
+    ..#.|...|.
+    ..+-+-+#|.
+    ..|.|.|.|.
+    .#+-^-+-+.
+    ..|...|.#.
+    #O+---+...
+    ......#...
 
 Option five, put the alchemical retroencabulator a bit to the right
 instead:
 
-    ....#..... ....+---+# ....|...|. ..#.|...|. ..+-+-+#|. ..|.|.|.|. .#+-^-+-+. ....|.|.#. #..O+-+... ......#... 
+    ....#.....
+    ....+---+#
+    ....|...|.
+    ..#.|...|.
+    ..+-+-+#|.
+    ..|.|.|.|.
+    .#+-^-+-+.
+    ....|.|.#.
+    #..O+-+...
+    ......#...
 
 Option six, put a tank of sovereign glue right next to the tank of
 universal solvent:
 
-    ....#..... ....+---+# ....|...|. ..#.|...|. ..+-+-+#|. ..|.|.|.|. .#+-^-+-+. .+----++#. #+----++.. ......#O.. 
+    ....#.....
+    ....+---+#
+    ....|...|.
+    ..#.|...|.
+    ..+-+-+#|.
+    ..|.|.|.|.
+    .#+-^-+-+.
+    .+----++#.
+    #+----++..
+    ......#O..
 
 It doesn\'t really matter what you choose to use as an obstacle so long
 as you and The Historians can put it into position without the guard
@@ -139,13 +247,11 @@ Your puzzle answer was `1586`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](6/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Guard+Gallivant%22+%2D+Day+6+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F6)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

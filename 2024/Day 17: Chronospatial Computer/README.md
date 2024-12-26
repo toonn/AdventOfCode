@@ -102,7 +102,11 @@ The Historians\' strange device has finished initializing its debugger
 and is displaying some *information about the program it is trying to
 run* (your puzzle input). For example:
 
-    Register A: 729 Register B: 0 Register C: 0  Program: 0,1,5,4,3,0 
+    Register A: 729
+    Register B: 0
+    Register C: 0
+
+    Program: 0,1,5,4,3,0
 
 Your first task is to *determine what the program is trying to output*.
 To do this, initialize the registers to the given values, then run the
@@ -129,7 +133,11 @@ the program itself.
 
 For example:
 
-    Register A: 2024 Register B: 0 Register C: 0  Program: 0,3,5,4,3,0 
+    Register A: 2024
+    Register B: 0
+    Register C: 0
+
+    Program: 0,3,5,4,3,0
 
 This program outputs a copy of itself if register `A` is instead
 initialized to *`117440`*. (The original initial value of register `A`,
@@ -143,13 +151,11 @@ Your puzzle answer was `265652340990875`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](17/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Chronospatial+Computer%22+%2D+Day+17+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F17)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

@@ -14,7 +14,15 @@ The numeric keypad has four rows of buttons: `789`, `456`, `123`, and
 finally an empty gap followed by `0A`. Visually, they are arranged like
 this:
 
-    +---+---+---+ | 7 | 8 | 9 | +---+---+---+ | 4 | 5 | 6 | +---+---+---+ | 1 | 2 | 3 | +---+---+---+     | 0 | A |     +---+---+ 
+    +---+---+---+
+    | 7 | 8 | 9 |
+    +---+---+---+
+    | 4 | 5 | 6 |
+    +---+---+---+
+    | 1 | 2 | 3 |
+    +---+---+---+
+        | 0 | A |
+        +---+---+
 
 Unfortunately, the area outside the door is currently *depressurized*
 and nobody can go near the door. A robot needs to be sent instead.
@@ -28,7 +36,11 @@ The directional keypad has two rows of buttons: a gap / `^` (up) / `A`
 (activate) on the first row and `<` (left) / `v` (down) / `>` (right) on
 the second row. Visually, they are arranged like this:
 
-        +---+---+     | ^ | A | +---+---+---+ | < | v | > | +---+---+---+ 
+        +---+---+
+        | ^ | A |
+    +---+---+---+
+    | < | v | > |
+    +---+---+---+
 
 When the robot arrives at the numeric keypad, its robotic arm is pointed
 at the `A` button in the bottom right corner. After that, this
@@ -82,7 +94,10 @@ Were you to choose this sequence of button presses, here are all of the
 buttons that would be pressed on your directional keypad, the two
 robots\' directional keypads, and the numeric keypad:
 
-    <vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A v<<A>>^A<A>AvA<^AA>A<vAAA>^A <A^A>^^AvvvA 029A 
+    <vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A
+    v<<A>>^A<A>AvA<^AA>A<vAAA>^A
+    <A^A>^^AvvvA
+    029A
 
 In summary, there are the following keypads:
 
@@ -99,12 +114,20 @@ initially aim at the keypad\'s `A` key, wherever it is.
 To unlock the door, *five* codes will need to be typed on its numeric
 keypad. For example:
 
-    029A 980A 179A 456A 379A 
+    029A
+    980A
+    179A
+    456A
+    379A
 
 For each of these, here is a shortest sequence of button presses you
 could type to cause the desired code to be typed on the numeric keypad:
 
-    029A: <vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A 980A: <v<A>>^AAAvA^A<vA<AA>>^AvAA<^A>A<v<A>A>^AAAvA<^A>A<vA>^A<A>A 179A: <v<A>>^A<vA<A>>^AAvAA<^A>A<v<A>>^AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A 456A: <v<A>>^AA<vA<A>>^AAvAA<^A>A<vA>^A<A>A<vA>^A<A>A<v<A>A>^AAvA<^A>A 379A: <v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A 
+    029A: <vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A
+    980A: <v<A>>^AAAvA^A<vA<AA>>^AvAA<^A>A<v<A>A>^AAAvA<^A>A<vA>^A<A>A
+    179A: <v<A>>^A<vA<A>>^AAvAA<^A>A<v<A>>^AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A
+    456A: <v<A>>^AA<vA<A>>^AAvAA<^A>A<vA>^A<A>A<vA>^A<A>A<v<A>A>^AAvA<^A>A
+    379A: <v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A
 
 The Historians are getting nervous; the ship computer doesn\'t remember
 whether the missing Historian is trapped in the area containing a *giant
@@ -166,13 +189,11 @@ Your puzzle answer was `306335137543664`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](21/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Keypad+Conundrum%22+%2D+Day+21+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F21)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

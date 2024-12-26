@@ -62,14 +62,26 @@ as necessary to produce more secret numbers.
 So, if a buyer had a secret number of `123`, that buyer\'s next ten
 secret numbers would be:
 
-    15887950 16495136 527345 704524 1553684 12683156 11100544 12249484 7753432 5908254 
+    15887950
+    16495136
+    527345
+    704524
+    1553684
+    12683156
+    11100544
+    12249484
+    7753432
+    5908254
 
 Each buyer uses their own secret number when choosing their price, so
 it\'s important to be able to predict the sequence of secret numbers for
 each buyer. Fortunately, the Historian\'s research has uncovered the
 *initial secret number of each buyer* (your puzzle input). For example:
 
-    1 10 100 2024 
+    1
+    10
+    100
+    2024
 
 This list describes the *initial secret number* of four different
 secret-hiding-spot-buyers on the Monkey Exchange Market. If you can
@@ -80,7 +92,10 @@ In a single day, buyers each have time to generate `2000` *new* secret
 numbers. In this example, for each buyer, their initial secret number
 and the 2000th new secret number they would generate are:
 
-    1: 8685429 10: 4700978 100: 15273692 2024: 8667524 
+    1: 8685429
+    10: 4700978
+    100: 15273692
+    2024: 8667524
 
 Adding up the 2000th new secret number for each buyer produces
 *`37327623`*.
@@ -101,7 +116,16 @@ secret numbers.
 So, if a buyer starts with a secret number of `123`, that buyer\'s first
 ten *prices* would be:
 
-    3 (from 123) 0 (from 15887950) 6 (from 16495136) 5 (etc.) 4 4 6 4 4 2 
+    3 (from 123)
+    0 (from 15887950)
+    6 (from 16495136)
+    5 (etc.)
+    4
+    4
+    6
+    4
+    4
+    2
 
 This price is the number of *bananas* that buyer is offering in exchange
 for your information about a new hiding spot. However, you still don\'t
@@ -117,7 +141,16 @@ then immediately sell when it sees that sequence.
 So, if a buyer starts with a secret number of `123`, that buyer\'s first
 ten secret numbers, prices, and the associated changes would be:
 
-         123: 3  15887950: 0 (-3) 16495136: 6 (6)   527345: 5 (-1)   704524: 4 (-1)  1553684: 4 (0) 12683156: 6 (2) 11100544: 4 (-2) 12249484: 4 (0)  7753432: 2 (-2) 
+         123: 3 
+    15887950: 0 (-3)
+    16495136: 6 (6)
+      527345: 5 (-1)
+      704524: 4 (-1)
+     1553684: 4 (0)
+    12683156: 6 (2)
+    11100544: 4 (-2)
+    12249484: 4 (0)
+     7753432: 2 (-2)
 
 Note that the first price has no associated change because there was no
 previous price to compare it with.
@@ -148,7 +181,10 @@ occur.
 
 Suppose the initial secret number of each buyer is:
 
-    1 2 3 2024 
+    1
+    2
+    3
+    2024
 
 There are many sequences of four price changes you could tell the
 monkey, but for these four buyers, the sequence that will get you the
@@ -177,13 +213,11 @@ Your puzzle answer was `2189`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](22/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Monkey+Market%22+%2D+Day+22+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F22)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

@@ -39,7 +39,12 @@ very similar. Maybe you can help The Historians reconcile their lists?
 
 For example:
 
-    3   4 4   3 2   5 1   3 3   9 3   3 
+    3   4
+    4   3
+    2   5
+    1   3
+    3   9
+    3   3
 
 Maybe the lists are only off by a small amount! To find out, pair up the
 numbers and measure how far apart they are. Pair up the *smallest number
@@ -99,7 +104,12 @@ the number of times that number appears in the right list.
 
 Here are the same example lists again:
 
-    3   4 4   3 2   5 1   3 3   9 3   3 
+    3   4
+    4   3
+    2   5
+    1   3
+    3   9
+    3   3
 
 For these example lists, here is the process of finding the similarity
 score:
@@ -128,13 +138,11 @@ Your puzzle answer was `23384288`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](1/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Historian+Hysteria%22+%2D+Day+1+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F1)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.

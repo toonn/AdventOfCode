@@ -17,22 +17,82 @@ They can also rotate clockwise or counterclockwise 90 degrees at a time
 To figure out the best place to sit, you start by grabbing a map (your
 puzzle input) from a nearby kiosk. For example:
 
-    ############### #.......#....E# #.#.###.#.###.# #.....#.#...#.# #.###.#####.#.# #.#.#.......#.# #.#.#####.###.# #...........#.# ###.#.#####.#.# #...#.....#.#.# #.#.#.###.#.#.# #.....#...#.#.# #.###.#.#.#.#.# #S..#.....#...# ############### 
+    ###############
+    #.......#....E#
+    #.#.###.#.###.#
+    #.....#.#...#.#
+    #.###.#####.#.#
+    #.#.#.......#.#
+    #.#.#####.###.#
+    #...........#.#
+    ###.#.#####.#.#
+    #...#.....#.#.#
+    #.#.#.###.#.#.#
+    #.....#...#.#.#
+    #.###.#.#.#.#.#
+    #S..#.....#...#
+    ###############
 
 There are many paths through this maze, but taking any of the best paths
 would incur a score of only *`7036`*. This can be achieved by taking a
 total of `36` steps forward and turning 90 degrees a total of `7` times:
 
-     ############### #.......#....E# #.#.###.#.###^# #.....#.#...#^# #.###.#####.#^# #.#.#.......#^# #.#.#####.###^# #..>>>>>>>>v#^# ###^#.#####v#^# #>>^#.....#v#^# #^#.#.###.#v#^# #^....#...#v#^# #^###.#.#.#v#^# #S..#.....#>>^# ############### 
+    ###############
+    #.......#....E#
+    #.#.###.#.###^#
+    #.....#.#...#^#
+    #.###.#####.#^#
+    #.#.#.......#^#
+    #.#.#####.###^#
+    #..>>>>>>>>v#^#
+    ###^#.#####v#^#
+    #>>^#.....#v#^#
+    #^#.#.###.#v#^#
+    #^....#...#v#^#
+    #^###.#.#.#v#^#
+    #S..#.....#>>^#
+    ###############
 
 Here\'s a second example:
 
-    ################# #...#...#...#..E# #.#.#.#.#.#.#.#.# #.#.#.#...#...#.# #.#.#.#.###.#.#.# #...#.#.#.....#.# #.#.#.#.#.#####.# #.#...#.#.#.....# #.#.#####.#.###.# #.#.#.......#...# #.#.###.#####.### #.#.#...#.....#.# #.#.#.#####.###.# #.#.#.........#.# #.#.#.#########.# #S#.............# ################# 
+    #################
+    #...#...#...#..E#
+    #.#.#.#.#.#.#.#.#
+    #.#.#.#...#...#.#
+    #.#.#.#.###.#.#.#
+    #...#.#.#.....#.#
+    #.#.#.#.#.#####.#
+    #.#...#.#.#.....#
+    #.#.#####.#.###.#
+    #.#.#.......#...#
+    #.#.###.#####.###
+    #.#.#...#.....#.#
+    #.#.#.#####.###.#
+    #.#.#.........#.#
+    #.#.#.#########.#
+    #S#.............#
+    #################
 
 In this maze, the best paths cost *`11048`* points; following one such
 path would look like this:
 
-    ################# #...#...#...#..E# #.#.#.#.#.#.#.#^# #.#.#.#...#...#^# #.#.#.#.###.#.#^# #>>v#.#.#.....#^# #^#v#.#.#.#####^# #^#v..#.#.#>>>>^# #^#v#####.#^###.# #^#v#..>>>>^#...# #^#v###^#####.### #^#v#>>^#.....#.# #^#v#^#####.###.# #^#v#^........#.# #^#v#^#########.# #S#>>^..........# ################# 
+    #################
+    #...#...#...#..E#
+    #.#.#.#.#.#.#.#^#
+    #.#.#.#...#...#^#
+    #.#.#.#.###.#.#^#
+    #>>v#.#.#.....#^#
+    #^#v#.#.#.#####^#
+    #^#v..#.#.#>>>>^#
+    #^#v#####.#^###.#
+    #^#v#..>>>>^#...#
+    #^#v###^#####.###
+    #^#v#>>^#.....#.#
+    #^#v#^#####.###.#
+    #^#v#^........#.#
+    #^#v#^#########.#
+    #S#>>^..........#
+    #################
 
 Note that the path shown above includes one 90 degree turn as the very
 first move, rotating the Reindeer from facing East to facing North.
@@ -61,12 +121,42 @@ through the maze, including the `S` and `E` tiles.
 In the first example, there are *`45`* tiles (marked `O`) that are part
 of at least one of the various best paths through the maze:
 
-    ############### #.......#....O# #.#.###.#.###O# #.....#.#...#O# #.###.#####.#O# #.#.#.......#O# #.#.#####.###O# #..OOOOOOOOO#O# ###O#O#####O#O# #OOO#O....#O#O# #O#O#O###.#O#O# #OOOOO#...#O#O# #O###.#.#.#O#O# #O..#.....#OOO# ############### 
+    ###############
+    #.......#....O#
+    #.#.###.#.###O#
+    #.....#.#...#O#
+    #.###.#####.#O#
+    #.#.#.......#O#
+    #.#.#####.###O#
+    #..OOOOOOOOO#O#
+    ###O#O#####O#O#
+    #OOO#O....#O#O#
+    #O#O#O###.#O#O#
+    #OOOOO#...#O#O#
+    #O###.#.#.#O#O#
+    #O..#.....#OOO#
+    ###############
 
 In the second example, there are *`64`* tiles that are part of at least
 one of the best paths:
 
-    ################# #...#...#...#..O# #.#.#.#.#.#.#.#O# #.#.#.#...#...#O# #.#.#.#.###.#.#O# #OOO#.#.#.....#O# #O#O#.#.#.#####O# #O#O..#.#.#OOOOO# #O#O#####.#O###O# #O#O#..OOOOO#OOO# #O#O###O#####O### #O#O#OOO#..OOO#.# #O#O#O#####O###.# #O#O#OOOOOOO..#.# #O#O#O#########.# #O#OOO..........# ################# 
+    #################
+    #...#...#...#..O#
+    #.#.#.#.#.#.#.#O#
+    #.#.#.#...#...#O#
+    #.#.#.#.###.#.#O#
+    #OOO#.#.#.....#O#
+    #O#O#.#.#.#####O#
+    #O#O..#.#.#OOOOO#
+    #O#O#####.#O###O#
+    #O#O#..OOOOO#OOO#
+    #O#O###O#####O###
+    #O#O#OOO#..OOO#.#
+    #O#O#O#####O###.#
+    #O#O#OOOOOOO..#.#
+    #O#O#O#########.#
+    #O#OOO..........#
+    #################
 
 Analyze your map further. *How many tiles are part of at least one of
 the best paths through the maze?*
@@ -76,13 +166,11 @@ Your puzzle answer was `435`.
 Both parts of this puzzle are complete! They provide two gold stars:
 \*\*
 
-At this point, you should [return to your Advent calendar](/2024) and
-try another puzzle.
+At this point, all that is left is for you to [admire your Advent
+calendar](/2024).
 
 If you still want to see it, you can [get your puzzle input](16/input).
 
-You can also [\[Share[on
-[Bluesky](https://bsky.app/intent/compose?text=I%27ve+completed+%22Reindeer+Maze%22+%2D+Day+16+%2D+Advent+of+Code+2024+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2024%2Fday%2F16)
-[Twitter](https://twitter.com/)
-[Mastodon](https://mastodon.social/)]{.share-content}\]]{.share} this
-puzzle.
+You can also \[Shareon [Bluesky](https://bsky.app/)
+[Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
+this puzzle.
