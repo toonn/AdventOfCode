@@ -1,0 +1,35 @@
+cabal-version:       2.4
+name:                AoC2025
+version:             2025.12.1.1
+synopsis:            Advent of Code 2025
+-- description:
+homepage:            https://codeberg.org/toonn/AdventOfCode
+license:             EUPL-1.2+
+license-file:        LICENSE
+author:              toonn
+maintainer:          toonn@toonn.io
+category:            Game
+data-files:          **/*.txt
+
+library
+  build-depends:      base >= 4.21.0.0
+                    , containers ^>= 0.7
+                    , filepath ^>= 1.5.4.0
+                    , megaparsec ^>= 9.7.0
+                    , mtl ^>= 2.3.1
+                    , pqueue ^>= 1.5.0.0
+  other-modules:      Paths_AoC2025
+  exposed-modules:    AoC
+  hs-source-dirs:     .
+  default-language:   Haskell2010
+
+executable SecretEntrance
+  main-is:            SecretEntrance.hs
+  build-depends:      base >= 4.21.0.0
+                    , AoC2025
+                    , criterion ^>= 1.6.4.0
+                    , megaparsec ^>= 9.7.0
+                    , silently ^>= 1.2.5.4
+  other-modules:      Paths_AoC2025
+  hs-source-dirs:     "Day 01: Secret Entrance"
+  default-language:   Haskell2010
