@@ -1,5 +1,5 @@
 { pkgs ? import ~/src/nix-config/haskell.nix/nixpkgs.nix
-, compiler-nix-name ? "ghc9101"
+, compiler-nix-name ? "ghc9103"
 }:
 pkgs.haskell-nix.project {
   inherit compiler-nix-name;
