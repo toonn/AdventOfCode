@@ -8,6 +8,7 @@ import Text.Megaparsec.Char
 
 import AoC
 
+import Data.List (nub)
 import Data.Monoid (Sum(..))
 
 type Input = [(Int,Int)]
@@ -17,37 +18,46 @@ parser = sepBy1 ((,) <$> lexeme integer <*> (char '-' *> lexeme integer))
                 (char ',')
       <* eol <* eof
 
-repeatedTwice :: Monoid m => (Int -> m -> m) -> (Int, Int) -> m
-repeatedTwice prepend (low,high) = go prepend places lowestCandidate
+add :: Num n => n -> Sum n -> Sum n
+add = (<>) . Sum
+
+-- Too low:  15387968268
+-- Too high: 16793893635
+part1 :: Parsed Input -> IO ()
+part1 input = do
+  let answer = getSum . foldMap (repeatedNTimes add 2) <$> input
+  printAnswer "Sum of invalid IDs: " answer
+
+repeatedNTimes :: Monoid m => (Int -> m -> m) -> Int -> (Int, Int) -> m
+repeatedNTimes prepend repeats (low,high) = go prepend places lowestCandidate
   where
     lowString = show low
-    (half, bias) = length lowString `quotRem` 2
+    (part, bias) = length lowString `quotRem` repeats
     (places, repeatString)
-      | bias == 0 = (10 ^ half, take half lowString)
-      | bias == 1 = (10 ^ (half + 1), '1' : replicate half '0')
+      | bias == 0 = (10 ^ part, take part lowString)
+      | otherwise = (10 ^ (part + 1), '1' : replicate part '0')
     lowestCandidate = read repeatString
 
     go :: Monoid m => (Int -> m -> m) -> Int -> Int -> m
     go prepend p n | repeatN > high = mempty
                    | otherwise = prependInvalid (go prepend (mInc p) (n + 1))
       where
-        repeatN = n * p + n
+        repeatN = getSum $ foldMap (Sum . (n *) . (p^)) [0..repeats-1]
         mInc | n + 1 == p = (* 10)
              | otherwise  = id
         prependInvalid | low <= repeatN, repeatN <= high = prepend repeatN
                        | otherwise                       = id
 
--- Too low:  15387968268
--- Too high: 16793893635
-part1 :: Parsed Input -> IO ()
-part1 input = do
-  let answer = getSum . foldMap (repeatedTwice ((<>) . Sum)) <$> input
-  printAnswer "Sum of invalid IDs: " answer
+repeatedAnyTimes :: (Int, Int) -> [Int]
+repeatedAnyTimes bounds = nub
+                        $ foldMap (\r -> repeatedNTimes (:) r bounds)
+                                  [2..maxLen]
+  where maxLen = uncurry max (both (length . show) bounds)
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . foldMap repeatedAnyTimes <$> input
+  printAnswer "Sum of all invalid IDs: " answer
 
 main :: IO ()
 main = do
