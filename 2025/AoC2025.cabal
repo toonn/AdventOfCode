@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2025
-version:             2025.12.2.2
+version:             2025.12.3.1
 synopsis:            Advent of Code 2025
 -- description:
 homepage:            https://codeberg.org/toonn/AdventOfCode
@@ -34,7 +34,6 @@ executable SecretEntrance
   hs-source-dirs:     "Day 01: Secret Entrance"
   default-language:   Haskell2010
 
-
 executable GiftShop
   main-is:            GiftShop.hs
   build-depends:      base ^>= 4.21.0.0
@@ -46,3 +45,13 @@ executable GiftShop
   hs-source-dirs:     "Day 02: Gift Shop"
   default-language:   Haskell2010
 
+executable Lobby
+  main-is:            Lobby.hs
+  build-depends:      base ^>= 4.21.0.0
+                    , AoC2025
+                    , criterion ^>= 1.6.4.1
+                    , megaparsec ^>= 9.7.0
+                    , silently ^>= 1.2.5.4
+  other-modules:      Paths_AoC2025
+  hs-source-dirs:     "Day 03: Lobby"
+  default-language:   Haskell2010
