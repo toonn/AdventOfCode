@@ -17,33 +17,25 @@ type Input = [String]
 parser :: Parser Input
 parser = sepEndBy1 (takeWhile1P (Just "digit") isDigit) eol <* eof
 
-largestJoltage :: String -> Int
-largestJoltage bank
-  = read
-  $ foldr (\candidate jolts ->
-            foldr (\j next mC ->
-                    case mC of
-                      Just c | c >= j -> c : next (Just j)
-                      _               -> j : next Nothing
-                  )
-                  (const [])
-                  jolts
-                  (Just candidate)
-          )
-          initial
-          candidates
+largestJoltage :: Int -> String -> Int
+largestJoltage batteries bank = read $ foldr pushdown initial candidates
   where
-    (candidates, initial) = splitAt (length bank - 2) bank
+    (candidates, initial) = splitAt (length bank - batteries) bank
+
+    pushdown :: Char -> String -> String
+    pushdown _ [] = []
+    pushdown c jolts@(j:js) | c < j = jolts
+                            | otherwise = c : pushdown j js
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = getSum . foldMap (Sum . largestJoltage) <$> input
+  let answer = getSum . foldMap (Sum . largestJoltage 2) <$> input
   printAnswer "Total joltage: " answer
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = getSum . foldMap (Sum . largestJoltage 12) <$> input
+  printAnswer "Joltage from 12 batteries per bank: " answer
 
 main :: IO ()
 main = do
