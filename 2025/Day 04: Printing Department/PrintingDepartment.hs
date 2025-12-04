@@ -13,23 +13,20 @@ import Data.Foldable (fold)
 import qualified Data.Map as M
 import Data.Monoid (Sum(..))
 import qualified Data.Set as S
-import Prelude hiding (filter)
-import Witherable (filter)
 
-type Input = M.Map YX Char
+type Input = S.Set YX
 
 parser :: Parser Input
-parser = filter (== '@') . foldYX <$> characterGrid <* eof
+parser = M.keysSet . M.filter (== '@') . foldYX <$> characterGrid <* eof
 
-accessible :: M.Map YX Char -> [YX]
-accessible rolls = filter ( (< 4)
-                         . length
-                         . M.restrictKeys rolls
-                         . S.fromList
-                         . deltaNeighbors twoDDeltas
-                         )
-                . M.keys
-                $ rolls
+accessible :: S.Set YX -> S.Set YX
+accessible rolls = S.filter ( (< 4)
+                            . length
+                            . S.intersection rolls
+                            . S.fromList
+                            . deltaNeighbors twoDDeltas
+                            )
+                 $ rolls
 
 -- Too low:  338
 part1 :: Parsed Input -> IO ()
@@ -46,7 +43,7 @@ part2 input = do
                              next | null as = Nothing
                                   | otherwise
                                   = Just (Sum (length as)
-                                         , M.withoutKeys rolls (S.fromList as)
+                                         , S.difference rolls as
                                          )
                           in next
                        )
