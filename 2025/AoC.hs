@@ -61,9 +61,10 @@ foldYX rows = M.fromAscList
                     rows
                     0
 
-twoDDeltas :: Num a => [(a,a)]
+twoDDeltas :: (Eq a, Num a) => [(a,a)]
 twoDDeltas = do dy <- [-1,0,1]
                 dx <- [-1,0,1]
+                guard (dy /= 0 || dx /= 0)
                 pure (dy,dx)
 
 fourWayDeltas :: (Eq a, Num a) => [(a,a)]
