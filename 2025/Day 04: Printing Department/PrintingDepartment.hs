@@ -8,10 +8,7 @@ import Text.Megaparsec.Char
 
 import AoC
 
-import Data.List (unfoldr)
-import Data.Foldable (fold)
 import qualified Data.Map as M
-import Data.Monoid (Sum(..))
 import qualified Data.Set as S
 
 type Input = S.Set YX
@@ -34,20 +31,33 @@ part1 input = do
   let answer = length . accessible <$> input
   printAnswer "Accessible rolls: " answer
 
+dropAllReachable :: M.Map YX Int -> Int
+dropAllReachable = dropReachable 0
+  where
+    dropReachable :: Int -> M.Map YX Int -> Int
+    dropReachable c m
+      = let (reachable, rolls) = M.partition (< 4) m
+            r | null reachable = c
+              | otherwise
+              = dropReachable (c + length reachable)
+                              (foldr ( flip (foldr (M.adjust (subtract 1)))
+                                     . deltaNeighbors twoDDeltas
+                                     )
+                                     rolls
+                                     (M.keys reachable)
+                              )
+         in r
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = getSum
-             . fold
-             . unfoldr (\rolls ->
-                         let as = accessible rolls
-                             next | null as = Nothing
-                                  | otherwise
-                                  = Just (Sum (length as)
-                                         , S.difference rolls as
-                                         )
-                          in next
-                       )
-           <$> input
+  let answer = dropAllReachable
+             . (\rolls -> M.fromSet ( length
+                                    . S.intersection rolls
+                                    . S.fromList
+                                    . deltaNeighbors twoDDeltas
+                                    )
+                                    rolls
+               ) <$> input
   printAnswer "Removable rolls: " answer
 
 main :: IO ()
