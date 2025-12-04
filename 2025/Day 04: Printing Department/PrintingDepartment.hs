@@ -8,18 +8,21 @@ import Text.Megaparsec.Char
 
 import AoC
 
+import Data.List (unfoldr)
+import Data.Foldable (fold)
 import qualified Data.Map as M
-import Prelude hiding (filter)
+import Data.Monoid (Sum(..))
 import qualified Data.Set as S
+import Prelude hiding (filter)
 import Witherable (filter)
 
 type Input = M.Map YX Char
 
 parser :: Parser Input
-parser = foldYX <$> characterGrid <* eof
+parser = filter (== '@') . foldYX <$> characterGrid <* eof
 
 accessible :: M.Map YX Char -> [YX]
-accessible grid = filter ( (< 4)
+accessible rolls = filter ( (< 4)
                          . length
                          . M.restrictKeys rolls
                          . S.fromList
@@ -27,7 +30,6 @@ accessible grid = filter ( (< 4)
                          )
                 . M.keys
                 $ rolls
-  where rolls = filter (== '@') grid
 
 -- Too low:  338
 part1 :: Parsed Input -> IO ()
@@ -37,8 +39,19 @@ part1 input = do
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = getSum
+             . fold
+             . unfoldr (\rolls ->
+                         let as = accessible rolls
+                             next | null as = Nothing
+                                  | otherwise
+                                  = Just (Sum (length as)
+                                         , M.withoutKeys rolls (S.fromList as)
+                                         )
+                          in next
+                       )
+           <$> input
+  printAnswer "Removable rolls: " answer
 
 main :: IO ()
 main = do
