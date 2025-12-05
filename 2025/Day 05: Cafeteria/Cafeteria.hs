@@ -9,6 +9,7 @@ import Text.Megaparsec.Char
 import AoC
 
 import qualified Data.IntegerInterval as II
+import qualified Data.Interval as I
 import qualified Data.IntervalSet as IS
 
 type Input = (IS.IntervalSet Int,[Int])
@@ -30,10 +31,15 @@ part1 input = do
   let answer = length . uncurry (filter . fresh) <$> input
   printAnswer "Fresh ingredients: " answer
 
+-- Assume all intervals include both bounds, since they are originally integer
+-- intervals.
+freshIDs :: (Integral a, Num a, Ord a) => IS.IntervalSet a -> a
+freshIDs = sum . fmap ((+ 1) . I.width) . IS.toList
+
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = freshIDs . fst <$> input
+  printAnswer "Total fresh IDs: " answer
 
 main :: IO ()
 main = do
