@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2025
-version:             2025.12.4.2
+version:             2025.12.5.1
 synopsis:            Advent of Code 2025
 -- description:
 homepage:            https://codeberg.org/toonn/AdventOfCode
@@ -66,4 +66,16 @@ executable PrintingDepartment
                     , containers ^>= 0.7
   other-modules:      Paths_AoC2025
   hs-source-dirs:     "Day 04: Printing Department"
+  default-language:   Haskell2010
+
+executable Cafeteria
+  main-is:            Cafeteria.hs
+  build-depends:      base ^>= 4.21.0.0
+                    , AoC2025
+                    , criterion ^>= 1.6.4.1
+                    , megaparsec ^>= 9.7.0
+                    , silently ^>= 1.2.5.4
+                    , data-interval ^>= 2.1.2
+  other-modules:      Paths_AoC2025
+  hs-source-dirs:     "Day 05: Cafeteria"
   default-language:   Haskell2010
