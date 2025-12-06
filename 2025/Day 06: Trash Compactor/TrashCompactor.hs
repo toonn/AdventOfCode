@@ -10,6 +10,7 @@ import AoC
 
 import Control.Arrow ((&&&), (***))
 import Data.List (transpose)
+import Data.List.Split (splitWhen)
 
 type Input = ([String],[Char])
 
@@ -33,17 +34,12 @@ part1 input = do
            <$> input
   printAnswer "Grand total: " answer
 
-collect :: [String] -> [[Int]]
-collect = foldr (\s (c:rs) ->
-                  let next | all (== ' ') s = (([] :) . (c :))
-                           | otherwise = ((read (filter (/= ' ') s) : c) :)
-                   in next rs
-                )
-                [[]]
-
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = sum . solve . (collect . transpose *** id) <$> input
+  let answer = sum
+             . solve
+             . (map (map read) . splitWhen (all (== ' ')) . transpose *** id)
+           <$> input
   printAnswer "Cephalopod math total: " answer
 
 main :: IO ()
