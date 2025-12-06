@@ -8,40 +8,43 @@ import Text.Megaparsec.Char
 
 import AoC
 
-type Input = ([[Int]],[Char])
+import Control.Arrow ((&&&), (***))
+import Data.List (transpose)
+
+type Input = ([String],[Char])
 
 parser :: Parser Input
-parser = (,)
-     <$> sepEndBy1 (hspace *> some integer) eol
-     <*> (hspace *> some (lexeme (anySingleBut '\n')) <* eol)
+parser = (init &&& filter (/= ' ') . last)
+     <$> sepEndBy1 (takeWhile1P (Just "any character") (/= '\n')) eol
       <* eof
 
-solve :: Input -> [Int]
-solve (problems, ops) = foldr (\numbers intermediate ->
-                                zipWith3 (\op a b -> a `op` b)
-                                         opFs
-                                         numbers
-                                         intermediate
-                              )
-                              units
-                              problems
+solve :: ([[Int]],[Char]) -> [Int]
+solve (problems, ops) = zipWith foldr1 opFs problems
   where
-    (opFs, units) = unzip
-                  . map (\op -> let unit | op == '*' = ((*), 1)
-                                         | otherwise = ((+), 0)
-                                 in unit
-                        )
-                  $ ops
+    opFs = map (\op -> let opF | op == '*' = (*)
+                               | otherwise = (+)
+                        in opF
+               )
+         $ ops
 
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = sum . solve <$> input
+  let answer = sum . solve . (transpose . map (map read . words) *** id)
+           <$> input
   printAnswer "Grand total: " answer
+
+collect :: [String] -> [[Int]]
+collect = foldr (\s (c:rs) ->
+                  let next | all (== ' ') s = (([] :) . (c :))
+                           | otherwise = ((read (filter (/= ' ') s) : c) :)
+                   in next rs
+                )
+                [[]]
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . solve . (collect . transpose *** id) <$> input
+  printAnswer "Cephalopod math total: " answer
 
 main :: IO ()
 main = do
