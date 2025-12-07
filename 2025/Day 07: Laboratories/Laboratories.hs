@@ -8,45 +8,46 @@ import Text.Megaparsec.Char
 
 import AoC
 
-import Data.Foldable (foldMap')
-import qualified Data.Set as S
+import qualified Data.Map as M
 
-type Input = (S.Set Int,[S.Set Int])
+type Input = (M.Map Int Int,[M.Map Int Int])
 
 parser :: Parser Input
 parser = (\(start:splitters) -> (start, splitters))
-       . map (S.fromAscList . map fst . filter ((/= '.') . snd) . zip [0..])
+       . map ( M.fromAscList
+             . map (fmap (const 1))
+             . filter ((/= '.') . snd)
+             . zip [0..]
+             )
      <$> sepEndBy1 (takeWhile1P (Just "One of S . ^") (/= '\n')) eol
       <* eof
 
+simulate :: Input -> (Int, M.Map Int Int)
+simulate (start, splitters) = foldr
+  (\splits next (count, beams) ->
+    let hits = M.intersection beams splits
+        misses = beams M.\\ splits
+     in next ( count + length hits
+             , M.unionsWith (+)
+                            [ misses
+                            , M.mapKeysMonotonic (subtract 1) hits
+                            , M.mapKeysMonotonic (+ 1) hits
+                            ]
+             )
+  )
+  id
+  splitters
+  (0, start)
+
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  let answer = fst
-             . (\(start, splitters) ->
-                 foldr (\splits next (count, beams) ->
-                         let hits = S.intersection beams splits
-                             misses = beams S.\\ splits
-                          in next ( count + length hits
-                                  , S.union
-                                      misses
-                                      (foldMap'
-                                        (\s ->
-                                          S.map (s +) (S.fromAscList [-1,1]))
-                                        hits
-                                      )
-                                  )
-                       )
-                       id
-                       splitters
-                       (0, start)
-               )
-           <$> input
+  let answer = fst . simulate <$> input
   printAnswer "Number of splits: " answer
 
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = const 'P' <$> input
-  printAnswer "No answer yet: " answer
+  let answer = sum . snd . simulate <$> input
+  printAnswer "Number of timelines: " answer
 
 main :: IO ()
 main = do
