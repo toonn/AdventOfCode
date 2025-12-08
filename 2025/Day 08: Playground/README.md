@@ -93,9 +93,36 @@ pairs of junction boxes which are closest together. Afterward, *what do
 you get if you multiply together the sizes of the three largest
 circuits?*
 
-Answer:
+Your puzzle answer was `131580`.
 
-To begin, [get your puzzle input](8/input).
+## \-\-- Part Two \-\-- {#part2}
+
+The Elves were right; they *definitely* don\'t have enough extension
+cables. You\'ll need to keep connecting junction boxes together until
+they\'re all in *one large circuit*.
+
+Continuing the above example, the first connection which causes all of
+the junction boxes to form a single circuit is between the junction
+boxes at `216,146,977` and `117,168,530`. The Elves need to know how far
+those junction boxes are from the wall so they can pick the right
+extension cable; multiplying the X coordinates of those two junction
+boxes (`216` and `117`) produces *`25272`*.
+
+Continue connecting the closest unconnected pairs of junction boxes
+together until they\'re [all in the same
+circuit]{title="I strongly recommend making an interactive visualizer for this one; it reminds me a lot of maps from futuristic space games."}.
+*What do you get if you multiply together the X coordinates of the last
+two junction boxes you need to connect?*
+
+Your puzzle answer was `6844224`.
+
+Both parts of this puzzle are complete! They provide two gold stars:
+\*\*
+
+At this point, you should [return to your Advent calendar](/2025) and
+try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](8/input).
 
 You can also \[Shareon [Bluesky](https://bsky.app/)
 [Twitter](https://twitter.com/) [Mastodon](https://mastodon.social/)\]
