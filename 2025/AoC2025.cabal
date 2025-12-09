@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2025
-version:             2025.12.8.2
+version:             2025.12.9.1
 synopsis:            Advent of Code 2025
 -- description:
 homepage:            https://codeberg.org/toonn/AdventOfCode
@@ -114,4 +114,15 @@ executable Playground
                     , containers ^>= 0.7
   other-modules:      Paths_AoC2025
   hs-source-dirs:     "Day 08: Playground"
+  default-language:   Haskell2010
+
+executable MovieTheater
+  main-is:            MovieTheater.hs
+  build-depends:      base ^>= 4.21.0.0
+                    , AoC2025
+                    , criterion ^>= 1.6.4.1
+                    , megaparsec ^>= 9.7.0
+                    , silently ^>= 1.2.5.4
+  other-modules:      Paths_AoC2025
+  hs-source-dirs:     "Day 09: Movie Theater"
   default-language:   Haskell2010
