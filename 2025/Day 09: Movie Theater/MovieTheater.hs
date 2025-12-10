@@ -8,6 +8,7 @@ import Text.Megaparsec.Char
 
 import AoC
 
+import Control.Arrow ((&&&))
 import Control.Monad (join)
 import Data.Foldable (foldMap')
 import Data.List (sortOn, tails)
@@ -34,74 +35,84 @@ atLeastTwo []  = False
 atLeastTwo [_] = False
 atLeastTwo _   = True
 
-bounds :: S.Set YX -> (YX, YX)
-bounds borderS | null borderS = error "Empty space doesn't have bounds"
-               | xs <- S.map snd borderS
-               = ( (fst (S.findMin borderS), S.findMin xs)
-                 , (fst (S.findMax borderS), S.findMax xs)
-                 )
+findTip :: [(YX,YX)] -> [(YX,Int)]
+findTip = sortOn (snd . fst) -- Sort left before right
+        . map (uncurry max &&& (fst . uncurry min)) -- Sort tip first in pairs
+        . take 2
+        . sortOn (negate . uncurry manhattan) -- Pairs with largest distance
 
-areaSet :: YX -> YX -> S.Set YX
-areaSet (y1,x1) (y2,x2) = S.fromList [ (y,x) | y <- [min y1 y2..max y1 y2]
-                                             , x <- [min x1 x2..max x1 x2]
-                                     ]
-
-border :: Input -> S.Set YX
-border = foldMap' (uncurry areaSet) . join (zip . (\(yx:yxs) -> yxs <> [yx]))
-
-corners :: (YX,YX) -> [YX]
-corners ((y1,x1),(y2,x2)) = [(y1,x1),(y1,x2),(y2,x2),(y2,x1)]
-
-outOfBounds :: (YX,YX) -> YX -> Bool
-outOfBounds ((ym,xm),(yM,xM)) (y,x) = y < ym || y > yM || x < xm || x > xM
-
-neighbors :: YX -> S.Set YX
-neighbors = S.fromAscList . deltaNeighbors fourWayDeltas
-
--- Assume there are no exterior regions that do not touch the bounds.
--- Problematic example: #XXX#
---                      X#X#X
---                      XX.##
---                      X#XX#
---                      #XXX#
-contained :: S.Set YX -> S.Set YX -> (YX,YX) -> S.Set YX
-contained borderS bad pair = go (rectangleBorder <> borderS <> front) front
+addXBound :: [(YX,Int)] -> [(YX,YX)] -> [(YX,YX)]
+addXBound [(l@(y1,_),ly),(r,ry)] pairs = [(l,(ly,lx)),(r,(ry,rx))]
   where
-    cs = corners pair
-    rectangleBorder = border cs
-    front = S.filter (outOfBounds (bounds (S.fromList cs)))
-          . foldMap' neighbors
-          $ rectangleBorder S.\\ borderS
+    xs = foldMap ((\(a,b) -> [a,b]) . both snd)
+       . filter (\((y,_),(y',_)) -> min y y' <= y1 && y1 <= max y y')
+       $ pairs
+    lx = minimum xs
+    rx = maximum xs
 
-    go :: S.Set YX -> S.Set YX -> S.Set YX
-    go seen candidates | (not . null $ S.intersection bad candidates)
-                       || any (outOfBounds (bounds borderS)) ns
-                       = bad <> candidates <> (seen <> uncurry areaSet pair
-                                           S.\\ borderS
-                                              )
-                       | null ns = mempty
-                       | otherwise = go (seen <> ns) ns
-      where
-        ns = foldMap' neighbors candidates S.\\ seen
+contains :: YX -> YX -> YX -> Bool
+contains (y1,x1) (y2,x2) (y,x) = min y1 y2 <= y && y <= max y1 y2
+                              && min x1 x2 <= x && x <= max x1 x2
 
+-- Plotting debug_rectangles.png showed that I was computing the "inside"
+-- wrong, always subtracting from the tip point and adding to the opposite
+-- point.
+toward :: YX -> YX -> YX
+toward (ty,tx) (y,x) = let y' | ty < y = y - 1
+                              | y < ty = y + 1
+                              | otherwise = y
+                           x' | tx < x = x - 1
+                              | x < tx = x + 1
+                              | otherwise = x
+                        in (y',x')
+
+
+biggestRectangle :: Input -> (YX,YX) -> Int
+biggestRectangle tiles (corner,bound) = area corner biggest
+  where
+    candidates = filter (/= corner)
+               . filter (contains corner bound)
+               $ tiles
+    (biggest:_) = filter ( \c -> not
+                               . any (contains (toward c corner)
+                                               (toward corner c)
+                                     )
+                               . filter (/= c)
+                               $ candidates
+                         )
+                . sortOn (negate . area corner)
+                $ candidates
+
+-- A general solution seems out of reach for me so on a hint in
+-- #adventofcode@Libera.Chat I plotted the input in GNUplot.
+--
+-- Produced input.png with
+-- ```gnuplot
+-- set datafile separator comma
+-- plot "input.txt" using 2:1 with lines
+-- ```
+-- The plot shows an ellipse with a rectangular cut almost across the middle.
+--
+-- This is a very suspicious structure, the points on the tip of the ellipse
+-- are likely corners of the biggest rectangles in the left and right halves,
+-- respectively.
+--
+-- Plan: 1. Find the tip of the cut
+--       2. Find the bounds on the corresponding corner
+--       3. Find the biggest rectangles in the left and right halves
+--       4. Return the bigger of the two
+--
+-- Too low: 1426288185
 part2 :: Parsed Input -> IO ()
 part2 input = do
-  let answer = (\(pair:_) -> uncurry area pair)
-             . (\tiles -> (\pairs ->
-                            foldr (\pair next bad ->
-                                    case contained (border tiles) bad pair of
-                                      bad' | null bad' -> pair : next bad
-                                           | otherwise -> next bad'
-                                  )
-                                  (const [])
-                                  pairs
-                                  mempty
-                          )
-                        . sortOn (negate . uncurry area)
-                        . foldMap (\(yx:yxs) -> map ((,) yx) yxs)
-                        . filter atLeastTwo
-                        . tails
-                        $ tiles
+  let answer = maximum -- 4.
+             . (\tiles@(t1:_) ->
+                 map (biggestRectangle tiles) -- 3.
+               . join ( addXBound -- Second part of 2.
+                      . findTip -- 1. and part of 2. [(left,lr),(right,ll)]
+                      )
+               . join (zip . drop 1)
+               $ tiles
                )
            <$> input
   printAnswer "Largest red and green rectangle: " answer
