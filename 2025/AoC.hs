@@ -91,8 +91,8 @@ nTimes rounds = foldr (.) id . replicate rounds
 -- https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode).
 --
 -- @since 2023.12.17.1
-aStar :: (Ord state, Show state)
-      => (state -> [state])
+aStar :: (Ord state, Foldable t)
+      => (state -> t state)
       -> (state -> state -> Int)
       -> (state -> Int)
       -> (state -> Bool)
@@ -127,6 +127,7 @@ aStar neighbors distance heuristic isGoal start =
               id
               (neighbors current)
               (shortestPaths, openSet)
+    go _ _ = error "Never reached goal!"
 
 -- | Transitive Closure of a Map from keys to monoids keys, representing a DAG
 --
