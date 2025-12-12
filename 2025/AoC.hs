@@ -135,7 +135,7 @@ aStar neighbors distance heuristic isGoal start =
 transitiveClosure :: (Foldable m, Eq (m a), Monoid (m a), Ord a)
                   => M.Map a (m a) -> M.Map a (m a)
 transitiveClosure m
-  = let m' = M.map (foldMap (\k -> M.findWithDefault mempty k m)) m
+  = let m' = M.map (join ((<>) . foldMap (\k -> M.findWithDefault mempty k m))) m
         closure | m == m' = m
                 | otherwise = transitiveClosure m'
      in closure
