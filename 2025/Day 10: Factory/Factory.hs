@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wall #-}
 module Main where
 
 import Criterion.Main
@@ -8,16 +9,12 @@ import Text.Megaparsec.Char
 
 import AoC
 
-import Data.Bool (bool)
-import Data.Char (intToDigit)
-import Data.Foldable (find, fold)
-import Data.Function ((&))
-import Data.List (nub,intercalate, intersperse)
 import qualified Data.Map as M
 import Data.Maybe (fromJust)
 import qualified Data.SBV as SBV
+import qualified Data.Set as S
 
-type Input = [([Int],[[Int]],[Int])]
+type Input = [(S.Set Int,[S.Set Int],[Int])]
 
 betwixt :: Char -> Char -> Parser a -> Parser a
 betwixt open close = between (char open) (char close)
@@ -25,12 +22,13 @@ betwixt open close = between (char open) (char close)
 commaSeparatedNumbers :: Parser [Int]
 commaSeparatedNumbers = sepEndBy1 integer (char ',')
 
-diagram :: Parser ([Int])
-diagram = map (bool 0 1 . (== '#'))
+diagram :: Parser (S.Set Int)
+diagram = S.fromAscList . map fst . filter snd . zip [0..] . map (== '#')
       <$> betwixt '[' ']' (some (anySingleBut ']'))
 
-schematics :: Parser [[Int]]
-schematics = sepEndBy1 (betwixt '(' ')' commaSeparatedNumbers) hspace1
+schematics :: Parser [S.Set Int]
+schematics = sepEndBy1 (S.fromAscList <$> betwixt '(' ')' commaSeparatedNumbers)
+                       hspace1
 
 joltageRequirements :: Parser [Int]
 joltageRequirements = betwixt '{' '}' commaSeparatedNumbers
@@ -45,43 +43,36 @@ parser = sepEndBy1 ( (,,)
                    eol
       <* eof
 
+fewestPresses :: (S.Set Int, [S.Set Int], a) -> Int
+fewestPresses (lightConfiguration, buttons, _)
+  = aStar neighbors distance heuristic isGoal start
+  where
+    -- symmetricDifference requires containers >= 0.8 :'(
+    neighbors c = map (\b -> (c S.\\ b) <> (b S.\\ c)) buttons
+    distance _ _ = 1
+    heuristic = const 0
+    isGoal = null
+    start = lightConfiguration
+
 part1 :: Parsed Input -> IO ()
 part1 input = do
-  answer <- either (pure . Left) (Right <$>)
-              ( (sum <$>)
-              . mapM (\(lightConfiguration, buttons, _) ->
-                       solveFor ( (\l s -> s `SBV.sRem` 2 SBV..== l)
-                                . fromIntegral
-                              <$> lightConfiguration
-                                )
-                         buttons
-                     )
-            <$> input
-              )
+  let answer = sum . map fewestPresses <$> input
   printAnswer "Fewest presses: " answer
 
-renderButton :: [Int] -> String
-renderButton = ('(':) . (<> ")") . intersperse ',' . map intToDigit
-
-solveFor :: [SBV.SInteger -> SBV.SBool] -> [[Int]] -> IO Integer
-solveFor joltageRequirements buttons
-  = fmap ( fromJust
-         . uncurry SBV.getModelValue
-         . fromJust
-         . find ((== "sum") . fst)
-         )
-  . SBV.optIndependent
-  $ do let buttonNames = map renderButton buttons
-       vars <- SBV.sIntegers buttonNames
+solveFor :: [Int] -> [S.Set Int] -> IO Integer
+solveFor joltageLevels buttons
+  = fmap (fromJust . SBV.getModelValue "sum") . SBV.optLexicographic
+  $ do vars <- mapM (const SBV.sInteger_ ) buttons
        let byJoltage = foldr (\(button, var) js ->
                                foldr (M.adjust (var :)) js button
                              )
-                             (M.fromList . map (flip (,) []) . nub . fold $ buttons)
+                             (M.fromAscList . zip [0..] . map (const [])
+                             $ joltageLevels
+                             )
                      $ zip buttons vars
        mapM_ SBV.constrain (map (SBV..>= 0) vars)
-       mapM_ SBV.constrain (zipWith (&)
-                             (M.elems (sum <$> byJoltage))
-                             joltageRequirements
+       mapM_ SBV.constrain (zipWith (SBV..==) (M.elems (sum <$> byJoltage))
+                                              (fromIntegral <$> joltageLevels)
                            )
        SBV.minimize "sum" (sum vars)
 
@@ -90,9 +81,8 @@ part2 input = do
   answer <- either (pure . Left)
                    (Right <$>)
                    ( (sum <$>)
-                   . mapM (\(_, buttons, joltageRequirements) ->
-                            solveFor ((SBV..==) . fromIntegral <$> joltageRequirements)
-                              buttons
+                   . mapM (\(_, buttons, joltageLevels) ->
+                            solveFor joltageLevels buttons
                           )
                  <$> input
                    )
