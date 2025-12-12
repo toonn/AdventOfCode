@@ -136,6 +136,7 @@ executable Factory
                     , megaparsec ^>= 9.7.0
                     , silently ^>= 1.2.5.4
                     , containers ^>= 0.7
+                    , sbv
   other-modules:      Paths_AoC2025
   hs-source-dirs:     "Day 10: Factory"
   default-language:   Haskell2010
