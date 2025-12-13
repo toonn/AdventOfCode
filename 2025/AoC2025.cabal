@@ -1,6 +1,6 @@
 cabal-version:       2.4
 name:                AoC2025
-version:             2025.12.11.2
+version:             2025.12.12.1
 synopsis:            Advent of Code 2025
 -- description:
 homepage:            https://codeberg.org/toonn/AdventOfCode
@@ -151,4 +151,16 @@ executable Reactor
                     , containers ^>= 0.7
   other-modules:      Paths_AoC2025
   hs-source-dirs:     "Day 11: Reactor"
+  default-language:   Haskell2010
+
+executable ChristmasTreeFarm
+  main-is:            ChristmasTreeFarm.hs
+  build-depends:      base ^>= 4.21.0.0
+                    , AoC2025
+                    , criterion ^>= 1.6.4.1
+                    , megaparsec ^>= 9.7.0
+                    , silently ^>= 1.2.5.4
+                    , containers ^>= 0.7
+  other-modules:      Paths_AoC2025
+  hs-source-dirs:     "Day 12: Christmas Tree Farm"
   default-language:   Haskell2010
