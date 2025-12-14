@@ -18,12 +18,16 @@ regionSpec = (,) <$> ((,) <$> integer <* char 'x' <*> integer)
                  <*> some integer
 
 parser :: Parser Input
-parser = skipSomeTill ( stimes 4 ( takeWhile1P (Just "Any character") (/= '\n')
-                                *> eol
-                                 )
-                     *> eol
-                      )
-                      (try (sepEndBy1 regionSpec eol))
+parser = skipSome (try ( integer
+                      *> char ':'
+                      *> eol
+                      *> stimes 3 ( takeWhile1P (Just "Any character") (/= '\n')
+                                 *> eol
+                                  )
+                      *> eol
+                       )
+                  )
+      *> (sepEndBy1 regionSpec eol)
       <* eof
 
 fitTrivial :: (YX, [Int]) -> Bool
